@@ -1,0 +1,176 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}{% if is_edit_mode %}Modifier l’espace{% else %}Ajouter un espace{% endif %} — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<div class="ibihub-dashboard-top">
+	<div>
+		<h1 class="text-primary-ibihub title-font-ibihub">{% firstof page_dashboard_title "Ajouter un espace" %}</h1>
+		<p>{% if is_edit_mode %}Mettez à jour les informations de votre annonce. Vous pouvez ajouter des photos en galerie.{% else %}Créez une nouvelle annonce rapidement : type d’espace, localisation, tarif et description.{% endif %}</p>
+		{% if not request.user.is_verified %}
+		<p class="ibihub-dashboard-alert ibihub-dashboard-alert--warning">Votre compte doit être vérifié par l’équipe IbiHub pour publier une annonce.</p>
+		{% endif %}
+	</div>
+</div>
+
+<section class="ibihub-dashboard-panel ibihub-dash-add-space-panel">
+	<div class="ibihub-dash-add-space-wrap">
+		<form method="post" enctype="multipart/form-data" class="ibihub-settings-form ibihub-dashboard-add-space-form">
+			{% csrf_token %}
+			{% if form.non_field_errors %}
+			<div class="ibihub-dashboard-form-errors">{{ form.non_field_errors }}</div>
+			{% endif %}
+
+			<div class="ibihub-dash-add-space-grid">
+				<div class="ibihub-dash-add-space-field">
+					<label for="{{ form.titre.id_for_label }}">{{ form.titre.label }}</label>
+					{{ form.titre.errors }}
+					{{ form.titre }}
+				</div>
+				<div class="ibihub-dash-add-space-field">
+					<label for="{{ form.categorie.id_for_label }}">{{ form.categorie.label }}</label>
+					{{ form.categorie.errors }}
+					{{ form.categorie }}
+				</div>
+				<div class="ibihub-dash-add-space-field">
+					<label for="{{ form.ville.id_for_label }}">{{ form.ville.label }}</label>
+					{{ form.ville.errors }}
+					{{ form.ville }}
+				</div>
+				<div class="ibihub-dash-add-space-field">
+					<label for="{{ form.surface_m2.id_for_label }}">{{ form.surface_m2.label }}</label>
+					{{ form.surface_m2.errors }}
+					{{ form.surface_m2 }}
+				</div>
+				<div class="ibihub-dash-add-space-field">
+					<label for="{{ form.prix_par_jour.id_for_label }}">{{ form.prix_par_jour.label }} (FCFA)</label>
+					{{ form.prix_par_jour.errors }}
+					{{ form.prix_par_jour }}
+				</div>
+				<div class="ibihub-dash-add-space-field ibihub-dash-add-space-field--checkbox">
+					{{ form.disponible.errors }}
+					<label class="ibihub-dashboard-checkbox-label ibihub-dash-add-space-disponible-label"><span class="ibihub-dashboard-checkbox-input">{{ form.disponible }}</span> {{ form.disponible.label }}</label>
+				</div>
+			</div>
+
+			<div class="ibihub-dash-add-space-full">
+				<label for="{{ form.adresse.id_for_label }}">{{ form.adresse.label }}</label>
+				{{ form.adresse.errors }}
+				{{ form.adresse }}
+			</div>
+			<div class="ibihub-dash-add-space-full">
+				<label for="{{ form.description_detaillee.id_for_label }}">{{ form.description_detaillee.label }}</label>
+				{{ form.description_detaillee.errors }}
+				{{ form.description_detaillee }}
+			</div>
+			<div class="ibihub-dash-add-space-full">
+				<label for="{{ form.image_principale.id_for_label }}">{{ form.image_principale.label }}</label>
+				{{ form.image_principale.errors }}
+				{{ form.image_principale }}
+			</div>
+
+			<div class="ibihub-dash-add-space-full ibihub-dash-add-space-equipements">
+				<span class="ibihub-dashboard-field-label-like">{{ form.equipements_choices.label }}</span>
+				{{ form.equipements_choices.errors }}
+				{{ form.equipements_choices }}
+				{% if form.equipements_choices.help_text %}<small class="ibihub-dashboard-field-hint">{{ form.equipements_choices.help_text }}</small>{% endif %}
+			</div>
+			<div class="ibihub-dash-add-space-full">
+				<label for="{{ form.equipements_autres.id_for_label }}">{{ form.equipements_autres.label }}</label>
+				{{ form.equipements_autres.errors }}
+				{{ form.equipements_autres }}
+				{% if form.equipements_autres.help_text %}<small class="ibihub-dashboard-field-hint">{{ form.equipements_autres.help_text }}</small>{% endif %}
+			</div>
+
+			<div class="ibihub-dash-add-space-full ibihub-gallery-field">
+				<span class="ibihub-dashboard-field-label-like" id="ibihub-gallery-label">Galerie photos (optionnel)</span>
+				<input type="file" name="images_galerie" id="id_images_galerie" multiple accept="image/*" class="ibihub-gallery-input-hidden" aria-labelledby="ibihub-gallery-label">
+				<div id="ibihub-gallery-dropzone" class="ibihub-gallery-dropzone" role="button" tabindex="0" aria-controls="id_images_galerie">
+					<i class="fa fa-cloud-upload-alt ibihub-gallery-dropzone__icon" aria-hidden="true"></i>
+					<span class="ibihub-gallery-dropzone__text">Glissez-déposez des images ici ou cliquez pour parcourir</span>
+				</div>
+				<div id="ibihub-gallery-thumbs" class="ibihub-gallery-thumbs" aria-live="polite"></div>
+				<small class="ibihub-dashboard-field-hint">Plusieurs images possibles ; elles s’affichent sur la fiche après la photo principale.</small>
+			</div>
+
+			<div class="ibihub-dash-add-space-actions">
+				<button type="submit" class="ibihub-dash-add-space-submit">{% if is_edit_mode %}Enregistrer les modifications{% else %}Enregistrer l’espace{% endif %}</button>
+			</div>
+		</form>
+	</div>
+</section>
+{% endblock %}
+
+{% block dashboard_extra_js %}
+<script>
+(function () {
+	var input = document.getElementById('id_images_galerie');
+	var dropzone = document.getElementById('ibihub-gallery-dropzone');
+	var thumbs = document.getElementById('ibihub-gallery-thumbs');
+	if (!input || !dropzone || !thumbs) return;
+
+	function renderThumbs() {
+		thumbs.innerHTML = '';
+		Array.prototype.forEach.call(input.files, function (file, i) {
+			if (!file.type || file.type.indexOf('image/') !== 0) return;
+			var reader = new FileReader();
+			reader.onload = (function (idx) {
+				return function (ev) {
+					var wrap = document.createElement('div');
+					wrap.className = 'ibihub-gallery-thumb';
+					var img = document.createElement('img');
+					img.src = ev.target.result;
+					img.alt = '';
+					var btn = document.createElement('button');
+					btn.type = 'button';
+					btn.className = 'ibihub-gallery-thumb-remove';
+					btn.setAttribute('aria-label', 'Retirer cette image');
+					btn.innerHTML = '&times;';
+					btn.addEventListener('click', function () {
+						var dt = new DataTransfer();
+						Array.prototype.forEach.call(input.files, function (f, j) {
+							if (j !== idx) dt.items.add(f);
+						});
+						input.files = dt.files;
+						renderThumbs();
+					});
+					wrap.appendChild(img);
+					wrap.appendChild(btn);
+					thumbs.appendChild(wrap);
+				};
+			})(i);
+			reader.readAsDataURL(file);
+		});
+	}
+
+	function addFiles(fileList) {
+		var dt = new DataTransfer();
+		Array.prototype.forEach.call(input.files, function (f) { dt.items.add(f); });
+		Array.prototype.forEach.call(fileList, function (f) {
+			if (f.type && f.type.indexOf('image/') === 0) dt.items.add(f);
+		});
+		input.files = dt.files;
+		renderThumbs();
+	}
+
+	dropzone.addEventListener('click', function () { input.click(); });
+	dropzone.addEventListener('keydown', function (e) {
+		if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+	});
+	dropzone.addEventListener('dragover', function (e) {
+		e.preventDefault();
+		dropzone.classList.add('is-dragover');
+	});
+	dropzone.addEventListener('dragleave', function () {
+		dropzone.classList.remove('is-dragover');
+	});
+	dropzone.addEventListener('drop', function (e) {
+		e.preventDefault();
+		dropzone.classList.remove('is-dragover');
+		addFiles(e.dataTransfer.files);
+	});
+	input.addEventListener('change', function () { renderThumbs(); });
+})();
+</script>
+{% endblock %}

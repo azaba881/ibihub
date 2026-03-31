@@ -1,0 +1,1269 @@
+/* ---------- Tableau de bord utilisateur ---------- */
+
+.ibihub-dashboard-shell {
+    background: #eef3f1;
+    padding: 14px 14px 18px;
+    min-height: 100vh;
+  }
+  
+  .ibihub-dashboard {
+    margin: 10px auto;
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
+    min-height: calc(100vh - 28px);
+  }
+  
+  @media (max-width: 991px) {
+    .ibihub-dashboard {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .ibihub-dashboard-sidebar {
+    background: linear-gradient(180deg, #0d5c4d 0%, #0a4539 100%);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    color: #ffffff;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 14px;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 28px);
+    box-sizing: border-box;
+  }
+  
+  .ibihub-dashboard-sidebar__logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+  }
+  
+  .ibihub-dashboard-sidebar__logo img {
+    max-height: 50px;
+    filter: brightness(0) invert(1);
+  }
+  
+  .ibihub-dashboard-nav {
+    list-style: none;
+    margin: 4px 0 18px;
+    padding: 0;
+    flex: 1;
+  }
+  
+  .ibihub-dashboard-nav li {
+    margin-bottom: 4px;
+  }
+  
+  .ibihub-dashboard-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    font-family: 'Poppins';
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .ibihub-dashboard-nav a span.icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.08);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+  
+  .ibihub-dashboard-nav a.is-active,
+  .ibihub-dashboard-nav a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+  }
+  
+  .ibihub-dashboard-user-area {
+    margin-top: 4px;
+  position: relative;
+  }
+  
+  .ibihub-dashboard-user-toggle {
+    border: none;
+    background: none;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .ibihub-dashboard-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  .ibihub-dashboard-user img {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+  }
+  
+  .ibihub-dashboard-user__name {
+    font-family: 'Poppins';
+    font-size: 13px;
+    font-weight: 600;
+  }
+  
+  .ibihub-dashboard-user__role {
+    font-size: 11px;
+    opacity: 0.8;
+  }
+  
+  .ibihub-dashboard-user-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 8px);
+    padding: 8px 10px;
+    background: rgba(4, 30, 24, 0.95);
+    border-radius: 10px;
+    font-family: 'Poppins';
+    font-size: 12px;
+    display: none;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 4;
+  }
+  
+  .ibihub-dashboard-user-menu a {
+    display: block;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 4px 0;
+  }
+  
+  .ibihub-dashboard-user-menu a:hover {
+    color: #f35c16;
+  }
+  
+  .ibihub-dashboard-user-area.is-open .ibihub-dashboard-user-menu {
+    display: block;
+  }
+  
+  .ibihub-dashboard-main {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 20px;
+  }
+  
+  .ibihub-dashboard-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  
+  .ibihub-dashboard-top h1 {
+    margin: 0;
+    font-family: 'Poppins';
+    font-size: 22px;
+    font-weight: 600;
+    color: #111111;
+  }
+  
+  .ibihub-dashboard-top small {
+    display: block;
+    font-size: 12px;
+    color: #777777;
+  }
+  
+  .ibihub-dashboard-top-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+  
+  .ibihub-dashboard-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .ibihub-dashboard-search input {
+  border-radius: 999px;
+  border: 1px solid #dde7e3;
+  font-size: 13px;
+  font-family: 'Poppins';
+  min-width: 190px;
+  width: 100%;
+  max-width: 280px;
+}
+  
+  .ibihub-dashboard-search button {
+    border-radius: 999px;
+    border: none;
+    padding: 12px 12px;
+    background: #0d5c4d;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Poppins';
+    cursor: pointer;
+  }
+
+  .ibihub-dashboard-top-bell {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #0d5c4d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+.ibihub-dashboard-top-notifications {
+  position: relative;
+}
+
+.ibihub-dashboard-top-bell-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #0d5c4d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+.ibihub-dashboard-top-bell-btn i {
+  color: #fff;
+  font-size: 18px;
+}
+
+.ibihub-dashboard-top-bell-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 300px;
+  background: #ffffff;
+  border: 1px solid #e3ebe7;
+  border-radius: 12px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+  padding: 10px;
+  display: none;
+  z-index: 6;
+}
+
+.ibihub-dashboard-top-notifications.is-open .ibihub-dashboard-top-bell-menu {
+  display: block;
+}
+
+.ibihub-dashboard-top-bell-menu h4 {
+  margin: 0 0 8px;
+  font-family: 'Poppins';
+  font-size: 13px;
+  color: #0d5c4d;
+}
+
+.ibihub-dashboard-top-bell-menu a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #35534a;
+}
+
+.ibihub-dashboard-top-bell-menu a:hover {
+  background: #f3f8f6;
+  color: #0d5c4d;
+}
+
+  .ibihub-dashboard-top-bell i {
+    color: white;
+    font-size: 25px;
+    margin-left: auto;
+    margin-right: auto;
+
+  }
+  
+  .ibihub-dashboard-top-avatar {
+  width: 50px;
+  height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #dde7e3;
+    margin-right: 10px;
+    margin-top: 0px;
+  }
+  
+  .ibihub-dashboard-top-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+.ibihub-dashboard-top-user {
+  position: relative;
+}
+
+.ibihub-dashboard-top-user-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.ibihub-dashboard-top-user-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  min-width: 190px;
+  background: #ffffff;
+  border: 1px solid #e3ebe7;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+  display: none;
+  z-index: 5;
+}
+
+.ibihub-dashboard-top-user.is-open .ibihub-dashboard-top-user-menu {
+  display: block;
+}
+
+.ibihub-dashboard-top-user-menu a {
+  display: block;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-family: 'Poppins';
+  font-size: 12px;
+  font-weight: 600;
+  color: #35534a;
+}
+
+.ibihub-dashboard-top-user-menu a:hover {
+  background: #f3f8f6;
+  color: #0d5c4d;
+}
+  
+  .ibihub-dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .ibihub-dashboard-cards--three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  
+  @media (max-width: 1199px) {
+    .ibihub-dashboard-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .ibihub-dashboard-cards--three {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .ibihub-dashboard-cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  
+  .ibihub-dashboard-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(13, 92, 77, 0.06);
+  }
+  
+  .ibihub-dashboard-card__label {
+    font-family: 'Poppins';
+    font-size: 16px;
+    color: #777777;
+    margin-bottom: 4px;
+  }
+  
+  .ibihub-dashboard-card__value {
+    font-family: 'Poppins';
+    font-size: 25px;
+    font-weight: 700;
+    color: #0d5c4d;
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+  
+  .ibihub-dashboard-card__hint {
+    font-size: 14px;
+    color: #0d5c4d;
+    margin-top: 2px;
+  }
+  
+  .ibihub-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 16px;
+  }
+  
+  @media (max-width: 991px) {
+    .ibihub-dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .ibihub-dashboard-panel {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px 18px 14px;
+    border: 1px solid rgba(13, 92, 77, 0.06);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  }
+  
+  .ibihub-dashboard-panel__title {
+    font-family: 'Poppins';
+    font-size: 18px;
+    font-weight: 600;
+    color: #0d5c4d;
+    margin: 0 0 4px;
+  }
+
+  .ibihub-dashboard-table-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 10%;
+    object-fit: cover;
+  }
+  
+  .ibihub-dashboard-panel__subtitle {
+    font-size: 12px;
+    color: #777777;
+    margin: 0 0 10px;
+  }
+  
+  .ibihub-dashboard-pseudo-chart {
+    margin-top: 6px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #e1f2ec 0%, #fef7f0 100%);
+    padding: 16px 18px;
+    font-size: 12px;
+    color: #0d5c4d;
+  }
+  
+  .ibihub-dashboard-pseudo-chart-bar {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.6);
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  
+  .ibihub-dashboard-pseudo-chart-bar span {
+    display: block;
+    height: 100%;
+    width: 70%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #0d5c4d, #1ea87f);
+  }
+  
+  .ibihub-dashboard-table {
+  margin-top: 4px;
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Poppins';
+  font-size: 12px;
+  min-width: 720px;
+}
+  
+  .ibihub-dashboard-table thead th {
+    text-align: left;
+    padding: 8px 6px;
+    color: #777777;
+    font-weight: 600;
+    border-bottom: 1px solid #e3ebe7;
+  }
+  
+  .ibihub-dashboard-table tbody td {
+    padding: 8px 6px;
+    border-bottom: 1px solid #f0f3f2;
+    color: #444444;
+  }
+  
+  .ibihub-dashboard-status {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  
+  .ibihub-dashboard-status--ok {
+    background: #e1f5ec;
+    color: #0d5c4d;
+  }
+  
+  .ibihub-dashboard-status--pending {
+    background: #fff4e3;
+    color: #b86504;
+  }
+  
+  .ibihub-dashboard-status--cancel {
+    background: #fde6e6;
+    color: #b23434;
+  }
+
+  .ibihub-dashboard-status--done {
+    background: #e8eef5;
+    color: #3d4f63;
+  }
+  
+  .ibihub-dashboard-empty {
+    font-size: 12px;
+    color: #888888;
+    margin-top: 4px;
+  }
+  
+  .ibihub-dashboard-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+  
+  @media (max-width: 991px) {
+    .ibihub-dashboard-bottom {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  
+  .ibihub-dashboard-actions-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    font-family: 'Poppins';
+    font-size: 12px;
+    color: #555555;
+  }
+  
+  .ibihub-dashboard-actions-list li {
+    margin-bottom: 8px;
+  }
+  
+  .ibihub-dashboard-actions-list button,
+  .ibihub-dashboard-actions-list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 12px;
+    border: 1px solid #dde7e3;
+    background: #f7faf9;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0d5c4d;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  
+  .ibihub-dashboard-actions-list button i,
+  .ibihub-dashboard-actions-list a i {
+    font-size: 13px;
+  }
+  
+  .ibihub-dashboard-actions-list span.label {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .ibihub-dashboard-actions-list span.chevron {
+    font-size: 11px;
+    color: #9aa9a3;
+  }
+  
+  .ibihub-dashboard-actions-list button:hover,
+  .ibihub-dashboard-actions-list a:hover {
+    background: #0d5c4d;
+    color: #ffffff;
+    border-color: #0d5c4d;
+    box-shadow: 0 6px 20px rgba(13, 92, 77, 0.25);
+  }
+
+.ibihub-dashboard-spaces-grid {
+  padding: 8px 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 1200px) {
+  .ibihub-dashboard-spaces-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .ibihub-dashboard-spaces-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .ibihub-dashboard-spaces-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ibihub-dashboard-space-card {
+  border: 1px solid #e3ebe7;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.ibihub-dashboard-space-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.ibihub-dashboard-space-card__body {
+  padding: 10px 12px 12px;
+}
+
+.ibihub-dashboard-space-card__title {
+  margin: 0 0 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0d5c4d;
+}
+
+.ibihub-dashboard-space-card__meta {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: #6a7974;
+  min-height: 34px;
+}
+
+.ibihub-dashboard-card-link {
+  display: inline-flex;
+  margin-top: 8px;
+  color: #0d5c4d;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ibihub-dashboard-add-btn {
+  border: none;
+  background: #f35c16;
+  color: #fff;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Poppins';
+}
+
+.ibihub-dashboard-eye-btn {
+  border: 1px solid #d8e7e0;
+  background: #f7fbf9;
+  color: #0d5c4d;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+}
+
+.ibihub-dashboard-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 19, 15, 0.48);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+}
+
+.ibihub-dashboard-modal.is-open {
+  display: flex;
+}
+
+.ibihub-dashboard-modal__content {
+  width: min(760px, 92vw);
+  background: #fff;
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 24px 50px rgba(7, 33, 27, 0.32);
+}
+
+.ibihub-dashboard-modal__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 14px 16px;
+  border-bottom: 1px solid #ebf1ee;
+}
+
+.ibihub-dashboard-modal__title {
+  margin: 0;
+  color: #0d5c4d;
+  font-size: 18px;
+}
+
+.ibihub-dashboard-modal__close {
+  border: none;
+  background: #f1f5f3;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+}
+
+.ibihub-dashboard-modal__layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 0;
+}
+
+.ibihub-dashboard-modal__media {
+  min-height: 290px;
+}
+
+.ibihub-dashboard-modal__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ibihub-dashboard-modal__info {
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.ibihub-dashboard-modal__info p {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #e3ebe7;
+  border-radius: 10px;
+  background: #f8fbfa;
+  display: grid;
+  gap: 4px;
+}
+
+.ibihub-dashboard-modal__info p span {
+  font-size: 11px;
+  color: #7a8a84;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.ibihub-dashboard-modal__info p strong {
+  color: #1d3e35;
+  font-size: 13px;
+}
+
+.ibihub-settings-menu .ibihub-dashboard-actions-list {
+  margin-top: 0;
+}
+
+.ibihub-settings-tab {
+  display: none;
+}
+
+.ibihub-settings-tab.is-active {
+  display: block;
+}
+
+.ibihub-dashboard-bottom--settings {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr);
+}
+
+.ibihub-settings-form label {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2f4e45;
+  font-family: 'Poppins';
+}
+
+.ibihub-settings-form input,
+.ibihub-settings-form select,
+.ibihub-settings-form textarea {
+  width: 100%;
+  border: 1px solid #d8e5e0;
+  background: #fbfdfc;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  font-family: 'Poppins';
+}
+
+.ibihub-settings-form textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.ibihub-settings-form input:focus,
+.ibihub-settings-form select:focus,
+.ibihub-settings-form textarea:focus {
+  border-color: #0d5c4d;
+  box-shadow: 0 0 0 3px rgba(13, 92, 77, 0.12);
+  outline: none;
+}
+
+.ibihub-settings-form input[type="file"] {
+  width: 100%;
+  font-size: 13px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px dashed #c5d9d2;
+  border-radius: 10px;
+  background: #fbfdfc;
+  font-family: 'Poppins', sans-serif;
+}
+
+.ibihub-settings-form input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  min-height: 18px;
+  min-width: 18px;
+  accent-color: #0d5c4d;
+  vertical-align: middle;
+}
+
+.ibihub-settings-menu [data-tab-target].is-active {
+  background: #0d5c4d;
+  color: #fff;
+  border-color: #0d5c4d;
+  box-shadow: 0 8px 18px rgba(13, 92, 77, 0.24);
+}
+
+.ibihub-settings-menu [data-tab-target].is-active .chevron {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ibihub-profile-photo-card {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.ibihub-profile-photo-card__avatar img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #e8f2ee;
+}
+
+.ibihub-profile-photo-card__meta h4 {
+  margin: 0 0 6px;
+  color: #0d5c4d;
+  font-size: 16px;
+}
+
+.ibihub-profile-photo-card__meta p {
+  margin: 0 0 12px;
+  color: #687b75;
+  font-size: 12px;
+}
+
+@media (max-width: 760px) {
+  .ibihub-dashboard-modal__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ibihub-dashboard-modal__media {
+    min-height: 200px;
+  }
+
+  .ibihub-profile-photo-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .ibihub-profile-photo-card__avatar img {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 991px) {
+  .ibihub-dashboard-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ibihub-dashboard-top-right {
+    justify-content: flex-start;
+  }
+
+  .ibihub-dashboard-search {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .ibihub-dashboard-search input {
+    max-width: none;
+  }
+
+  .ibihub-dashboard-top-bell-menu,
+  .ibihub-dashboard-top-user-menu {
+    right: auto;
+    left: 0;
+  }
+
+  .ibihub-dashboard-bottom--settings {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .ibihub-dashboard-shell {
+    padding: 8px;
+  }
+
+  .ibihub-dashboard-sidebar,
+  .ibihub-dashboard-panel {
+    border-radius: 12px;
+  }
+
+  .ibihub-dashboard-sidebar {
+    min-height: auto;
+    position: static;
+  }
+
+  .ibihub-dashboard-top-bell-btn,
+  .ibihub-dashboard-top-avatar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .ibihub-dashboard-top-bell-menu {
+    width: min(92vw, 300px);
+  }
+
+  .ibihub-dashboard-table {
+    min-width: 640px;
+    font-size: 11px;
+  }
+
+  .ibihub-dashboard-table thead th,
+  .ibihub-dashboard-table tbody td {
+    padding: 7px 5px;
+  }
+
+  .ibihub-dashboard-modal__content {
+    width: 96vw;
+  }
+
+  .ibihub-dashboard-actions-list button,
+  .ibihub-dashboard-actions-list a {
+    padding: 8px 10px;
+  }
+}
+
+/* Onglets réservations (propriétaire) */
+.ibihub-dash-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.ibihub-dash-tabs__btn {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid #d5e3dd;
+  background: #fff;
+  color: #35534a;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.ibihub-dash-tabs__btn:hover {
+  border-color: #0d5c4d;
+  color: #0d5c4d;
+}
+
+.ibihub-dash-tabs__btn.is-active {
+  background: #0d5c4d;
+  border-color: #0d5c4d;
+  color: #fff;
+}
+
+.ibihub-dash-hint {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 12px;
+}
+
+/* Modal pass d’accès (commerçant) */
+.ibihub-pass-modal {
+  max-width: 420px;
+  width: calc(100vw - 32px);
+  padding: 0;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+}
+
+.ibihub-pass-modal::backdrop {
+  background: rgba(15, 40, 35, 0.45);
+}
+
+.ibihub-pass-modal__inner {
+  padding: 22px 22px 20px;
+  position: relative;
+  font-family: 'Poppins', sans-serif;
+}
+
+.ibihub-pass-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+}
+
+.ibihub-pass-modal__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d5c4d;
+  margin: 0 32px 6px 0;
+  line-height: 1.35;
+}
+
+.ibihub-pass-modal__ref {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 14px;
+}
+
+.ibihub-pass-modal__qr-wrap {
+  text-align: center;
+  margin: 12px 0 14px;
+}
+
+.ibihub-pass-modal__qr-wrap img {
+  border-radius: 8px;
+  border: 1px solid #e5ebe8;
+}
+
+.ibihub-pass-modal__note {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
+}
+
+.ibihub-dashboard-add-btn--muted:hover {
+  background: #4b5563 !important;
+}
+
+/* ---------- Barre supérieure tableau de bord (recherche + notifications + profil) ---------- */
+.ibihub-dashboard-main-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+  margin-top: 20px;
+  /* border-bottom: 1px solid rgba(13, 92, 77, 0.1); */
+}
+
+.ibihub-dashboard-main-header-spacer {
+  flex: 1 1 80px;
+  min-width: 0;
+}
+
+.ibihub-dashboard-main-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.ibihub-dashboard-top-bell-btn {
+  position: relative;
+}
+
+.ibihub-dashboard-top-bell-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 999px;
+  background: #f35c16;
+  color: #fff;
+}
+
+.ibihub-dashboard-top-bell-empty {
+  font-size: 12px;
+  color: #777;
+  margin: 8px 0;
+  padding: 0 6px;
+}
+
+.ibihub-dashboard-top-bell-all {
+  display: block;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e8eeeb;
+  font-weight: 600;
+  color: #0d5c4d !important;
+}
+
+.ibihub-dashboard-main {
+  margin-top: 0;
+}
+
+/* Messages et champs (alignés sur les maquettes HTML) */
+.ibihub-dashboard-form-errors {
+  color: #c0392b;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.ibihub-dashboard-field-hint {
+  display: block;
+  margin-top: 6px;
+  color: #687b75;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.ibihub-dashboard-field-label-like {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2f4e45;
+  font-family: 'Poppins', sans-serif;
+}
+
+.ibihub-dashboard-field-checkbox .ibihub-dashboard-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2f4e45;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+}
+
+.ibihub-dashboard-alert {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.ibihub-dashboard-alert--warning {
+  background: #fff4e3;
+  color: #8a4a00;
+  border: 1px solid #f0d9a8;
+}
+
+.ibihub-dashboard-add-btn--settings {
+  margin-top: 10px;
+}
+
+.ibihub-dashboard-settings-readonly {
+  padding-top: 20px;
+  border-top: 1px solid #e8eeeb;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* Équipements : grille de cases à cocher (Django CheckboxSelectMultiple → conteneur <div>) */
+div.ibihub-equipements-checkboxes {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px 16px;
+}
+
+div.ibihub-equipements-checkboxes > div {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+div.ibihub-equipements-checkboxes label {
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .ibihub-dashboard-main-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ibihub-dashboard-main-header-spacer {
+    display: none;
+  }
+
+  .ibihub-dashboard-search {
+    width: 100%;
+  }
+
+  .ibihub-dashboard-search input {
+    max-width: none;
+    min-width: 0;
+  }
+
+  .ibihub-dashboard-main-header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  div.ibihub-equipements-checkboxes {
+    grid-template-columns: 1fr;
+  }
+}

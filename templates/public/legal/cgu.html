@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Conditions d'utilisation — IbiHub{% endblock %}
+{% block content %}
+<div class="container ibihub-legal-page">
+	<h1>Conditions d’utilisation</h1>
+	<p><em>Dernière mise à jour : mars 2026</em></p>
+	<p>En accédant à IbiHub, vous acceptez les présentes conditions. IbiHub est une plateforme de mise en relation ; les contrats de location ou de sous-location restent de la responsabilité des parties.</p>
+	<h2>Comptes</h2>
+	<p>Vous vous engagez à fournir des informations exactes et à sécuriser vos identifiants. Les comptes propriétaires peuvent faire l’objet d’une vérification avant publication d’annonces.</p>
+	<h2>Annonces et réservations</h2>
+	<p>Les propriétaires sont responsables du contenu de leurs annonces. Les demandes de réservation sont soumises à validation par le propriétaire. IbiHub peut retirer tout contenu manifestement illicite ou trompeur.</p>
+	<h2>Paiements</h2>
+	<p>Les modalités financières entre utilisateurs et IbiHub (le cas échéant) sont précisées au cas par cas ou dans des documents annexes. La plateforme peut appliquer des frais ou commissions selon les offres en vigueur.</p>
+	<h2>Limitation</h2>
+	<p>IbiHub ne saurait être tenu responsable des dommages indirects résultant de l’usage du service dans la limite autorisée par la loi.</p>
+	<p><a href="{% url 'core:contact' %}">Nous contacter</a></p>
+</div>
+{% endblock %}

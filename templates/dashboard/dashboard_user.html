@@ -1,0 +1,144 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Tableau de bord — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<div class="ibihub-dashboard-top">
+	<div>
+		<h1 class="text-primary-ibihub title-font-ibihub">Bonjour, {{ request.user.get_full_name|default:request.user.username }}</h1>
+		<p>Suivez vos espaces, réservations et revenus en un coup d’œil.</p>
+	</div>
+</div>
+
+{% if is_owner %}
+<div class="ibihub-dashboard-cards ibihub-dashboard-cards--three">
+	<article class="ibihub-dashboard-card">
+		<div class="ibihub-dashboard-card__label">Mes entrepôts</div>
+		<div class="ibihub-dashboard-card__value">{{ owner_entrepot_count }}</div>
+		<div class="ibihub-dashboard-card__hint">Annonces publiées</div>
+	</article>
+	<article class="ibihub-dashboard-card">
+		<div class="ibihub-dashboard-card__label">Chiffre d’affaires total</div>
+		<div class="ibihub-dashboard-card__value">{{ owner_ca_termine|floatformat:0 }}&nbsp;FCFA</div>
+		<div class="ibihub-dashboard-card__hint">Somme des réservations terminées</div>
+	</article>
+	<article class="ibihub-dashboard-card">
+		<div class="ibihub-dashboard-card__label">Revenus en attente</div>
+		<div class="ibihub-dashboard-card__value">{{ owner_revenus_en_attente|floatformat:0 }}&nbsp;FCFA</div>
+		<div class="ibihub-dashboard-card__hint">Réservations confirmées, non encore terminées</div>
+	</article>
+</div>
+
+<div class="ibihub-dashboard-bottom margin-top-30">
+	<section class="ibihub-dashboard-panel" aria-labelledby="owner-shortcuts-title">
+		<h2 id="owner-shortcuts-title" class="ibihub-dashboard-panel__title">Vue d’ensemble</h2>
+		<p class="ibihub-dashboard-panel__subtitle">Accédez rapidement à la gestion de vos annonces et des demandes de location.</p>
+		<p class="ibihub-dashboard-empty" style="margin-top:8px;">Pour le détail des réservations (valider, refuser), ouvrez la section « Réservations ».</p>
+	</section>
+	<aside class="ibihub-dashboard-panel" aria-label="Actions rapides">
+		<h2 class="ibihub-dashboard-panel__title">Actions rapides</h2>
+		<p class="ibihub-dashboard-panel__subtitle">Les liens les plus utiles.</p>
+		<ul class="ibihub-dashboard-actions-list">
+			<li>
+				<a href="{% url 'core:dashboard_add_space' %}">
+					<i class="fa fa-plus-circle" aria-hidden="true"></i>
+					<span class="label">Ajouter un espace</span>
+					<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'core:dashboard_spaces' %}">
+					<i class="fa fa-store" aria-hidden="true"></i>
+					<span class="label">Mes espaces publiés</span>
+					<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'core:dashboard_reservations' %}">
+					<i class="fa fa-calendar-check" aria-hidden="true"></i>
+					<span class="label">Réservations à traiter</span>
+					<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+				</a>
+			</li>
+		</ul>
+	</aside>
+</div>
+
+{% else %}
+<div class="ibihub-dashboard-cards">
+	<article class="ibihub-dashboard-card">
+		<div class="ibihub-dashboard-card__label">Réservations en cours</div>
+		<div class="ibihub-dashboard-card__value">{{ merchant_reservations|length }}</div>
+		<div class="ibihub-dashboard-card__hint">En attente ou confirmées (date de fin ≥ aujourd’hui)</div>
+	</article>
+</div>
+
+<div class="ibihub-dashboard-bottom margin-top-30">
+	<section class="ibihub-dashboard-panel" aria-labelledby="merchant-res-title">
+		<h2 id="merchant-res-title" class="ibihub-dashboard-panel__title">Vos réservations en cours</h2>
+		<p class="ibihub-dashboard-panel__subtitle">Suivi de vos demandes de location.</p>
+		{% if merchant_reservations %}
+		<div style="overflow-x:auto;">
+			<table class="ibihub-dashboard-table">
+				<thead>
+					<tr>
+						<th>Espace</th>
+						<th>Dates</th>
+						<th>Statut</th>
+						<th>QR</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for r in merchant_reservations %}
+					<tr>
+						<td>{{ r.entrepot.titre }}</td>
+						<td>{{ r.date_debut|date:"d/m/Y" }} — {{ r.date_fin|date:"d/m/Y" }}</td>
+						<td><span class="ibihub-dashboard-status {% if r.statut == 'CONFIRME' %}ibihub-dashboard-status--ok{% elif r.statut == 'EN_ATTENTE' %}ibihub-dashboard-status--pending{% endif %}">{{ r.get_statut_display }}</span></td>
+						<td>
+							{% if r.qr_data_uri %}
+							<img src="{{ r.qr_data_uri }}" alt="QR code" style="width:72px;height:72px;">
+							{% else %}
+							—
+							{% endif %}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		{% else %}
+		<p class="ibihub-dashboard-empty">Aucune réservation en cours.</p>
+		{% endif %}
+	</section>
+
+	<aside class="ibihub-dashboard-panel" aria-label="Actions rapides">
+		<h2 class="ibihub-dashboard-panel__title">Actions rapides</h2>
+		<p class="ibihub-dashboard-panel__subtitle">Parcourir les espaces ou votre historique.</p>
+		<ul class="ibihub-dashboard-actions-list">
+			<li>
+				<a href="{% url 'core:liste_espaces' %}">
+					<i class="fa fa-search" aria-hidden="true"></i>
+					<span class="label">Trouver un espace</span>
+					<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'core:dashboard_reservations' %}">
+					<i class="fa fa-calendar-alt" aria-hidden="true"></i>
+					<span class="label">Toutes mes réservations</span>
+					<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'core:dashboard_settings' %}">
+					<i class="fa fa-user-cog" aria-hidden="true"></i>
+					<span class="label">Mon profil</span>
+					<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+				</a>
+			</li>
+		</ul>
+	</aside>
+</div>
+{% endif %}
+{% endblock %}

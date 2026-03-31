@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Politique de sécurité des espaces — IbiHub{% endblock %}
+{% block content %}
+<div class="container ibihub-legal-page">
+	<h1>Politique de sécurité des espaces</h1>
+	<p><em>Dernière mise à jour : mars 2026</em></p>
+	<p>Cette politique encadre les bonnes pratiques attendues des annonceurs et des locataires pour la sécurité des biens et des personnes sur IbiHub.</p>
+	<h2>Vérification des annonces</h2>
+	<p>IbiHub peut demander des justificatifs ou marquer les comptes comme « vérifiés » pour renforcer la confiance. Cela ne remplace pas une visite sur site ni une diligence contractuelle de votre part.</p>
+	<h2>Accès et équipements</h2>
+	<p>Les propriétaires doivent décrire fidèlement les équipements de sécurité (gardiennage, alarme, vidéo, accès contrôlé, etc.). Les locataires s’engagent à respecter les règles du lieu et les consignes du propriétaire.</p>
+	<h2>Signalement</h2>
+	<p>En cas d’incident ou de contenu douteux, utilisez la page <a href="{% url 'core:reclamation' %}">Réclamation</a> ou le <a href="{% url 'core:contact' %}">contact</a> pour alerter l’équipe.</p>
+	<h2>Données sensibles</h2>
+	<p>Ne communiquez jamais de mots de passe ou d’informations bancaires hors des canaux sécurisés prévus. Méfiez-vous des demandes inhabituelles en dehors de la plateforme.</p>
+</div>
+{% endblock %}

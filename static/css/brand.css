@@ -1,0 +1,1474 @@
+/* Grille « Espaces récents » accueil : évite les décalages (float Bootstrap + hauteurs variables) */
+.ibihub-home-recent-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+    width: 100%;
+}
+
+@media (max-width: 991px) {
+    .ibihub-home-recent-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 575px) {
+    .ibihub-home-recent-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ibihub-home-recent-grid .ibihub-space-card--home-recent {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ibihub-home-recent-grid .ibihub-space-card__body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.ibihub-home-recent-grid .ibihub-space-card__footer {
+    margin-top: auto;
+}
+
+.ibihub-home-recent-grid .ibihub-space-card__title {
+    min-height: 2.7em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.ibihub-home-recent-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.screen-reader-text {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    border: 0 !important;
+}
+
+.ibihub-home-hero-search.main-search-input {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+
+.main-search-input-item.location .ibihub-home-loc-icon {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 6px;
+}
+
+:root {
+    --color-primary: #0F7B6C;
+    --color-accent: #f35c16;
+    --color-dark: #1F2937;
+    --font-main: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--color-dark);
+    margin: 0;
+}
+
+/* Cartes « Explorez nos catégories » : le thème utilisait Poppins pour le glyphe \f061 (Font Awesome) */
+span.like-icon:before,
+span.like-icon:after {
+    font-family: "Font Awesome 5 Free" !important;
+    font-weight: 900 !important;
+}
+
+/* Bloc recherche hero : icônes visibles sans police iconsmind (fichiers .woff absents) */
+.highlighted-category .fas {
+    font-size: 32px;
+    line-height: 1;
+}
+
+/* Catégorie : image uploadée (admin) à la place de l’icône */
+.highlighted-category .highlighted-category__img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    flex-shrink: 0;
+}
+
+/* Encadré explicatif (page opportunités, alignée sur le listing espaces) */
+.ibihub-opportunites-note {
+    background: #f0faf8;
+    border-left: 4px solid var(--color-primary);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 28px;
+}
+
+.ibihub-opportunites-note a {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.ibihub-opportunites-cta-wrap {
+    text-align: center;
+    margin: 40px 0 48px;
+}
+
+.ibihub-invest-cta-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: var(--font-main);
+    font-weight: 600;
+    font-size: 15px;
+    background: var(--color-accent);
+    color: #fff !important;
+    border: 1px solid var(--color-accent);
+    transition: filter 0.2s ease;
+}
+
+.ibihub-invest-cta-btn:hover {
+    filter: brightness(0.95);
+    color: #fff !important;
+}
+
+/* ——— Navbar IbiHub (alignement, espacement, actif, CTA) ——— */
+#header .header-widget {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    height: auto;
+    min-height: 48px;
+    top: 0;
+}
+
+#header .header-widget .ibihub-btn-simple,
+#header .header-widget .ibihub-btn-primary,
+#header .header-widget form {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+/* Inscription : vert principal IbiHub (priorité sur thème / orange secondaire) */
+#header .header-widget a.ibihub-header-signup.ibihub-btn-primary,
+#header .header-widget a.ibihub-btn-primary[href*="inscription"],
+#header .header-widget a[href*="sign_up"].ibihub-btn-primary {
+    background-color: var(--color-primary) !important;
+    background: var(--color-primary) !important;
+    color: #fff !important;
+    border: 1px solid var(--color-primary) !important;
+    box-shadow: none !important;
+}
+
+#header .header-widget a.ibihub-header-signup.ibihub-btn-primary:hover,
+#header .header-widget a.ibihub-btn-primary[href*="inscription"]:hover,
+#header .header-widget a[href*="sign_up"].ibihub-btn-primary:hover {
+    filter: brightness(0.92);
+    color: #fff !important;
+}
+
+/* Espacement horizontal entre les entrées du menu principal */
+@media (min-width: 1025px) {
+    #navigation.style-1 > ul > li:not(.ibihub-mm-brand-item) {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+
+    #navigation.style-1 > ul > li:not(.ibihub-mm-brand-item) > a {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+}
+
+/* Lien actif : soulignement vert, pas de fond gris */
+#navigation.style-1 > ul > li > a.current {
+    background: transparent !important;
+    color: var(--color-primary) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border-bottom: 2px solid var(--color-primary);
+    padding-bottom: 6px !important;
+}
+
+#navigation.style-1 > ul > li:hover > a:not(.current) {
+    background: rgba(15, 123, 108, 0.06) !important;
+    color: var(--color-dark) !important;
+}
+
+#navigation.style-1 > ul > li:hover > a.current {
+    background: transparent !important;
+    color: var(--color-primary) !important;
+}
+
+.transparent-header #header:not(.cloned) #navigation.style-1 > ul > li:hover > a:not(.current) {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #fff !important;
+    border-bottom: none !important;
+}
+
+.transparent-header #header:not(.cloned) #navigation.style-1 > ul > li:hover > a.current {
+    background: transparent !important;
+    color: #fff !important;
+    border-bottom: 2px solid #fff !important;
+}
+
+.transparent-header #header:not(.cloned) #navigation.style-1 > ul > li > a.current {
+    border-bottom: 2px solid #fff !important;
+    color: #fff !important;
+}
+
+/* ——— Listing espaces : grille 3 colonnes, badges orange ——— */
+.ibihub-listings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: stretch;
+}
+
+@media (max-width: 991px) {
+    .ibihub-listings-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 575px) {
+    .ibihub-listings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ibihub-listings-grid .ibihub-space-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 460px;
+    height: 100%;
+}
+
+.ibihub-listings-grid .ibihub-space-card__body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.ibihub-listings-grid .ibihub-space-card__title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.7em;
+}
+
+.ibihub-listings-grid .ibihub-space-card__footer {
+    margin-top: auto;
+}
+
+.ibihub-listings-body .ibihub-space-card__badge {
+    background: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+    color: #fff !important;
+}
+
+.ibihub-listings-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin: 2rem 0 3rem;
+    font-family: var(--font-main);
+    color: #555;
+}
+
+/* ——— Inscription : cartes rôle + intl-tel ——— */
+.ibihub-role-cards {
+    margin-bottom: 1.5rem;
+}
+
+.ibihub-role-cards__legend {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-family: var(--font-main);
+    color: var(--color-dark);
+}
+
+.ibihub-role-cards__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 520px) {
+    .ibihub-role-cards__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ibihub-role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 18px 14px;
+    border: 2px solid rgba(15, 123, 108, 0.25);
+    border-radius: 14px;
+    background: #fff;
+    cursor: pointer;
+    font-family: var(--font-main);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.ibihub-role-card:hover {
+    border-color: var(--color-primary);
+}
+
+.ibihub-role-card.is-selected {
+    border-color: var(--color-primary);
+    background: rgba(15, 123, 108, 0.06);
+    box-shadow: 0 0 0 2px rgba(15, 123, 108, 0.15);
+}
+
+.ibihub-role-card__icon {
+    font-size: 28px;
+    color: var(--color-primary);
+}
+
+.ibihub-role-card__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-dark);
+}
+
+.ibihub-role-card__desc {
+    font-size: 12px;
+    color: #555;
+    line-height: 1.35;
+}
+
+#id_role {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.ibihub-auth-field .iti {
+    width: 100%;
+}
+
+.ibihub-auth-field .iti__flag-container {
+    border-radius: 8px 0 0 8px;
+}
+
+/* ——— Inscription : grands choix de rôle (legacy) ——— */
+.ibihub-role-toggle__legend {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-family: var(--font-main);
+    color: var(--color-dark);
+}
+
+.ibihub-role-toggle__inner ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 600px) {
+    .ibihub-role-toggle__inner ul {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ibihub-role-toggle__inner li {
+    margin: 0 !important;
+}
+
+.ibihub-role-toggle__inner li label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    padding: 16px 18px;
+    border: 2px solid rgba(15, 123, 108, 0.25);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--color-dark);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.ibihub-role-toggle__inner li label:hover {
+    border-color: var(--color-primary);
+    background: rgba(15, 123, 108, 0.04);
+}
+
+.ibihub-role-toggle__inner li input[type="radio"] {
+    margin-top: 4px;
+    flex-shrink: 0;
+    accent-color: var(--color-primary);
+}
+
+.ibihub-role-toggle__inner li label:has(input:checked) {
+    border-color: var(--color-primary);
+    background: rgba(15, 123, 108, 0.08);
+    box-shadow: 0 0 0 2px rgba(15, 123, 108, 0.15);
+}
+
+.ibihub-role-toggle__inner li label.ibihub-role-checked {
+    border-color: var(--color-primary);
+    background: rgba(15, 123, 108, 0.08);
+}
+
+/* =============================================================================
+   IbiHub — Responsive page d’accueil & menu mobile (mobile-first, brand)
+   Breakpoints : max-width 1024px tablette, max-width 767px mobile
+   ============================================================================= */
+
+/* ——— Tablette (≤1024px) : typo hero, grille récente, header logo/hamburger, menu plein écran ——— */
+@media (max-width: 1024px) {
+    .ibihub-home-recent-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .text-hero-ibihub {
+        font-size: clamp(1.45rem, 3.8vw, 2.1rem) !important;
+        line-height: 1.2 !important;
+    }
+
+    .text-hero-ibihub-subtitle {
+        font-size: clamp(0.95rem, 2.2vw, 1.1rem) !important;
+    }
+
+    .title-ibihub,
+    .headline strong.title-ibihub {
+        font-size: clamp(1.3rem, 3.2vw, 1.9rem) !important;
+    }
+
+    /* Header : logo à gauche, hamburger à droite (flex, pas float) */
+    #header .left-side {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
+    }
+
+    #header #logo {
+        flex: 0 1 auto !important;
+        width: auto !important;
+        max-width: calc(100% - 56px) !important;
+        margin-top: 0 !important;
+        text-align: left !important;
+    }
+
+    #header .mmenu-trigger {
+        float: none !important;
+        flex: 0 0 48px !important;
+        width: 48px !important;
+        margin-left: auto !important;
+        margin-right: 0 !important;
+    }
+
+    #header #navigation.style-1 {
+        display: none !important;
+    }
+
+    /* mmenu : overlay plein écran (remplace le volet ~80vw) */
+    .mm-panels,
+    .mm-panel,
+    .mm-menu_offcanvas {
+        width: 100vw !important;
+        max-width: none !important;
+        min-width: 0 !important;
+    }
+
+    .mm-wrapper_opening .mm-menu_offcanvas ~ .mm-slideout {
+        -webkit-transform: translate3d(100vw, 0, 0) !important;
+        transform: translate3d(100vw, 0, 0) !important;
+    }
+
+    /* Bouton fermeture menu (injecté par custom.js) */
+    .ibihub-mm-close-bar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 100002;
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-start;
+        padding: 14px 16px;
+        pointer-events: none;
+        box-sizing: border-box;
+    }
+
+    .ibihub-mm-close {
+        pointer-events: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        margin: 0;
+        padding: 0;
+        border: 2px solid rgba(255, 255, 255, 0.55);
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.25);
+        color: #fff !important;
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .ibihub-mm-close:hover,
+    .ibihub-mm-close:focus {
+        background: rgba(255, 255, 255, 0.15);
+        outline: none;
+    }
+
+    .ibihub-mm-close:active {
+        transform: scale(0.96);
+    }
+
+    /* Liens du drawer centrés (style plein écran) */
+    .mm-menu.mm-offcanvas .mm-panel.mm-panel_opened {
+        padding-top: 4.5rem !important;
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+    }
+
+    .mm-menu.mm-offcanvas .mm-listview {
+        width: 100%;
+        max-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .mm-menu.mm-offcanvas .mm-listitem:not(.ibihub-mm-brand-item) > a {
+        justify-content: center !important;
+        flex-wrap: wrap;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-mobile-only {
+        align-items: center !important;
+        text-align: center;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-brand-wrap {
+        padding-top: 2.5rem !important;
+    }
+
+    /* Overlay mobile : fond vert IbiHub (--color-primary), pas gris */
+    .mm-menu.mm-offcanvas,
+    .mm-menu.mm-offcanvas .mm-panel {
+        background: var(--color-primary) !important;
+        --mm-color-background: var(--color-primary);
+    }
+
+    .mm-menu.mm-offcanvas .mm-navbar {
+        background: transparent !important;
+        border: none !important;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-brand {
+        padding-top: 0.5rem;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-brand__logo {
+        max-height: 52px !important;
+        margin: 0 auto;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-brand__title .ibihub-mm-brand__i,
+    .mm-menu.mm-offcanvas .ibihub-mm-brand__title .ibihub-mm-brand__muted {
+        color: #fff !important;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-brand__tagline {
+        color: #fff !important;
+        font-size: 0.95rem !important;
+        max-width: 280px;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .mm-menu.mm-offcanvas .mm-listitem:not(.ibihub-mm-brand-item) > a {
+        justify-content: center !important;
+        flex-direction: row !important;
+        font-size: 1.08rem !important;
+        font-weight: 600;
+        color: #fff !important;
+        padding: 18px 16px !important;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-ico {
+        background: rgba(255, 255, 255, 0.18) !important;
+        color: #fff !important;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-link__accent {
+        color: #fff !important;
+        font-size: 1.08rem !important;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-link__muted {
+        color: rgba(255, 255, 255, 0.75) !important;
+    }
+
+    .ibihub-mm-close {
+        border: 2px solid rgba(255, 255, 255, 0.85) !important;
+        background: rgba(0, 0, 0, 0.15) !important;
+        color: #fff !important;
+        width: 52px !important;
+        height: 52px !important;
+        font-size: 24px !important;
+    }
+}
+
+/* ——— Mobile (≤767px) : titre + formulaire d’abord, image téléphone ensuite, filtres empilés ——— */
+@media (max-width: 767px) {
+    /* Hero : titre + recherche en premier, mockup iPhone centré en dessous */
+    .main-search-container.ibihub-home-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        height: auto !important;
+        min-height: 0 !important;
+        padding-bottom: 28px !important;
+        background-attachment: scroll !important;
+    }
+
+    .main-search-container.ibihub-home-hero .main-search-inner {
+        order: 1;
+        padding-top: 8px !important;
+    }
+
+    .main-search-container.ibihub-home-hero .msps-container {
+        order: 2;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-top: 8px !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* Réaffiche le mockup (le thème le masque sous 992px) */
+    .main-search-container.ibihub-home-hero .main-search-photo-slider {
+        display: block !important;
+    }
+
+    .main-search-container.ibihub-home-hero .main-search-photo-slider,
+    .main-search-container.ibihub-home-hero .msps-slider .slick-slide,
+    .main-search-container.ibihub-home-hero .msps-slider {
+        height: auto !important;
+        min-height: 200px !important;
+        max-height: min(42vh, 320px) !important;
+        width: 100% !important;
+        max-width: min(100%, 380px) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .main-search-container.ibihub-home-hero .msps-shapes {
+        display: none !important;
+    }
+
+    .main-search-container.ibihub-home-hero .main-search-headlines {
+        text-align: center !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        margin-bottom: 18px !important;
+    }
+
+    .main-search-container.ibihub-home-hero .text-hero-ibihub {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 100%;
+        font-size: clamp(1.05rem, 4.6vw, 1.38rem) !important;
+        line-height: 1.2 !important;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        max-height: calc(1.2em * 3 + 2px);
+    }
+
+    .main-search-container.ibihub-home-hero .text-hero-ibihub-subtitle {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 22rem;
+        font-size: clamp(0.88rem, 3.6vw, 1rem) !important;
+        line-height: 1.45 !important;
+    }
+
+    .main-search-container.ibihub-home-hero .main-search-inner .container {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+
+    /* Filtres empilés + bouton Rechercher pleine largeur (orange accent) */
+    .ibihub-home-hero-search.main-search-input,
+    .main-search-container.ibihub-home-hero .main-search-input {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        width: 100% !important;
+        margin-top: 12px !important;
+    }
+
+    .main-search-container.ibihub-home-hero .main-search-input-item {
+        width: 100% !important;
+        flex: 1 1 auto !important;
+        float: none !important;
+        margin: 0 !important;
+        min-height: 0 !important;
+    }
+
+    .main-search-container.ibihub-home-hero .main-search-input-item input,
+    .main-search-container.ibihub-home-hero .main-search-input-item select {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .main-search-container.ibihub-home-hero .chosen-container {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .main-search-container.ibihub-home-hero .ibihub-home-hero-search button[type="submit"],
+    .main-search-container.ibihub-home-hero .ibihub-home-hero-search .button {
+        width: 100% !important;
+        display: block !important;
+        box-sizing: border-box !important;
+        margin-top: 4px !important;
+        padding: 14px 20px !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        border-radius: 8px !important;
+        background-color: var(--color-accent) !important;
+        border: 1px solid var(--color-accent) !important;
+        color: #fff !important;
+    }
+
+    .main-search-container.ibihub-home-hero .highlighted-categories-headline,
+    .main-search-container.ibihub-home-hero .highlighted-categories {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    /* Section À propos : image pleine largeur puis texte, padding confort */
+    .ibihub-about-block {
+        overflow-x: hidden;
+    }
+
+    .section-about-ibihub.row {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .section-about-ibihub .col-md-6:first-child {
+        order: 2;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+        margin-top: 8px !important;
+        margin-bottom: 32px !important;
+    }
+
+    .section-about-ibihub .col-md-6:last-child {
+        order: 1;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .ibihub-about-block .ibihub-about-block__visual {
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        border-radius: 0;
+        min-height: 0;
+        box-shadow: none;
+    }
+
+    .ibihub-about-block .ibihub-about-block__visual img {
+        border-radius: 0;
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .ibihub-about-block__lead,
+    .ibihub-about-block__text {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Typographie : h1 / h2 plus compacts sur mobile */
+    h1.text-primary-ibihub.title-ibihub,
+    .headline.centered h1 {
+        font-size: clamp(1.15rem, 5.2vw, 1.5rem) !important;
+        line-height: 1.25 !important;
+    }
+
+    h2.headline-with-separator.title-ibihub,
+    h2#about-ibihub-title {
+        font-size: clamp(1.05rem, 4.6vw, 1.4rem) !important;
+        line-height: 1.28 !important;
+    }
+
+    h3.headline .title-ibihub,
+    h3.headline strong.title-ibihub {
+        font-size: clamp(1rem, 4vw, 1.35rem) !important;
+    }
+
+    .ibihub-how-it-works__step-title {
+        font-size: clamp(1rem, 3.8vw, 1.25rem) !important;
+    }
+
+    .ibihub-home-recent-grid .ibihub-space-card__title {
+        font-size: clamp(0.92rem, 3.4vw, 1.05rem) !important;
+        line-height: 1.25 !important;
+        min-height: 0 !important;
+        -webkit-line-clamp: 3;
+    }
+
+    /* Ajouter un espace : grille équipements + galerie sur mobile */
+    div.ibihub-equipements-checkboxes {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .ibihub-dash-add-space-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ——— Dashboard : paramètres (footer boutons) ——— */
+.ibihub-settings-form-footer {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+/* ——— Dashboard : formulaire Ajouter un espace ——— */
+.ibihub-dash-add-space-wrap {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ibihub-dashboard-add-space-form.ibihub-settings-form label,
+.ibihub-dashboard-add-space-form .ibihub-dashboard-field-label-like {
+    font-size: 11px;
+    font-weight: 600;
+    color: #5a6f68;
+    letter-spacing: 0.02em;
+}
+
+.ibihub-dash-add-space-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 4px;
+}
+
+.ibihub-dash-add-space-field label {
+    margin-bottom: 4px;
+}
+
+.ibihub-dash-add-space-field--checkbox {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 2px;
+}
+
+.ibihub-dash-add-space-disponible-label {
+    margin-bottom: 0 !important;
+    font-size: 12px !important;
+}
+
+.ibihub-dash-add-space-full {
+    margin-top: 16px;
+}
+
+.ibihub-dashboard-add-space-form.ibihub-settings-form .ibihub-dash-add-space-full label,
+.ibihub-dashboard-add-space-form.ibihub-settings-form .ibihub-dash-add-space-grid label {
+    display: block;
+}
+
+.ibihub-dashboard-add-space-form.ibihub-settings-form input,
+.ibihub-dashboard-add-space-form.ibihub-settings-form select,
+.ibihub-dashboard-add-space-form.ibihub-settings-form textarea {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #d5deda;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+.ibihub-dashboard-add-space-form.ibihub-settings-form input::placeholder,
+.ibihub-dashboard-add-space-form.ibihub-settings-form textarea::placeholder {
+    font-size: 12px;
+    color: #9aa8a3;
+}
+
+.ibihub-dashboard-add-space-form.ibihub-settings-form textarea {
+    min-height: 88px;
+}
+
+.ibihub-dash-add-space-equipements {
+    margin-top: 18px;
+}
+
+.ibihub-dash-add-space-equipements .ibihub-dashboard-field-label-like {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Django CheckboxSelectMultiple : classe sur le conteneur <div> */
+div.ibihub-equipements-checkboxes {
+    padding: 0;
+    margin: 0 0 8px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px 16px;
+}
+
+div.ibihub-equipements-checkboxes > div {
+    margin: 0;
+}
+
+div.ibihub-equipements-checkboxes label {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: #3d524a !important;
+    margin: 0 !important;
+    line-height: 1.3;
+}
+
+/* Galerie : dropzone + vignettes */
+.ibihub-gallery-input-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.ibihub-gallery-field {
+    position: relative;
+}
+
+.ibihub-gallery-dropzone {
+    margin-top: 8px;
+    min-height: 96px;
+    padding: 14px 16px;
+    border: 1px dashed #c5d4cf;
+    border-radius: 8px;
+    background: #f8fbfa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.ibihub-gallery-dropzone:hover,
+.ibihub-gallery-dropzone:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background: #f2f9f7;
+}
+
+.ibihub-gallery-dropzone.is-dragover {
+    border-color: var(--color-primary);
+    background: #e8f5f1;
+}
+
+.ibihub-gallery-dropzone__icon {
+    font-size: 1.35rem;
+    color: var(--color-primary);
+    opacity: 0.85;
+}
+
+.ibihub-gallery-dropzone__text {
+    font-size: 12px;
+    color: #5c6e68;
+    max-width: 280px;
+    line-height: 1.35;
+}
+
+.ibihub-gallery-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+    min-height: 0;
+}
+
+.ibihub-gallery-thumb {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e0ebe7;
+    flex-shrink: 0;
+    background: #eef4f1;
+}
+
+.ibihub-gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ibihub-gallery-thumb-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.ibihub-gallery-thumb-remove:hover {
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.ibihub-dash-add-space-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ibihub-dash-add-space-submit {
+    border: none;
+    background: var(--color-primary);
+    color: #fff;
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(15, 123, 108, 0.25);
+}
+
+.ibihub-dash-add-space-submit:hover {
+    filter: brightness(1.05);
+}
+
+@media (max-width: 900px) {
+    div.ibihub-equipements-checkboxes {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    div.ibihub-equipements-checkboxes {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ——— Dashboard : grille cartes « Mes espaces » ——— */
+.ibihub-dash-spaces-top {
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.ibihub-dash-spaces-add {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.ibihub-dash-spaces-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+}
+
+.ibihub-dash-space-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e5eeea;
+    box-shadow: 0 8px 28px rgba(13, 92, 77, 0.06);
+    display: flex;
+    flex-direction: column;
+}
+
+.ibihub-dash-space-card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    background: #eef4f1;
+}
+
+.ibihub-dash-space-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ibihub-dash-space-card__badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ibihub-dash-space-card__badge.is-on {
+    background: rgba(15, 123, 108, 0.92);
+    color: #fff;
+}
+
+.ibihub-dash-space-card__badge.is-off {
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+}
+
+.ibihub-dash-space-card__body {
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 12px;
+}
+
+.ibihub-dash-space-card__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    font-family: 'Poppins', sans-serif;
+}
+
+.ibihub-dash-space-card__title a {
+    color: #0d5c4d;
+    text-decoration: none;
+}
+
+.ibihub-dash-space-card__title a:hover {
+    text-decoration: underline;
+}
+
+.ibihub-dash-space-card__meta {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    color: #5a6f68;
+    line-height: 1.5;
+}
+
+.ibihub-dash-space-card__meta li {
+    margin-bottom: 4px;
+}
+
+.ibihub-dash-space-card__meta i {
+    width: 18px;
+    margin-right: 6px;
+    color: var(--color-primary);
+}
+
+.ibihub-dash-space-card__actions {
+    margin-top: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ibihub-dash-space-card__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.ibihub-dash-space-card__btn--ghost {
+    background: #f4faf8;
+    color: #0d5c4d;
+    border-color: #d0e5df;
+}
+
+.ibihub-dash-space-card__btn--primary {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+.ibihub-dash-space-card__btn--disabled {
+    background: #f0f3f2;
+    color: #9aa8a3;
+    border-color: #e0e8e5;
+    cursor: not-allowed;
+}
+
+.ibihub-dash-spaces-empty {
+    margin: 0;
+    padding: 24px;
+    text-align: center;
+    color: #5a6f68;
+}
+
+/* Fiche espace : avis + calendrier disponibilité */
+.ibihub-space-hero__rating {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.ibihub-space-hero__rating--muted {
+    opacity: 0.85;
+    font-weight: 500;
+}
+
+.ibihub-space-avis-form-title {
+    font-size: 17px;
+    margin-bottom: 12px;
+}
+
+.ibihub-space-avis-select,
+.ibihub-space-avis-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 10px 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.ibihub-space-review__stars {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0d5c4d;
+    margin: 4px 0 6px;
+}
+
+.ibihub-space-availability-card {
+    margin-top: 18px;
+}
+
+.ibihub-avail-legend {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: #5a6f68;
+    margin: 10px 0 14px;
+}
+
+.ibihub-avail-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.ibihub-avail-dot--free {
+    background: #c8ebe0;
+    border: 1px solid #7bc4b0;
+}
+
+.ibihub-avail-dot--busy {
+    background: #dde2e0;
+    border: 1px solid #9aa8a3;
+}
+
+.ibihub-availability-calendar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.ibihub-avail-month__title {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d3e35;
+    font-family: 'Poppins', sans-serif;
+}
+
+.ibihub-avail-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+    text-align: center;
+    font-size: 11px;
+}
+
+.ibihub-avail-dow {
+    font-weight: 600;
+    color: #7a8a84;
+    padding: 4px 0;
+}
+
+.ibihub-avail-cell {
+    aspect-ratio: 1;
+    max-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.ibihub-avail-cell--empty {
+    visibility: hidden;
+}
+
+.ibihub-avail-cell--past {
+    color: #bcc5c2;
+    background: #fafbfb;
+}
+
+.ibihub-avail-cell--free {
+    background: #e8f7f2;
+    color: #0d5c4d;
+}
+
+.ibihub-avail-cell--busy {
+    background: #e8ebea;
+    color: #5a6562;
+}
+
+.ibihub-contact-flash {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin: 0 0 10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.ibihub-contact-flash--success {
+    background: #e8f5f1;
+    color: #0d5c4d;
+    border: 1px solid #b8dfd4;
+}
+
+.ibihub-contact-flash--error {
+    background: #fdecea;
+    color: #b71c1c;
+    border: 1px solid #f5c6cb;
+}
+
+.ibihub-contact-flash--warning {
+    background: #fff8e6;
+    color: #856404;
+    border: 1px solid #ffe0a3;
+}
+
+.ibihub-contact-flash--info {
+    background: #eef6ff;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
+}
+
+/* Pages légales */
+.ibihub-legal-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 16px 64px;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.65;
+    color: #2d3f38;
+}
+
+.ibihub-legal-page h1 {
+    font-size: 1.75rem;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}
+
+.ibihub-legal-page h2 {
+    font-size: 1.15rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+    color: #1d3e35;
+}
+
+.ibihub-legal-page p,
+.ibihub-legal-page li {
+    font-size: 15px;
+    color: #4a5c55;
+}

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact — IbiHub{% endblock %}
+
+{% block content %}
+<div class="clearfix"></div>
+
+<div class="ibihub-contact-hero">
+	<div class="container ibihub-contact-hero__top">
+		<nav class="ibihub-breadcrumb" aria-label="Fil d'Ariane">
+			<ol>
+				<li><a href="{% url 'core:home' %}">Accueil</a></li>
+				<li aria-current="page">Contact</li>
+			</ol>
+		</nav>
+	</div>
+	<h1>Contactez-nous</h1>
+	<p>Une question sur une annonce, un partenariat ou l’utilisation de la plateforme ? Écrivez-nous.</p>
+	<svg class="ibihub-contact-wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+		<path d="M0,40 C360,90 720,0 1080,40 C1260,60 1380,50 1440,45 L1440,80 L0,80 Z"></path>
+	</svg>
+</div>
+
+<section class="ibihub-contact-body">
+	<div class="container">
+		{% if messages %}
+		<div class="row margin-bottom-20">
+			<div class="col-md-12">
+				{% for message in messages %}
+				<p class="ibihub-contact-flash ibihub-contact-flash--{{ message.level_tag }}" role="alert">{{ message }}</p>
+				{% endfor %}
+			</div>
+		</div>
+		{% endif %}
+		<div class="row">
+			<div class="col-md-7 col-sm-12 margin-bottom-30">
+				<div class="ibihub-form-card">
+					<header class="ibihub-form-card__header">
+						<h2 class="ibihub-form-card__title">Envoyez-nous un message</h2>
+						<p class="ibihub-form-card__lead">Question générale, partenariat ou accompagnement : notre équipe vous répond sous 2 jours ouvrés.</p>
+					</header>
+					<form class="ibihub-form" action="{% url 'core:contact' %}" method="post">
+						{% csrf_token %}
+						{% if form.non_field_errors %}
+						<div class="ibihub-form__group" style="color:#c0392b;font-size:14px;">{{ form.non_field_errors }}</div>
+						{% endif %}
+						<div class="ibihub-form__row">
+							<div class="ibihub-form__group ibihub-form__group--half">
+								<label class="ibihub-form__label" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+								{{ form.name }}
+								{{ form.name.errors }}
+							</div>
+							<div class="ibihub-form__group ibihub-form__group--half">
+								<label class="ibihub-form__label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+								{{ form.email }}
+								{{ form.email.errors }}
+							</div>
+						</div>
+						<div class="ibihub-form__group">
+							<label class="ibihub-form__label" for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
+							{{ form.subject }}
+							{{ form.subject.errors }}
+						</div>
+						<div class="ibihub-form__group">
+							<label class="ibihub-form__label" for="{{ form.message.id_for_label }}">{{ form.message.label }}</label>
+							{{ form.message }}
+							{{ form.message.errors }}
+						</div>
+						<div class="ibihub-form__actions">
+							<button type="submit" class="ibihub-form__submit"><i class="fa fa-paper-plane" aria-hidden="true"></i> Envoyer le message</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col-md-5 col-sm-12">
+				<div class="ibihub-contact-info-card">
+					<i class="fa fa-map-marker"></i>
+					<div>
+						<strong>Adresse</strong>
+						<span>Dakar, Sénégal</span>
+					</div>
+				</div>
+				<div class="ibihub-contact-info-card">
+					<i class="fa fa-phone"></i>
+					<div>
+						<strong>Téléphone</strong>
+						<span>+221 33 000 00 00</span>
+					</div>
+				</div>
+				<div class="ibihub-contact-info-card">
+					<i class="fa fa-envelope"></i>
+					<div>
+						<strong>Email</strong>
+						<span>contact@ibihub.com</span>
+					</div>
+				</div>
+				<div class="ibihub-contact-map">
+					<iframe title="Carte Dakar" src="https://www.openstreetmap.org/export/embed.html?bbox=-17.55%2C14.68%2C-17.42%2C14.77&amp;layer=mapnik&amp;marker=14.7237%2C-17.4753"></iframe>
+				</div>
+				<div class="ibihub-contact-social">
+					<a href="#" class="ibihub-soc-ig" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+					<a href="#" class="ibihub-soc-in" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

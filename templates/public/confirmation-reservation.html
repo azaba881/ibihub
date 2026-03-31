@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirmation de réservation — IbiHub{% endblock %}
+
+{% block extra_css %}
+<style>
+	@media (max-width: 576px) {
+		.ibihub-confirm-wrap { margin: 16px auto !important; padding: 24px 16px !important; }
+		.ibihub-confirm-wrap h1 { font-size: 24px !important; }
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="clearfix"></div>
+<section class="ibihub-confirm-page" style="padding:48px 0 64px; background:#f5f7f6; min-height:50vh;">
+	<div class="container ibihub-confirm-wrap" style="max-width:760px; margin:0 auto; background:#fff; border-radius:16px; padding:38px; text-align:center; box-shadow:0 10px 32px rgba(0,0,0,.08);">
+		<img src="{% static 'images/logo.png' %}" alt="IbiHub" style="max-width:170px; margin:0 auto 18px;">
+		<h1 style="font-family:Poppins,sans-serif; margin:0 0 10px; color:#0d5c4d;">{% if reservation and reservation.statut == 'EN_ATTENTE' %}Demande enregistrée !{% elif reservation %}Réservation confirmée !{% else %}Demande enregistrée{% endif %}</h1>
+		{% if reservation %}
+		<p style="font-family:Poppins,sans-serif; margin:0 0 8px; color:#444;">Réf. #{{ reservation.pk }} — {{ reservation.entrepot.titre }}</p>
+		<p style="font-family:Poppins,sans-serif; margin:0 0 20px; color:#666; font-size:14px;">Du {{ reservation.date_debut|date:"d/m/Y" }} au {{ reservation.date_fin|date:"d/m/Y" }} · {{ reservation.get_statut_display }}</p>
+		{% if reservation.statut == 'EN_ATTENTE' %}
+		<p style="font-family:Poppins,sans-serif; margin:0 0 20px; color:#555; font-size:15px;">Le propriétaire va examiner votre demande. Vous serez informé dès qu’elle sera validée.</p>
+		{% endif %}
+		{% else %}
+		<p style="font-family:Poppins,sans-serif; margin:0 0 20px; color:#444;">Votre demande a bien été enregistrée. Vous pouvez suivre son évolution dans votre espace client.</p>
+		{% endif %}
+		<a href="{% url 'core:mon_dashboard' %}" style="display:inline-block; background:#0d5c4d; color:#fff; padding:12px 18px; border-radius:8px; font-family:Poppins,sans-serif; font-weight:600;">Voir mon tableau de bord</a>
+	</div>
+</section>
+{% endblock %}

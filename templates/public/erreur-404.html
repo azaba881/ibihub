@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Page introuvable — IbiHub{% endblock %}
+
+{% block extra_css %}
+<style>
+	@media (max-width: 576px) {
+		.ibihub-404-actions a {
+			display: block !important;
+			margin: 10px auto 0 !important;
+			width: 100%;
+			max-width: 260px;
+		}
+		.ibihub-404-actions a:first-child {
+			margin-top: 0 !important;
+		}
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 80px 20px; text-align:center;">
+	<img src="{% static 'images/logo.png' %}" alt="IbiHub" style="max-width:180px; margin:0 auto 20px;">
+	<h1 style="font-family:Poppins,sans-serif; font-size:38px; margin:0 0 10px; color:#0d5c4d;">404</h1>
+	<p style="font-family:Poppins,sans-serif; font-size:18px; color:#333; margin:0 0 24px;">La page que vous cherchez n'existe pas ou a été déplacée.</p>
+	<div class="ibihub-404-actions">
+		<a href="{% url 'core:home' %}" style="display:inline-block; padding:12px 20px; border-radius:8px; background:#0d5c4d; color:#fff; font-family:Poppins,sans-serif; font-weight:600;">Retour à l'accueil</a>
+		<a href="{% url 'core:liste_espaces' %}" style="display:inline-block; margin-left:10px; padding:12px 20px; border-radius:8px; background:#f35c16; color:#fff; font-family:Poppins,sans-serif; font-weight:600;">Voir les espaces</a>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+Nouveau message depuis le formulaire de contact IbiHub
+================================
+
+Nom : {{ name }}
+E-mail : {{ email }}
+Sujet : {{ subject }}
+
+Message :
+{{ message }}
+
+Répondre à : {{ email }}

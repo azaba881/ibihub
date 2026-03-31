@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Créer un compte — IbiHub{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23/build/css/intlTelInput.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="clearfix"></div>
+<div class="ibihub-auth-page ibihub-auth-page--tall">
+	<div class="ibihub-auth-card ibihub-auth-card--wide">
+		<a href="{% url 'core:home' %}" class="ibihub-auth-card__logo"><img src="{% static 'images/logo.png' %}" width="200" height="auto" alt="IbiHub"></a>
+		<h1>Créer un compte</h1>
+		<form method="post" action="" id="ibihub-signup-form" novalidate>
+			{% csrf_token %}
+			{% if form.non_field_errors %}
+			<div class="ibihub-auth-errors">{{ form.non_field_errors }}</div>
+			{% endif %}
+
+			{% for field in form %}
+				{% if field.name == 'role' %}
+					{{ field }}
+					<div class="ibihub-role-cards margin-bottom-24" role="group" aria-labelledby="ibihub-role-legend">
+						<span id="ibihub-role-legend" class="ibihub-role-cards__legend">Type de compte</span>
+						<div class="ibihub-role-cards__grid">
+							<button type="button" class="ibihub-role-card{% if field.value == 'MERCHANT' or not field.value %} is-selected{% endif %}" data-role="MERCHANT" aria-pressed="{% if field.value == 'MERCHANT' or not field.value %}true{% else %}false{% endif %}">
+								<span class="ibihub-role-card__icon" aria-hidden="true"><i class="fas fa-boxes"></i></span>
+								<span class="ibihub-role-card__title">Commerçant</span>
+								<span class="ibihub-role-card__desc">Je cherche un espace pour stocker</span>
+							</button>
+							<button type="button" class="ibihub-role-card{% if field.value == 'OWNER' %} is-selected{% endif %}" data-role="OWNER" aria-pressed="{% if field.value == 'OWNER' %}true{% else %}false{% endif %}">
+								<span class="ibihub-role-card__icon" aria-hidden="true"><i class="fas fa-warehouse"></i></span>
+								<span class="ibihub-role-card__title">Propriétaire</span>
+								<span class="ibihub-role-card__desc">Je propose un espace à louer</span>
+							</button>
+						</div>
+					</div>
+					{{ field.errors }}
+				{% endif %}
+			{% endfor %}
+
+			{% for field in form %}
+				{% if field.name != 'role' %}
+				<div class="ibihub-auth-field">
+					<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+					{% if field.name == 'password1' or field.name == 'password2' %}
+					<div class="ibihub-auth-password-wrap">
+						{{ field }}
+						<button type="button" class="ibihub-auth-toggle-pw" aria-label="Afficher le mot de passe" data-target="{{ field.id_for_label }}"><i class="fa fa-eye"></i></button>
+					</div>
+					{% else %}
+					{{ field }}
+					{% endif %}
+					{{ field.errors }}
+					{% if field.help_text and field.name != 'password1' and field.name != 'password2' %}
+					<small class="text-muted" style="display:block;margin-top:4px;">{{ field.help_text|safe }}</small>
+					{% endif %}
+				</div>
+				{% endif %}
+			{% endfor %}
+			<button type="submit" class="ibihub-auth-primary-btn">S'inscrire</button>
+		</form>
+		<p class="ibihub-auth-footer-link">Déjà un compte ? <a href="{% url 'core:sign_in' %}">Se connecter</a></p>
+	</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23/build/js/intlTelInput.min.js"></script>
+<script>
+(function() {
+	var form = document.getElementById('ibihub-signup-form');
+	var roleInput = document.getElementById('id_role');
+	var telInput = document.getElementById('id_telephone');
+	var iti = null;
+	var intlFn = typeof intlTelInput !== 'undefined' ? intlTelInput : window.intlTelInput;
+	if (telInput && intlFn) {
+		iti = intlFn(telInput, {
+			initialCountry: 'bj',
+			preferredCountries: ['bj', 'fr', 'sn', 'ci', 'tg', 'ng'],
+			utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@23/build/js/utils.js',
+			nationalMode: false,
+			formatOnDisplay: true,
+			strictMode: true
+		});
+	}
+	document.querySelectorAll('.ibihub-role-card').forEach(function(btn) {
+		btn.addEventListener('click', function() {
+			var v = btn.getAttribute('data-role');
+			if (roleInput) roleInput.value = v;
+			document.querySelectorAll('.ibihub-role-card').forEach(function(b) {
+				var sel = b.getAttribute('data-role') === v;
+				b.classList.toggle('is-selected', sel);
+				b.setAttribute('aria-pressed', sel ? 'true' : 'false');
+			});
+		});
+	});
+	if (form) {
+		form.addEventListener('submit', function() {
+			if (telInput && iti) {
+				var raw = (telInput.value || '').trim();
+				if (!raw) {
+					telInput.value = '';
+				} else {
+					var num = iti.getNumber();
+					if (num) telInput.value = num;
+				}
+			}
+		});
+	}
+})();
+document.querySelectorAll('.ibihub-auth-toggle-pw').forEach(function(btn) {
+	btn.addEventListener('click', function() {
+		var id = btn.getAttribute('data-target');
+		var input = document.getElementById(id);
+		if (!input) return;
+		var isPw = input.type === 'password';
+		input.type = isPw ? 'text' : 'password';
+		btn.innerHTML = isPw ? '<i class="fa fa-eye-slash"></i>' : '<i class="fa fa-eye"></i>';
+		btn.setAttribute('aria-label', isPw ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+	});
+});
+</script>
+{% endblock %}

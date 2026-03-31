@@ -1,0 +1,56 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Mes espaces — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<div class="ibihub-dashboard-top ibihub-dash-spaces-top">
+	<div>
+		<h1 class="text-primary-ibihub title-font-ibihub">Mes espaces</h1>
+		<p>Gérez vos annonces, consultez la fiche publique ou modifiez-les lorsqu’aucune réservation n’est en cours.</p>
+	</div>
+	<div>
+		<a href="{% url 'core:dashboard_add_space' %}" class="ibihub-dashboard-add-btn ibihub-dash-spaces-add">Ajouter un espace</a>
+	</div>
+</div>
+
+<section class="ibihub-dashboard-panel ibihub-dash-spaces-panel">
+	{% if entrepots %}
+	<div class="ibihub-dash-spaces-grid">
+		{% for e in entrepots %}
+		<article class="ibihub-dash-space-card">
+			<a href="{% url 'core:espace_detail' pk=e.pk %}" class="ibihub-dash-space-card__media">
+				{% if e.image_principale %}
+				<img src="{{ e.image_principale.url }}" alt="">
+				{% else %}
+				<img src="{% static 'images/category-space/cat-1.png' %}" alt="">
+				{% endif %}
+				<span class="ibihub-dash-space-card__badge {% if e.disponible %}is-on{% else %}is-off{% endif %}">
+					{% if e.disponible %}Disponible{% else %}Indisponible{% endif %}
+				</span>
+			</a>
+			<div class="ibihub-dash-space-card__body">
+				<h2 class="ibihub-dash-space-card__title"><a href="{% url 'core:espace_detail' pk=e.pk %}">{{ e.titre }}</a></h2>
+				<ul class="ibihub-dash-space-card__meta">
+					<li><i class="fa fa-tag" aria-hidden="true"></i> {{ e.categorie.nom }}</li>
+					<li><i class="fa fa-map-marker" aria-hidden="true"></i> {{ e.get_ville_display }}</li>
+					<li><i class="fa fa-money" aria-hidden="true"></i> {{ e.prix_par_jour|floatformat:0 }} FCFA / jour</li>
+					<li><i class="fa fa-arrows-alt" aria-hidden="true"></i> {{ e.surface_m2 }} m²</li>
+				</ul>
+				<div class="ibihub-dash-space-card__actions">
+					<a href="{% url 'core:espace_detail' pk=e.pk %}" class="ibihub-dash-space-card__btn ibihub-dash-space-card__btn--ghost">Voir la fiche</a>
+					{% if e.can_owner_edit %}
+					<a href="{% url 'core:dashboard_edit_space' pk=e.pk %}" class="ibihub-dash-space-card__btn ibihub-dash-space-card__btn--primary">Modifier</a>
+					{% else %}
+					<span class="ibihub-dash-space-card__btn ibihub-dash-space-card__btn--disabled" title="Modification impossible : réservation en attente ou location confirmée en cours.">Modifier</span>
+					{% endif %}
+				</div>
+			</div>
+		</article>
+		{% endfor %}
+	</div>
+	{% else %}
+	<p class="ibihub-dash-spaces-empty">Aucun entrepôt pour le moment. <a href="{% url 'core:dashboard_add_space' %}">Publier une annonce</a>.</p>
+	{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Facture — IbiHub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/invoice.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="invoice">
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="invoice-logo"><img src="{% static 'images/logo.png' %}" alt=""></div>
+		</div>
+
+		<div class="col-md-6">
+
+			<p id="details">
+				<strong>Numéro de commande:</strong> #00124 <br>
+				<strong>Date de création:</strong> 20/07/2019 <br>
+				<strong>Date d'échéance:</strong> 7 jours à partir de la date de création
+			</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<h2>Facture</h2>
+		</div>
+
+		<div class="col-md-6">
+			<strong class="margin-bottom-5">Fournisseur</strong>
+			<p>
+				IbiHub <br>
+				Yaoundé, Cameroun <br>
+			</p>
+		</div>
+
+		<div class="col-md-6">
+			<strong class="margin-bottom-5">Client</strong>
+			<p>
+				Nom du client <br>
+				Adresse du client <br>
+				Yaoundé, Cameroun <br>
+			</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<table class="margin-top-20">
+				<tr>
+					<th>Description</th>
+					<th>Quantité</th>
+					<th>VAT</th>
+					<th>Total</th>
+				</tr>
+
+				<tr>
+					<td>Location d'espace</td>
+					<td>1</td>
+					<td>18%</td>
+					<td>90&nbsp;000 FCFA</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="col-md-4 col-md-offset-8">
+			<table id="totals">
+				<tr>
+					<th>Total à payer</th>
+					<th><span>90&nbsp;000 FCFA</span></th>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="invoice-actions">
+		<a href="#" class="print-button">Imprimer</a>
+		<a href="#" class="download-button">Télécharger la facture</a>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<ul id="invoice-footer">
+				<li><span>www.ibihub.cm</span></li>
+				<li>contact@ibihub.com</li>
+				<li>+237 6 99 99 99 99</li>
+				<li>Godomey-plateau, Bénin</li>
+			</ul>
+			<p class="invoice-footer-note">
+				Merci de votre confiance. Pour toute question sur cette facture, contactez le support IbiHub.
+			</p>
+		</div>
+	</div>
+
+</div>
+{% endblock %}

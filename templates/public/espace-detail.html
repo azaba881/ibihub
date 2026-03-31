@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ entrepot.titre }} — IbiHub{% endblock %}
+
+{% block content %}
+<div class="ibihub-space-page">
+	{% if messages %}
+	<div class="container" style="padding-top:20px;">
+		{% for message in messages %}
+		<p class="ibihub-space-booking-msg ibihub-space-booking-msg--{{ message.level_tag }}" role="alert" style="margin:0 0 10px;padding:12px 16px;border-radius:10px;font-family:Poppins,sans-serif;font-size:14px;{% if message.level_tag == 'error' %}background:#fdecea;color:#b71c1c;border:1px solid #f5c6cb;{% elif message.level_tag == 'success' %}background:#e8f5f1;color:#0d5c4d;border:1px solid #b8dfd4;{% else %}background:#eef6ff;color:#1565c0;border:1px solid #bbdefb;{% endif %}">{{ message }}</p>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	<section class="ibihub-space-hero" aria-labelledby="space-title">
+		<div class="ibihub-space-hero__bg" style="background-image: url('{% if entrepot.image_principale %}{{ entrepot.image_principale.url }}{% else %}{% static 'images/sim-1.png' %}{% endif %}');"></div>
+		<div class="ibihub-space-hero__overlay"></div>
+		<div class="container">
+			<nav class="ibihub-breadcrumb" aria-label="Fil d'Ariane">
+				<ol>
+					<li><a href="{% url 'core:home' %}">Accueil</a></li>
+					<li><a href="{% url 'core:liste_espaces' %}">Trouvez votre espace</a></li>
+					<li aria-current="page">{{ entrepot.ville }}</li>
+				</ol>
+			</nav>
+			<span class="ibihub-space-hero__badge">{{ entrepot.categorie.nom }}</span>
+			<h1 id="space-title" class="ibihub-space-hero__title">{{ entrepot.titre }}</h1>
+			<div class="ibihub-space-hero__meta">
+				<span><i class="fa fa-map-marker-alt" aria-hidden="true"></i>{{ entrepot.adresse }} — {{ entrepot.get_ville_display }}</span>
+				{% if avis_avg %}
+				<span class="ibihub-space-hero__rating" title="{{ avis_avg }} sur 5">{{ avis_avg }} / 5 · {{ avis_count }} avis</span>
+				{% else %}
+				<span class="ibihub-space-hero__rating ibihub-space-hero__rating--muted">Pas encore d’avis</span>
+				{% endif %}
+				<span><a href="#section-avis">Avis</a></span>
+				<div class="ibihub-space-hero__price">
+					<span class="ibihub-space-hero__price-num">{{ entrepot.prix_par_jour|floatformat:0 }} <small>FCFA</small></span>
+					<span class="ibihub-space-hero__price-label">par jour · {{ entrepot.surface_m2 }} m²</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div class="ibihub-space-gallery mfp-gallery-container">
+		<div class="ibihub-space-gallery__wrap ibihub-space-gallery__wrap--slider">
+			<div class="listing-slider ibihub-space-listing-slider">
+				{% for url in gallery_slides %}
+				<div class="ibihub-space-gallery__slide">
+					<a href="{{ url }}" class="mfp-gallery ibihub-space-gallery__slide-link" title="{{ entrepot.titre }} — {{ forloop.counter }}">
+						<img src="{{ url }}" alt="{{ entrepot.titre }}">
+					</a>
+				</div>
+				{% empty %}
+				<div class="ibihub-space-gallery__slide">
+					<a href="{% static 'images/sim-2.png' %}" class="mfp-gallery"><img src="{% static 'images/sim-2.png' %}" alt=""></a>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<nav class="ibihub-space-nav" aria-label="Sections">
+			<a href="#section-apercu">Aperçu</a>
+			<a href="#section-tarifs">Tarifs</a>
+			<a href="#section-carte">Carte</a>
+			<a href="#section-avis">Avis</a>
+			<a href="#section-disponibilite">Disponibilité</a>
+		</nav>
+
+		<div class="row">
+			<div class="col-lg-8 col-md-8 col-sm-12">
+
+				<section id="section-apercu" class="ibihub-space-card">
+					<h2 class="ibihub-space-card__title">Aperçu</h2>
+					<div class="ibihub-space-kpis">
+						<div class="ibihub-space-kpi">
+							<div class="ibihub-space-kpi__val">{{ entrepot.surface_m2 }} m²</div>
+							<div class="ibihub-space-kpi__label">Surface</div>
+						</div>
+						<div class="ibihub-space-kpi">
+							<div class="ibihub-space-kpi__val">{{ entrepot.categorie.nom }}</div>
+							<div class="ibihub-space-kpi__label">Catégorie</div>
+						</div>
+						<div class="ibihub-space-kpi">
+							<div class="ibihub-space-kpi__val">{% if entrepot.disponible %}Disponible{% else %}Indisponible{% endif %}</div>
+							<div class="ibihub-space-kpi__label">Statut</div>
+						</div>
+					</div>
+					<div class="ibihub-space-description">{{ entrepot.description_detaillee|linebreaks }}</div>
+					{% if entrepot.equipements %}
+					<div class="ibihub-space-amenities" role="list">
+						{% for item in entrepot.equipements %}
+						<span class="ibihub-space-amenity" role="listitem"><i class="fa fa-check" aria-hidden="true"></i> {{ item }}</span>
+						{% endfor %}
+					</div>
+					{% endif %}
+				</section>
+
+				<section id="section-tarifs" class="ibihub-space-card">
+					<h2 class="ibihub-space-card__title">Tarifs</h2>
+					<div class="ibihub-space-tarifs">
+						<div class="ibihub-space-tarif">
+							<h4>Prix par jour</h4>
+							<p>Tarification affichée pour la location à la journée.</p>
+							<div class="ibihub-space-tarif__amount">{{ entrepot.prix_par_jour|floatformat:0 }} FCFA</div>
+						</div>
+						<div class="ibihub-space-tarif">
+							<h4>Caution</h4>
+							<p>À convenir avec le propriétaire lors de la réservation.</p>
+							<div class="ibihub-space-tarif__amount">—</div>
+						</div>
+						<div class="ibihub-space-tarif">
+							<h4>Honoraires IbiHub</h4>
+							<p>Mise en relation et suivi du dossier.</p>
+							<div class="ibihub-space-tarif__amount">Sur devis</div>
+						</div>
+					</div>
+				</section>
+
+				<section id="section-carte" class="ibihub-space-card">
+					<h2 class="ibihub-space-card__title">Localisation</h2>
+					<p class="margin-bottom-20"><strong>{{ entrepot.adresse }}</strong>, {{ entrepot.get_ville_display }}</p>
+					<div class="ibihub-space-map">
+						<iframe title="Carte — {{ entrepot.ville }}" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=2.35%2C6.30%2C2.52%2C6.45&amp;layer=mapnik"></iframe>
+					</div>
+					<a class="ibihub-space-map__link" href="https://www.openstreetmap.org/search?query={{ entrepot.adresse|urlencode }}%20{{ entrepot.get_ville_display|urlencode }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link-alt" aria-hidden="true"></i> Ouvrir dans une carte</a>
+				</section>
+
+				<section id="section-avis" class="ibihub-space-card">
+					<h2 class="ibihub-space-card__title">Avis</h2>
+					<div class="ibihub-space-rating-head">
+						<div>
+							<div class="ibihub-space-rating-head__score">{% if avis_avg %}{{ avis_avg }}{% else %}—{% endif %}</div>
+							<div class="ibihub-space-rating-head__label">sur 5 · {{ avis_count }} avis</div>
+						</div>
+					</div>
+
+					{% if can_post_avis and avis_form %}
+					<form class="ibihub-space-comment-form" method="post" action="{% url 'core:espace_avis_create' pk=entrepot.pk %}">
+						{% csrf_token %}
+						<h3 class="ibihub-space-card__title ibihub-space-avis-form-title">Publier un avis</h3>
+						<label for="{{ avis_form.note.id_for_label }}">{{ avis_form.note.label }}</label>
+						{{ avis_form.note }}
+						{{ avis_form.note.errors }}
+						<label for="{{ avis_form.commentaire.id_for_label }}" style="margin-top:12px;">{{ avis_form.commentaire.label }}</label>
+						{{ avis_form.commentaire }}
+						{{ avis_form.commentaire.errors }}
+						<button type="submit">Publier l’avis</button>
+					</form>
+					{% elif not user.is_authenticated %}
+					<p class="ibihub-space-comment-form__hint"><a href="{% url 'core:sign_in' %}?next={{ request.path|urlencode }}" class="ibihub-space-map__link">Connectez-vous</a> pour laisser un avis (un seul avis par compte et par espace).</p>
+					{% elif user.pk == entrepot.proprietaire_id %}
+					<p class="ibihub-space-comment-form__hint">En tant que propriétaire, vous ne pouvez pas noter votre propre annonce.</p>
+					{% else %}
+					<p class="ibihub-space-comment-form__hint">Vous avez déjà publié un avis pour cet espace.</p>
+					{% endif %}
+
+					{% for a in avis_recent %}
+					<div class="ibihub-space-review">
+						<div class="ibihub-space-review__avatar">
+							{% if a.auteur.photo_profil %}
+							<img src="{{ a.auteur.photo_profil.url }}" alt="">
+							{% else %}
+							<img src="{% static 'images/dashboard-avatar.jpg' %}" alt="">
+							{% endif %}
+						</div>
+						<div>
+							<div>
+								<span class="ibihub-space-review__name">{{ a.auteur.get_full_name|default:a.auteur.username }}</span>
+								<span class="ibihub-space-review__date">{{ a.created_at|date:"d/m/Y" }}</span>
+							</div>
+							<div class="ibihub-space-review__stars" aria-label="{{ a.note }} sur 5">{{ a.note }}/5</div>
+							<p>{{ a.commentaire|linebreaksbr }}</p>
+						</div>
+					</div>
+					{% empty %}
+					<p class="ibihub-space-comment-form__hint">Aucun avis pour le moment. Soyez le premier à en laisser un.</p>
+					{% endfor %}
+				</section>
+
+			</div>
+
+			<div class="col-lg-4 col-md-4 col-sm-12">
+				<aside class="ibihub-space-aside">
+					<div class="ibihub-space-book">
+						<div class="ibihub-space-book__verified"><i class="fa fa-check" aria-hidden="true"></i> Annonce IbiHub</div>
+						<div class="ibihub-space-book__price">{{ entrepot.prix_par_jour|floatformat:0 }} <small>FCFA / jour</small></div>
+						<p class="ibihub-space-book__hint">{% if entrepot.disponible %}Disponible pour réservation{% else %}Actuellement indisponible{% endif %}</p>
+						<label for="visit-date">Date de visite souhaitée</label>
+						<input type="date" id="visit-date" name="visit">
+						<label for="visit-note" style="margin-top:14px;">Message</label>
+						<textarea id="visit-note" placeholder="Présentez votre projet…"></textarea>
+						<a href="{% url 'core:contact' %}" class="ibihub-space-book__cta">Demander une visite</a>
+						<a href="#small-dialog" class="ibihub-space-book__secondary popup-with-zoom-anim">Écrire au propriétaire</a>
+
+						<div class="ibihub-space-host">
+							{% if entrepot.proprietaire.photo_profil %}
+							<img src="{{ entrepot.proprietaire.photo_profil.url }}" alt="">
+							{% else %}
+							<img src="{% static 'images/dashboard-avatar.jpg' %}" alt="">
+							{% endif %}
+							<div class="ibihub-space-host__info">
+								<h4>{{ entrepot.proprietaire.get_full_name|default:entrepot.proprietaire.username }}</h4>
+								<span>Propriétaire</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="ibihub-space-calendar-card">
+						<h4>Réserver cet espace</h4>
+						{% if booking_requires_login %}
+						<p class="ibihub-space-calendar-card__hint" style="color:#b71c1c;margin-bottom:12px;"><strong>Connexion requise.</strong> Connectez-vous pour soumettre une demande de réservation.</p>
+						<p style="margin:0;"><a href="{% url 'core:sign_in' %}?next={{ request.path|urlencode }}" class="ibihub-space-book__cta" style="display:inline-block;text-align:center;">Se connecter</a></p>
+						{% elif booking_blocked_own %}
+						<p class="ibihub-space-calendar-card__hint" style="color:#b71c1c;margin-bottom:0;"><strong>Vous êtes le propriétaire de cet espace.</strong> Vous ne pouvez pas réserver votre propre annonce.</p>
+						{% elif not entrepot.disponible %}
+						<p class="ibihub-space-calendar-card__hint" style="color:#666;">Cet espace n’est pas disponible à la réservation pour le moment.</p>
+						{% else %}
+						<form method="post" action="{% url 'core:reserver_espace' pk=entrepot.pk %}" class="ibihub-space-reservation-form">
+							{% csrf_token %}
+							<label for="id_date_debut">Date de début</label>
+							<input type="date" name="date_debut" id="id_date_debut" required min="{% now 'Y-m-d' %}" style="width:100%;box-sizing:border-box;border-radius:8px;border:1px solid rgba(0,0,0,.12);padding:10px 12px;font-family:Poppins,sans-serif;font-size:14px;">
+							<label for="id_date_fin" style="margin-top:12px;">Date de fin</label>
+							<input type="date" name="date_fin" id="id_date_fin" required min="{% now 'Y-m-d' %}" style="width:100%;box-sizing:border-box;border-radius:8px;border:1px solid rgba(0,0,0,.12);padding:10px 12px;font-family:Poppins,sans-serif;font-size:14px;">
+							<button type="submit" class="ibihub-space-book__cta" style="margin-top:16px;width:100%;border:0;cursor:pointer;">Demander la réservation</button>
+						</form>
+						<p class="ibihub-space-calendar-card__hint" style="margin-top:12px;">La demande est envoyée au propriétaire. Vous serez notifié après validation.</p>
+						{% endif %}
+					</div>
+
+					<div class="ibihub-space-calendar-card ibihub-space-availability-card" id="section-disponibilite">
+						<h4>Calendrier de disponibilité</h4>
+						<p class="ibihub-space-calendar-card__hint">Les plages grisées correspondent à des demandes en attente ou à des locations confirmées.</p>
+						<div class="ibihub-avail-legend">
+							<span><i class="ibihub-avail-dot ibihub-avail-dot--free"></i> Libre</span>
+							<span><i class="ibihub-avail-dot ibihub-avail-dot--busy"></i> Indisponible</span>
+						</div>
+						<script type="application/json" id="ibihub-availability-data">{{ availability_ranges_json|safe }}</script>
+						<div id="ibihub-availability-calendar" class="ibihub-availability-calendar"></div>
+					</div>
+
+					<p class="ibihub-space-save"><button type="button">Enregistrer</button> cette annonce</p>
+				</aside>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="small-dialog" class="zoom-anim-dialog mfp-hide">
+	<div class="small-dialog-header">
+		<h3>Message au propriétaire</h3>
+	</div>
+	<div class="message-reply margin-top-0">
+		<textarea cols="40" rows="4" placeholder="Votre message…"></textarea>
+		<button type="button" class="button margin-top-15">Envoyer</button>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var d0 = document.getElementById('id_date_debut');
+  var d1 = document.getElementById('id_date_fin');
+  if (d0 && d1) {
+    d0.addEventListener('change', function () {
+      d1.min = d0.value || '';
+      if (d1.value && d1.value < d0.value) d1.value = d0.value;
+    });
+  }
+  var calRoot = document.getElementById('ibihub-availability-calendar');
+  var dataEl = document.getElementById('ibihub-availability-data');
+  if (!calRoot || !dataEl) return;
+  var ranges;
+  try { ranges = JSON.parse(dataEl.textContent || '[]'); } catch (e) { ranges = []; }
+  function dOnly(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function inRange(day, r) {
+    var a = new Date(r.debut + 'T12:00:00');
+    var b = new Date(r.fin + 'T12:00:00');
+    return day >= dOnly(a) && day <= dOnly(b);
+  }
+  function isBusy(day) {
+    for (var i = 0; i < ranges.length; i++) {
+      if (inRange(day, ranges[i])) return true;
+    }
+    return false;
+  }
+  var monthNames = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  var today = dOnly(new Date());
+  var start = new Date(today);
+  calRoot.innerHTML = '';
+  for (var m = 0; m < 2; m++) {
+    var ref = new Date(start.getFullYear(), start.getMonth() + m, 1);
+    var wrap = document.createElement('div');
+    wrap.className = 'ibihub-avail-month';
+    var h = document.createElement('h5');
+    h.className = 'ibihub-avail-month__title';
+    h.textContent = monthNames[ref.getMonth()] + ' ' + ref.getFullYear();
+    wrap.appendChild(h);
+    var grid = document.createElement('div');
+    grid.className = 'ibihub-avail-grid';
+    var dow = ['L','M','M','J','V','S','D'];
+    for (var w = 0; w < 7; w++) {
+      var hd = document.createElement('div');
+      hd.className = 'ibihub-avail-dow';
+      hd.textContent = dow[w];
+      grid.appendChild(hd);
+    }
+    var firstDow = (ref.getDay() + 6) % 7;
+    var dim = new Date(ref.getFullYear(), ref.getMonth() + 1, 0).getDate();
+    for (var pad = 0; pad < firstDow; pad++) {
+      var ph = document.createElement('div');
+      ph.className = 'ibihub-avail-cell ibihub-avail-cell--empty';
+      grid.appendChild(ph);
+    }
+    for (var day = 1; day <= dim; day++) {
+      var cell = document.createElement('div');
+      var dt = new Date(ref.getFullYear(), ref.getMonth(), day);
+      cell.className = 'ibihub-avail-cell';
+      cell.textContent = String(day);
+      if (dt < today) cell.classList.add('ibihub-avail-cell--past');
+      else if (isBusy(dt)) cell.classList.add('ibihub-avail-cell--busy');
+      else cell.classList.add('ibihub-avail-cell--free');
+      grid.appendChild(cell);
+    }
+    wrap.appendChild(grid);
+    calRoot.appendChild(wrap);
+  }
+});
+</script>
+{% endblock %}

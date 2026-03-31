@@ -1,0 +1,44 @@
+{% load static %}
+<header class="ibihub-dashboard-main-header" role="banner">
+	<form class="ibihub-dashboard-search" method="get" action="{% url 'core:liste_espaces' %}" role="search">
+		<label class="screen-reader-text" for="dashboard-ts-q">Rechercher un espace</label>
+		<input type="search" id="dashboard-ts-q" name="q" placeholder="Rechercher un espace sur IbiHub…" value="" autocomplete="off">
+	</form>
+	<div class="ibihub-dashboard-main-header-spacer" aria-hidden="true"></div>
+	<div class="ibihub-dashboard-main-header-actions">
+	<div id="topNotifications" class="ibihub-dashboard-top-notifications">
+		<button type="button" class="ibihub-dashboard-top-bell-btn" aria-label="Notifications" aria-expanded="false" aria-haspopup="true">
+			<i class="fa fa-bell" aria-hidden="true"></i>
+			{% if dashboard_notif_count > 0 %}
+			<span class="ibihub-dashboard-top-bell-badge">{{ dashboard_notif_count }}</span>
+			{% endif %}
+		</button>
+		<div class="ibihub-dashboard-top-bell-menu" role="menu">
+			<h4>Notifications</h4>
+			{% if dashboard_notif_items %}
+				{% for item in dashboard_notif_items %}
+				<a href="{{ item.url }}" role="menuitem">{{ item.text }}</a>
+				{% endfor %}
+			{% else %}
+				<p class="ibihub-dashboard-top-bell-empty">Aucune notification pour le moment.</p>
+			{% endif %}
+			<a href="{% url 'core:dashboard_reservations' %}" class="ibihub-dashboard-top-bell-all">Voir les réservations</a>
+		</div>
+	</div>
+	<div class="ibihub-dashboard-top-user" id="topUserMenu">
+		<button type="button" class="ibihub-dashboard-top-user-btn" aria-haspopup="true" aria-expanded="false">
+			<div class="ibihub-dashboard-top-avatar">
+				{% if request.user.photo_profil %}
+				<img src="{{ request.user.photo_profil.url }}" alt="">
+				{% else %}
+				<img src="{% static 'images/dashboard-avatar.jpg' %}" alt="Profil">
+				{% endif %}
+			</div>
+		</button>
+		<div class="ibihub-dashboard-top-user-menu">
+			<a href="{% url 'core:dashboard_settings' %}">Mon profil</a>
+			<a href="{% url 'core:dashboard_reservations' %}">Mes réservations</a>
+		</div>
+	</div>
+	</div>
+</header>

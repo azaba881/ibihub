@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Redirection — IbiHub{% endblock %}
+
+{% block extra_head %}
+<meta http-equiv="refresh" content="0; url={% url 'core:liste_espaces' %}">
+<link rel="canonical" href="{% url 'core:liste_espaces' %}">
+{% endblock %}
+
+{% block content %}
+<p>Redirection vers la <a href="{% url 'core:liste_espaces' %}">liste des espaces</a>…</p>
+{% endblock %}

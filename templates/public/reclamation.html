@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Réclamation — IbiHub{% endblock %}
+
+{% block content %}
+<div class="clearfix"></div>
+<div class="ibihub-contact-hero">
+	<div class="container ibihub-contact-hero__top">
+		<nav class="ibihub-breadcrumb" aria-label="Fil d'Ariane">
+			<ol>
+				<li><a href="{% url 'core:home' %}">Accueil</a></li>
+				<li aria-current="page">Réclamation</li>
+			</ol>
+		</nav>
+	</div>
+	<h1 id="reclamation-title">Déposer une réclamation</h1>
+	<p>Ce formulaire est destiné aux signalements sérieux concernant une transaction, une annonce ou l’usage de la plateforme. Les demandes sont traitées de manière confidentielle.</p>
+	<svg class="ibihub-contact-wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+		<path d="M0,40 C360,90 720,0 1080,40 C1260,60 1380,50 1440,45 L1440,80 L0,80 Z"></path>
+	</svg>
+</div>
+
+<section class="ibihub-contact-body">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-sm-12 margin-bottom-30">
+				<div class="ibihub-form-card">
+					<header class="ibihub-form-card__header">
+						<h2 class="ibihub-form-card__title">Formulaire de réclamation</h2>
+						<p class="ibihub-form-card__lead">Renseignez les champs ci-dessous. Les dossiers complets sont traités en priorité.</p>
+					</header>
+					<form class="ibihub-form" action="#" method="post">
+						<div class="ibihub-form__group">
+							<label class="ibihub-form__label" for="rec-type">Type de réclamation</label>
+							<select class="ibihub-form__select" id="rec-type" name="type" required>
+								<option value="">Choisir une catégorie</option>
+								<option value="transaction">Litige lié à une transaction ou réservation</option>
+								<option value="listing">Annonce inexacte ou trompeuse</option>
+								<option value="conduct">Comportement d’un utilisateur</option>
+								<option value="technical">Dysfonctionnement technique</option>
+								<option value="other">Autre</option>
+							</select>
+						</div>
+						<div class="ibihub-form__group">
+							<label class="ibihub-form__label" for="rec-ref">Référence <span class="optional">(facultatif)</span></label>
+							<input class="ibihub-form__input" type="text" id="rec-ref" name="reference" placeholder="N° d’annonce, de réservation…">
+						</div>
+						<div class="ibihub-form__group">
+							<label class="ibihub-form__label" for="rec-subject">Objet</label>
+							<input class="ibihub-form__input" type="text" id="rec-subject" name="subject" placeholder="Résumé en une ligne" required>
+						</div>
+						<div class="ibihub-form__group">
+							<label class="ibihub-form__label" for="rec-detail">Description détaillée</label>
+							<textarea class="ibihub-form__textarea ibihub-form__textarea--large" id="rec-detail" name="detail" rows="7" placeholder="Faits, dates, montants, échanges avec l’autre partie…" required></textarea>
+						</div>
+						<div class="ibihub-form__row">
+							<div class="ibihub-form__group ibihub-form__group--half">
+								<label class="ibihub-form__label" for="rec-name">Nom et prénom</label>
+								<input class="ibihub-form__input" type="text" id="rec-name" name="name" required autocomplete="name">
+							</div>
+							<div class="ibihub-form__group ibihub-form__group--half">
+								<label class="ibihub-form__label" for="rec-email">Email</label>
+								<input class="ibihub-form__input" type="email" id="rec-email" name="email" required autocomplete="email">
+							</div>
+						</div>
+						<div class="ibihub-form__group">
+							<label class="ibihub-form__label" for="rec-phone">Téléphone</label>
+							<input class="ibihub-form__input" type="tel" id="rec-phone" name="phone" placeholder="+221 …" autocomplete="tel">
+						</div>
+						<div class="ibihub-form__actions">
+							<button type="submit" class="ibihub-form__submit ibihub-form__submit--accent"><i class="fa fa-check-circle" aria-hidden="true"></i> Envoyer la réclamation</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col-md-5 col-sm-12">
+				<div class="ibihub-reclamation-aside">
+					<h2 class="ibihub-reclamation-aside__title text-primary-ibihub">Traitement de votre dossier</h2>
+					<p>Notre équipe accuse réception sous <strong>5 jours ouvrés</strong>. Un conseiller peut vous solliciter pour des pièces complémentaires.</p>
+					<p>En cas d’urgence liée à la sécurité des personnes ou des biens, contactez les autorités compétentes sans délai, en parallèle de votre signalement ici.</p>
+					<p class="ibihub-reclamation-aside__note"><i class="fa fa-shield-alt text-primary-ibihub" aria-hidden="true"></i> Les données transmises sont traitées conformément à notre politique de confidentialité et utilisées uniquement dans le cadre de l’instruction de votre réclamation.</p>
+					<p class="margin-top-20 margin-bottom-0"><a href="{% url 'core:contact' %}" class="text-primary-ibihub" style="font-weight:600;">Besoin d’un contact général ?</a></p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

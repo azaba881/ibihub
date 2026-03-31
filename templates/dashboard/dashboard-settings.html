@@ -1,0 +1,188 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Paramètres — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<div class="ibihub-dashboard-top">
+	<div>
+		<h1 class="text-primary-ibihub title-font-ibihub">Paramètres du compte</h1>
+		<p>Personnalisez votre profil IbiHub.</p>
+	</div>
+</div>
+
+<div class="ibihub-dashboard-bottom ibihub-dashboard-bottom--settings">
+	<section class="ibihub-dashboard-panel ibihub-settings-menu">
+		<h2 class="ibihub-dashboard-panel__title">Menu paramètres</h2>
+		<p class="ibihub-dashboard-panel__subtitle">Sélectionnez une section.</p>
+		<div class="row">
+			<div class="col-md-6 col-sm-12">
+				<ul class="ibihub-dashboard-actions-list">
+					<li>
+						<button type="button" class="{% if active_settings_tab == 'profile' %}is-active {% endif %}" data-tab-target="tab-profile" aria-selected="{% if active_settings_tab == 'profile' %}true{% else %}false{% endif %}">
+							<i class="fa fa-user" aria-hidden="true"></i>
+							<span class="label">Infos personnelles</span>
+							<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+						</button>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<ul class="ibihub-dashboard-actions-list">
+					<li>
+						<button type="button" class="{% if active_settings_tab == 'photo' %}is-active {% endif %}" data-tab-target="tab-photo" aria-selected="{% if active_settings_tab == 'photo' %}true{% else %}false{% endif %}">
+							<i class="fa fa-camera" aria-hidden="true"></i>
+							<span class="label">Photo de profil</span>
+							<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+						</button>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<ul class="ibihub-dashboard-actions-list">
+					<li>
+						<button type="button" class="{% if active_settings_tab == 'password' %}is-active {% endif %}" data-tab-target="tab-password" aria-selected="{% if active_settings_tab == 'password' %}true{% else %}false{% endif %}">
+							<i class="fa fa-lock" aria-hidden="true"></i>
+							<span class="label">Mot de passe</span>
+							<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<section class="ibihub-dashboard-panel">
+		<form method="post" enctype="multipart/form-data" class="ibihub-settings-form" id="ibihub-settings-main-form">
+			{% csrf_token %}
+			{% if form.non_field_errors %}
+			<div class="ibihub-dashboard-form-errors">{{ form.non_field_errors }}</div>
+			{% endif %}
+
+			<div id="tab-profile" class="ibihub-settings-tab{% if active_settings_tab == 'profile' %} is-active{% endif %}" role="tabpanel">
+				<h2 class="ibihub-dashboard-panel__title">Informations personnelles</h2>
+				<p class="ibihub-dashboard-panel__subtitle">Identité et coordonnées utilisées sur la plateforme.</p>
+				<div class="row">
+					<div class="col-md-6 col-sm-12">
+						<label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+						{{ form.first_name.errors }}
+						{{ form.first_name }}
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+						{{ form.last_name.errors }}
+						{{ form.last_name }}
+					</div>
+					<div class="col-md-12 col-sm-12">
+						<label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+						{{ form.email.errors }}
+						{{ form.email }}
+					</div>
+					<div class="col-md-12 col-sm-12">
+						<label for="{{ form.telephone.id_for_label }}">{{ form.telephone.label }}</label>
+						{{ form.telephone.errors }}
+						{{ form.telephone }}
+						<small class="ibihub-dashboard-field-hint">Format international (ex. +22990123456).</small>
+					</div>
+				</div>
+			</div>
+
+			<div id="tab-photo" class="ibihub-settings-tab{% if active_settings_tab == 'photo' %} is-active{% endif %}" role="tabpanel">
+				<h2 class="ibihub-dashboard-panel__title">Photo de profil</h2>
+				<p class="ibihub-dashboard-panel__subtitle">Une photo claire renforce la confiance.</p>
+				<div class="ibihub-profile-photo-card">
+					<div class="ibihub-profile-photo-card__avatar">
+						{% if request.user.photo_profil %}
+						<img src="{{ request.user.photo_profil.url }}" alt="Photo actuelle">
+						{% else %}
+						<img src="{% static 'images/dashboard-avatar.jpg' %}" alt="Photo par défaut">
+						{% endif %}
+					</div>
+					<div class="ibihub-profile-photo-card__meta">
+						<h4>Remplacer la photo</h4>
+						<p>Format recommandé : JPG ou PNG, idéalement carré, moins de 5&nbsp;Mo.</p>
+						<label for="{{ form.photo_profil.id_for_label }}">{{ form.photo_profil.label }}</label>
+						{{ form.photo_profil.errors }}
+						{{ form.photo_profil }}
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<form method="post" class="ibihub-settings-form" id="ibihub-settings-password-form" autocomplete="on">
+			{% csrf_token %}
+			<input type="hidden" name="form_type" value="password">
+			<div id="tab-password" class="ibihub-settings-tab{% if active_settings_tab == 'password' %} is-active{% endif %}" role="tabpanel">
+				<h2 class="ibihub-dashboard-panel__title">Mot de passe</h2>
+				<p class="ibihub-dashboard-panel__subtitle">Pour votre sécurité, utilisez un mot de passe long et unique.</p>
+				{% if password_form.non_field_errors %}
+				<div class="ibihub-dashboard-form-errors">{{ password_form.non_field_errors }}</div>
+				{% endif %}
+				<div class="row">
+					<div class="col-md-12 col-sm-12">
+						<label for="{{ password_form.old_password.id_for_label }}">{{ password_form.old_password.label }}</label>
+						{{ password_form.old_password.errors }}
+						{{ password_form.old_password }}
+					</div>
+					<div class="col-md-12 col-sm-12">
+						<label for="{{ password_form.new_password1.id_for_label }}">{{ password_form.new_password1.label }}</label>
+						{{ password_form.new_password1.errors }}
+						{{ password_form.new_password1 }}
+					</div>
+					<div class="col-md-12 col-sm-12">
+						<label for="{{ password_form.new_password2.id_for_label }}">{{ password_form.new_password2.label }}</label>
+						{{ password_form.new_password2.errors }}
+						{{ password_form.new_password2 }}
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<div class="ibihub-settings-form-footer">
+			<button type="submit" form="ibihub-settings-main-form" class="ibihub-dashboard-add-btn ibihub-dashboard-add-btn--settings" id="ibihub-settings-btn-profile">Enregistrer les modifications</button>
+			<button type="submit" form="ibihub-settings-password-form" class="ibihub-dashboard-add-btn ibihub-dashboard-add-btn--settings" id="ibihub-settings-btn-password" hidden>Mettre à jour le mot de passe</button>
+		</div>
+
+		<div class="ibihub-dashboard-settings-readonly margin-top-25">
+			<p><strong>Rôle :</strong> {{ request.user.get_role_display }}</p>
+			<p><strong>Compte vérifié :</strong> {% if request.user.is_verified %}Oui{% else %}Non — contactez l’équipe IbiHub pour publier des annonces en tant que propriétaire.{% endif %}</p>
+		</div>
+	</section>
+</div>
+{% endblock %}
+
+{% block dashboard_extra_js %}
+<script>
+(function () {
+	var links = document.querySelectorAll('.ibihub-settings-menu [data-tab-target]');
+	var tabs = document.querySelectorAll('.ibihub-settings-tab');
+	var btnProfile = document.getElementById('ibihub-settings-btn-profile');
+	var btnPassword = document.getElementById('ibihub-settings-btn-password');
+	if (!links.length || !tabs.length) return;
+	function showTab(id) {
+		tabs.forEach(function (t) {
+			var on = t.id === id;
+			t.classList.toggle('is-active', on);
+		});
+		links.forEach(function (btn) {
+			var active = btn.getAttribute('data-tab-target') === id;
+			btn.classList.toggle('is-active', active);
+			btn.setAttribute('aria-selected', active ? 'true' : 'false');
+		});
+		if (btnProfile && btnPassword) {
+			var isPassword = id === 'tab-password';
+			btnProfile.hidden = isPassword;
+			btnPassword.hidden = !isPassword;
+		}
+	}
+	links.forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			showTab(btn.getAttribute('data-tab-target'));
+		});
+	});
+	var initial = '{{ active_settings_tab|default:"profile" }}';
+	var map = { profile: 'tab-profile', photo: 'tab-photo', password: 'tab-password' };
+	if (map[initial]) showTab(map[initial]);
+})();
+</script>
+{% endblock %}

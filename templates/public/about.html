@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}À propos de nous — IbiHub{% endblock %}
+
+{% block content %}
+<div class="clearfix"></div>
+
+<div class="ibihub-contact-hero">
+	<div class="container ibihub-contact-hero__top">
+		<nav class="ibihub-breadcrumb" aria-label="Fil d'Ariane">
+			<ol>
+				<li><a href="{% url 'core:home' %}">Accueil</a></li>
+				<li aria-current="page">À propos</li>
+			</ol>
+		</nav>
+	</div>
+	<h1>À propos d'IbiHub</h1>
+	<p>Notre mission, notre vision et les valeurs qui nous animent au service des commerçants et des propriétaires.</p>
+	<svg class="ibihub-contact-wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+		<path d="M0,40 C360,90 720,0 1080,40 C1260,60 1380,50 1440,45 L1440,80 L0,80 Z"></path>
+	</svg>
+</div>
+
+<section class="ibihub-about-mission">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-sm-12">
+				<h1 class="text-primary-ibihub title-font-ibihub">Qui sommes-nous ?</h1>
+				<p>IbiHub connecte propriétaires et locataires pour des espaces commerciaux, entrepôts, garages et stands. Nous simplifions la recherche, la réservation et le paiement en ligne pour que vous vous concentriez sur votre activité.</p>
+				<p>Nous croyons qu’un espace bien choisi peut transformer une idée en entreprise florissante — au cœur des marchés, des quartiers et des zones d’activité.</p>
+				<h1 class="text-primary-ibihub title-font-ibihub">Notre mission</h1>
+				<p>Devenir la plateforme de référence pour la mise en relation d’espaces professionnels en Afrique : transparence des surfaces, disponibilité claire, et confiance entre les parties.</p>
+				<p>Nous investissons dans l’expérience utilisateur, la sécurité des transactions et l’accompagnement des commerçants comme des propriétaires.</p>
+				<a href="{% url 'core:liste_espaces' %}" class="button margin-top-25 ibihub-btn-primary">Trouver un espace</a>
+				<a href="{% url 'core:sign_up' %}" class="button margin-top-25 ibihub-btn-secondary">Rejoignez IbiHub</a>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<div class="ibihub-about-collage">
+					<div class="ibihub-about-collage__big">
+						<img src="{% static 'images/ab/ab-1.png' %}" alt="Espace commercial">
+					</div>
+					<div>
+						<img src="{% static 'images/ab/ab-2.png' %}" alt="Stockage">
+					</div>
+					<div>
+						<img src="{% static 'images/ab/ab-3.png' %}" alt="Marché">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="ibihub-about-stats">
+	<div class="container">
+		<div class="ibihub-about-stats__grid">
+			<div>
+				<div class="ibihub-about-stats__num">500+</div>
+				<div class="ibihub-about-stats__label">Espaces</div>
+			</div>
+			<div>
+				<div class="ibihub-about-stats__num">1000+</div>
+				<div class="ibihub-about-stats__label">Commerçants</div>
+			</div>
+			<div>
+				<div class="ibihub-about-stats__num">10+</div>
+				<div class="ibihub-about-stats__label">Villes</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="fullwidth padding-bottom-80 padding-top-20 margin-top-80">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="boxed-photo-banner">
+					<div class="boxed-photo-banner-text">
+						<h2 class="title-font-ibihub">Rejoignez IbiHub aujourd'hui</h2>
+						<p style="color:white !important;z-index: 10;">Des milliers de commerçants et propriétaires nous font confiance. Transformez votre espace en revenus dès maintenant.</p>
+						<a href="{% url 'core:sign_up' %}" class="button margin-top-25 bg-secondary-ibihub">Rejoignez IbiHub</a>
+					</div>
+					<img src="{% static 'images/join.png' %}" alt="">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

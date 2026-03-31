@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Investissez dans la logistique béninoise — IbiHub{% endblock %}
+
+{% block content %}
+<div class="clearfix"></div>
+
+<section class="ibihub-listings-hero" aria-labelledby="opportunites-hero-title">
+	<div class="ibihub-listings-hero__inner">
+		<h1 id="opportunites-hero-title">Investissez dans la Logistique Béninoise</h1>
+		<p>Acquérir ou faire construire des capacités de stockage (entrepôts, chambres froides) pour renforcer la chaîne logistique locale et soutenir les commerçants.</p>
+	</div>
+</section>
+
+<div class="ibihub-listings-body">
+	<div class="container">
+		<div class="ibihub-opportunites-note">
+			<strong>Offres à titre indicatif.</strong> Ces dossiers sont présentés pour illustrer les types d’investissements possibles. IbiHub peut vous mettre en relation avec des partenaires et experts. Pour louer un espace à court terme, utilisez <a href="{% url 'core:liste_espaces' %}">Trouvez votre espace</a>.
+		</div>
+
+		<div class="ibihub-listings-grid">
+			<article class="ibihub-space-card">
+				<div class="ibihub-space-card__media">
+					<img src="{% static 'images/category-space/cat-1.png' %}" alt="">
+					<span class="ibihub-space-card__badge">Entrepôt</span>
+				</div>
+				<div class="ibihub-space-card__body">
+					<h4 class="ibihub-space-card__title">Acquisition d&apos;entrepôt logistique — zone Cotonou</h4>
+					<p class="ibihub-space-card__location"><i class="fa fa-map-marker text-primary-ibihub" aria-hidden="true"></i> Cotonou, Bénin</p>
+					<p class="ibihub-space-card__meta"><span class="ibihub-space-card__meta-label">Surface</span> 800 à 1&nbsp;200 m²</p>
+					<p class="ibihub-space-card__availability ibihub-space-card__availability--now">Idéal pour hub régional et consolidation</p>
+					<div class="ibihub-space-card__divider"></div>
+					<div class="ibihub-space-card__footer">
+						<div class="ibihub-space-card__footer-price">
+							<span class="ibihub-space-card__price">Dossier</span>
+							<span class="ibihub-space-card__currency">sur étude</span>
+						</div>
+					</div>
+				</div>
+			</article>
+
+			<article class="ibihub-space-card">
+				<div class="ibihub-space-card__media">
+					<img src="{% static 'images/category-space/cat-2.png' %}" alt="">
+					<span class="ibihub-space-card__badge">Chambre froide</span>
+				</div>
+				<div class="ibihub-space-card__body">
+					<h4 class="ibihub-space-card__title">Construction de chambres froides — produits frais</h4>
+					<p class="ibihub-space-card__location"><i class="fa fa-map-marker text-primary-ibihub" aria-hidden="true"></i> Parakou / Grand Nord</p>
+					<p class="ibihub-space-card__meta"><span class="ibihub-space-card__meta-label">Capacité</span> modulaire</p>
+					<p class="ibihub-space-card__availability">Réduction des pertes post-récolte</p>
+					<div class="ibihub-space-card__divider"></div>
+					<div class="ibihub-space-card__footer">
+						<div class="ibihub-space-card__footer-price">
+							<span class="ibihub-space-card__price">Dossier</span>
+							<span class="ibihub-space-card__currency">sur étude</span>
+						</div>
+					</div>
+				</div>
+			</article>
+
+			<article class="ibihub-space-card">
+				<div class="ibihub-space-card__media">
+					<img src="{% static 'images/category-space/cat-2.png' %}" alt="">
+					<span class="ibihub-space-card__badge">Projet</span>
+				</div>
+				<div class="ibihub-space-card__body">
+					<h4 class="ibihub-space-card__title">Site mixte entrepôt + bureaux — Abomey-Calavi</h4>
+					<p class="ibihub-space-card__location"><i class="fa fa-map-marker text-primary-ibihub" aria-hidden="true"></i> Abomey-Calavi</p>
+					<p class="ibihub-space-card__meta"><span class="ibihub-space-card__meta-label">Usage</span> stockage + services</p>
+					<p class="ibihub-space-card__availability">Structuration en partenariat public-privé</p>
+					<div class="ibihub-space-card__divider"></div>
+					<div class="ibihub-space-card__footer">
+						<div class="ibihub-space-card__footer-price">
+							<span class="ibihub-space-card__price">Dossier</span>
+							<span class="ibihub-space-card__currency">sur étude</span>
+						</div>
+					</div>
+				</div>
+			</article>
+		</div>
+
+		<div class="ibihub-opportunites-cta-wrap">
+			<a href="{% url 'core:contact' %}" class="ibihub-invest-cta-btn">Contacter le service Investisseur</a>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% load static %}
+<aside class="ibihub-dashboard-sidebar" aria-label="Navigation tableau de bord">
+	<div class="ibihub-dashboard-sidebar__logo">
+		<a href="{% url 'core:home' %}"><img src="{% static 'images/favicon.png' %}" alt="IbiHub"></a>
+		<span style="font-family:Poppins;font-size:14px;color:white;">
+			{% if request.user.role == 'OWNER' %}Espace propriétaire{% else %}Espace commerçant{% endif %}
+		</span>
+	</div>
+	<ul class="ibihub-dashboard-nav">
+		<li>
+			<a href="{% url 'core:mon_dashboard' %}" class="{% if request.resolver_match.url_name == 'mon_dashboard' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-th-large" aria-hidden="true"></i></span> Tableau de bord
+			</a>
+		</li>
+		{% if request.user.role == 'OWNER' %}
+		<li>
+			<a href="{% url 'core:dashboard_spaces' %}" class="{% if request.resolver_match.url_name == 'dashboard_spaces' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-store" aria-hidden="true"></i></span> Mes espaces
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'core:dashboard_add_space' %}" class="{% if request.resolver_match.url_name == 'dashboard_add_space' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-plus-circle" aria-hidden="true"></i></span> Ajouter un espace
+			</a>
+		</li>
+		{% endif %}
+		<li>
+			<a href="{% url 'core:dashboard_reservations' %}" class="{% if request.resolver_match.url_name == 'dashboard_reservations' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-calendar-check" aria-hidden="true"></i></span> Réservations
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'core:dashboard_settings' %}" class="{% if request.resolver_match.url_name == 'dashboard_settings' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-cog" aria-hidden="true"></i></span> Paramètres
+			</a>
+		</li>
+		<li>
+			<form method="post" action="{% url 'core:logout' %}" class="ibihub-dashboard-logout-form">
+				{% csrf_token %}
+				<button type="submit" class="ibihub-dashboard-nav-logout">
+					<span class="icon"><i class="fa fa-sign-out-alt" aria-hidden="true"></i></span> Se déconnecter
+				</button>
+			</form>
+		</li>
+	</ul>
+	<div class="ibihub-dashboard-user-area" id="dashboardUserArea">
+		<button class="ibihub-dashboard-user-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+			<div class="ibihub-dashboard-user">
+				{% if request.user.photo_profil %}
+				<img src="{{ request.user.photo_profil.url }}" alt="">
+				{% else %}
+				<img src="{% static 'images/dashboard-avatar.jpg' %}" alt="Photo de profil">
+				{% endif %}
+				<div>
+					<div class="ibihub-dashboard-user__name">{{ request.user.get_full_name|default:request.user.username }}</div>
+					<div class="ibihub-dashboard-user__role">{{ request.user.get_role_display }}</div>
+				</div>
+			</div>
+		</button>
+		<div class="ibihub-dashboard-user-menu" aria-label="Menu utilisateur">
+			<a href="{% url 'core:dashboard_settings' %}">Paramètres du compte</a>
+			<a href="{% url 'core:contact' %}">Centre d'aide</a>
+			<form method="post" action="{% url 'core:logout' %}">
+				{% csrf_token %}
+				<button type="submit" class="ibihub-dashboard-user-menu__logout">Se déconnecter</button>
+			</form>
+		</div>
+	</div>
+</aside>

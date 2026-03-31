@@ -1,0 +1,261 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Réservations — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<div class="ibihub-dashboard-top">
+	<div>
+		<h1 class="text-primary-ibihub title-font-ibihub">Réservations</h1>
+		<p>
+			{% if request.user.role == 'OWNER' %}
+			Demandes de location sur vos entrepôts. Confirmez pour générer un QR code pour le client.
+			{% else %}
+			Vos demandes : présentez le pass d’accès à l’entrepôt une fois la réservation confirmée.
+			{% endif %}
+		</p>
+	</div>
+</div>
+
+{% if request.user.role == 'OWNER' %}
+<div class="ibihub-dash-tabs" role="tablist" aria-label="Filtre des réservations">
+	<button type="button" class="ibihub-dash-tabs__btn is-active" role="tab" aria-selected="true" data-tab="a-valider">À valider ({{ reservations_a_valider|length }})</button>
+	<button type="button" class="ibihub-dash-tabs__btn" role="tab" aria-selected="false" data-tab="historique">Historique ({{ reservations_historique|length }})</button>
+</div>
+
+<section class="ibihub-dashboard-panel ibihub-dash-tab-panel is-active" id="panel-a-valider" role="tabpanel" data-panel="a-valider">
+	<h2 class="ibihub-dashboard-panel__title">À valider</h2>
+	<div style="overflow-x:auto;">
+		<table class="ibihub-dashboard-table">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Image</th>
+					<th>Espace</th>
+					<th>Client</th>
+					<th>Période</th>
+					<th>Montant</th>
+					<th>Frais assurance (5&nbsp;%)</th>
+					<th>Gain net (propriétaire)</th>
+					<th>Statut</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for r in reservations_a_valider %}
+				<tr>
+					<td>{{ r.pk }}</td>
+					<td>
+						{% if r.entrepot.image_principale %}
+						<img class="ibihub-dashboard-table-image" src="{{ r.entrepot.image_principale.url }}" alt="">
+						{% else %}
+						<img class="ibihub-dashboard-table-image" src="{% static 'images/category-space/cat-1.png' %}" alt="">
+						{% endif %}
+					</td>
+					<td>{{ r.entrepot.titre }}</td>
+					<td>{{ r.client.get_full_name|default:r.client.username }}</td>
+					<td>{{ r.date_debut|date:"d/m/Y" }} — {{ r.date_fin|date:"d/m/Y" }}</td>
+					<td>{{ r.montant_total|floatformat:0 }}&nbsp;FCFA</td>
+					<td>{{ r.frais_assurance|floatformat:0 }}&nbsp;FCFA</td>
+					<td><strong>{{ r.revenu_net_proprietaire|floatformat:0 }}&nbsp;FCFA</strong></td>
+					<td>
+						<span class="ibihub-dashboard-status ibihub-dashboard-status--pending">{{ r.get_statut_display }}</span>
+					</td>
+					<td>
+						<form method="post" action="{% url 'core:confirmer_reservation' pk=r.pk %}" style="display:inline;margin-right:8px;">
+							{% csrf_token %}
+							<button type="submit" class="ibihub-dashboard-add-btn" style="padding:6px 14px;font-size:13px;">Confirmer la location</button>
+						</form>
+						<form method="post" action="{% url 'core:refuser_reservation' pk=r.pk %}" style="display:inline;" onsubmit="return confirm('Refuser cette demande ? Les dates redeviendront disponibles.');">
+							{% csrf_token %}
+							<button type="submit" class="ibihub-dashboard-add-btn ibihub-dashboard-add-btn--muted" style="padding:6px 14px;font-size:13px;background:#6b7280;color:#fff;">Refuser</button>
+						</form>
+					</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="10">Aucune demande en attente.</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</section>
+
+<section class="ibihub-dashboard-panel ibihub-dash-tab-panel" id="panel-historique" role="tabpanel" data-panel="historique" hidden>
+	<h2 class="ibihub-dashboard-panel__title">Historique</h2>
+	<p class="ibihub-dash-hint">Réservations confirmées, terminées ou refusées.</p>
+	<div style="overflow-x:auto;">
+		<table class="ibihub-dashboard-table">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Image</th>
+					<th>Espace</th>
+					<th>Client</th>
+					<th>Période</th>
+					<th>Montant</th>
+					<th>Frais assurance (5&nbsp;%)</th>
+					<th>Gain net (propriétaire)</th>
+					<th>Statut</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for r in reservations_historique %}
+				<tr>
+					<td>{{ r.pk }}</td>
+					<td>
+						{% if r.entrepot.image_principale %}
+						<img class="ibihub-dashboard-table-image" src="{{ r.entrepot.image_principale.url }}" alt="">
+						{% else %}
+						<img class="ibihub-dashboard-table-image" src="{% static 'images/category-space/cat-1.png' %}" alt="">
+						{% endif %}
+					</td>
+					<td>{{ r.entrepot.titre }}</td>
+					<td>{{ r.client.get_full_name|default:r.client.username }}</td>
+					<td>{{ r.date_debut|date:"d/m/Y" }} — {{ r.date_fin|date:"d/m/Y" }}</td>
+					<td>{{ r.montant_total|floatformat:0 }}&nbsp;FCFA</td>
+					<td>{{ r.frais_assurance|floatformat:0 }}&nbsp;FCFA</td>
+					<td><strong>{{ r.revenu_net_proprietaire|floatformat:0 }}&nbsp;FCFA</strong></td>
+					<td>
+						<span class="ibihub-dashboard-status {% if r.statut == 'CONFIRME' %}ibihub-dashboard-status--ok{% elif r.statut == 'TERMINE' %}ibihub-dashboard-status--done{% elif r.statut == 'ANNULE' %}ibihub-dashboard-status--cancel{% endif %}">
+							{{ r.get_statut_display }}
+						</span>
+					</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="9">Aucun historique pour le moment.</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</section>
+
+{% else %}
+
+<section class="ibihub-dashboard-panel">
+	<h2 class="ibihub-dashboard-panel__title">Mes réservations</h2>
+	<div style="overflow-x:auto;">
+		<table class="ibihub-dashboard-table">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Image</th>
+					<th>Espace</th>
+					<th>Période</th>
+					<th>Montant</th>
+					<th>Statut</th>
+					<th>Pass d’accès</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for r in reservations %}
+				<tr>
+					<td>{{ r.pk }}</td>
+					<td>
+						{% if r.entrepot.image_principale %}
+						<img class="ibihub-dashboard-table-image" src="{{ r.entrepot.image_principale.url }}" alt="">
+						{% else %}
+						<img class="ibihub-dashboard-table-image" src="{% static 'images/category-space/cat-1.png' %}" alt="">
+						{% endif %}
+					</td>
+					<td>{{ r.entrepot.titre }}</td>
+					<td>{{ r.date_debut|date:"d/m/Y" }} — {{ r.date_fin|date:"d/m/Y" }}</td>
+					<td>{{ r.montant_total|floatformat:0 }}&nbsp;FCFA</td>
+					<td>
+						<span class="ibihub-dashboard-status {% if r.statut == 'CONFIRME' %}ibihub-dashboard-status--ok{% elif r.statut == 'EN_ATTENTE' %}ibihub-dashboard-status--pending{% elif r.statut == 'ANNULE' %}ibihub-dashboard-status--cancel{% elif r.statut == 'TERMINE' %}ibihub-dashboard-status--done{% endif %}">
+							{{ r.get_statut_display }}
+						</span>
+					</td>
+					<td>
+						{% if r.statut == 'CONFIRME' and r.qr_data_uri %}
+						<button type="button" class="ibihub-dashboard-add-btn ibihub-pass-open" style="padding:6px 14px;font-size:13px;"
+							data-qr-src="{{ r.qr_data_uri }}"
+							data-ref="{{ r.pk }}"
+							data-entrepot="{{ r.entrepot.titre|escape }}">
+							Afficher mon Pass d’Accès
+						</button>
+						{% elif r.statut == 'CONFIRME' %}
+						<span style="color:#888;">QR indisponible</span>
+						{% else %}
+						<span style="color:#888;">—</span>
+						{% endif %}
+					</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="7">Aucune réservation.</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</section>
+
+<dialog id="ibihub-pass-modal" class="ibihub-pass-modal" aria-labelledby="ibihub-pass-modal-title">
+	<div class="ibihub-pass-modal__inner">
+		<button type="button" class="ibihub-pass-modal__close" aria-label="Fermer">&times;</button>
+		<h2 id="ibihub-pass-modal-title" class="ibihub-pass-modal__title">Pass d’accès — <span id="ibihub-pass-modal-entrepot"></span></h2>
+		<p class="ibihub-pass-modal__ref">Réf. #<span id="ibihub-pass-modal-ref"></span></p>
+		<div class="ibihub-pass-modal__qr-wrap">
+			<img id="ibihub-pass-modal-qr" src="" alt="QR code d’accès" width="220" height="220">
+		</div>
+		<p class="ibihub-pass-modal__note">Présentez ce code au propriétaire pour décharger vos marchandises.</p>
+	</div>
+</dialog>
+
+{% endif %}
+{% endblock %}
+
+{% block dashboard_extra_js %}
+{% if request.user.role != 'OWNER' %}
+<script>
+(function() {
+	var modal = document.getElementById('ibihub-pass-modal');
+	if (!modal) return;
+	var img = document.getElementById('ibihub-pass-modal-qr');
+	var titleEnt = document.getElementById('ibihub-pass-modal-entrepot');
+	var refEl = document.getElementById('ibihub-pass-modal-ref');
+	document.querySelectorAll('.ibihub-pass-open').forEach(function(btn) {
+		btn.addEventListener('click', function() {
+			img.src = btn.getAttribute('data-qr-src') || '';
+			titleEnt.textContent = btn.getAttribute('data-entrepot') || '';
+			refEl.textContent = btn.getAttribute('data-ref') || '';
+			if (modal.showModal) modal.showModal();
+			else modal.setAttribute('open', '');
+		});
+	});
+	modal.querySelector('.ibihub-pass-modal__close').addEventListener('click', function() {
+		if (modal.close) modal.close();
+		else modal.removeAttribute('open');
+	});
+	modal.addEventListener('click', function(e) {
+		if (e.target === modal && modal.close) modal.close();
+	});
+})();
+</script>
+{% else %}
+<script>
+(function() {
+	var tabs = document.querySelectorAll('.ibihub-dash-tabs__btn');
+	var panels = document.querySelectorAll('.ibihub-dash-tab-panel');
+	tabs.forEach(function(tab) {
+		tab.addEventListener('click', function() {
+			var id = tab.getAttribute('data-tab');
+			tabs.forEach(function(t) {
+				t.classList.toggle('is-active', t === tab);
+				t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+			});
+			panels.forEach(function(p) {
+				var show = p.getAttribute('data-panel') === id;
+				p.classList.toggle('is-active', show);
+				p.hidden = !show;
+			});
+		});
+	});
+})();
+</script>
+{% endif %}
+{% endblock %}

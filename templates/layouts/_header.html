@@ -1,0 +1,78 @@
+{% load static %}
+<!-- Header Container
+================================================== -->
+<header id="header-container" class="no-shadow">
+
+	<!-- Header -->
+	<div id="header">
+		<div class="container-fluid">
+			
+			<!-- Left Side Content -->
+			<div class="left-side">				
+				<!-- Logo -->
+				<div id="logo">
+					<a href="{% url 'core:home' %}"><img src="{% static 'images/logo.png' %}" style="width: 100%;zoom: 1.2;" alt="IbiHub"></a>
+				</div>
+
+				<!-- Mobile Navigation -->
+				<div class="mmenu-trigger" id="hamburger-menu">
+					<button class="hamburger hamburger--collapse" type="button" aria-label="Ouvrir le menu">
+						<span class="hamburger-box">
+							<span class="hamburger-inner"></span>
+						</span>
+					</button>
+				</div>
+
+				<!-- Main Navigation -->
+				<nav id="navigation" class="style-1">
+					<ul id="responsive">
+						<li class="ibihub-mm-brand-item">
+							<a href="{% url 'core:home' %}" class="ibihub-mm-brand-wrap">
+								<span class="ibihub-mm-brand">
+									<img src="{% static 'images/logo.png' %}" alt="IbiHub" class="ibihub-mm-brand__logo">
+									<span class="ibihub-mm-brand__title" aria-hidden="true"><span class="ibihub-mm-brand__i">I</span><span class="ibihub-mm-brand__muted">bi</span><span class="ibihub-mm-brand__i">H</span><span class="ibihub-mm-brand__muted">ub</span></span>
+									<p class="ibihub-mm-brand__tagline">Le hub des commerçants africains</p>
+								</span>
+							</a>
+						</li>
+						<li><a class="{% if request.resolver_match and request.resolver_match.url_name == 'home' %}current{% endif %}" href="{% url 'core:home' %}"><span class="ibihub-mm-desktop-only">Accueil</span><i class="fa fa-home ibihub-mm-ico" aria-hidden="true"></i><span class="ibihub-mm-link ibihub-mm-mobile-only"><span class="ibihub-mm-link__muted">Page</span><span class="ibihub-mm-link__accent">Accueil</span></span></a></li>
+						<li><a class="{% if request.resolver_match and request.resolver_match.url_name == 'a_propos' %}current{% endif %}" href="{% url 'core:a_propos' %}"><span class="ibihub-mm-desktop-only">À propos de nous</span><i class="fa fa-info-circle ibihub-mm-ico" aria-hidden="true"></i><span class="ibihub-mm-link ibihub-mm-mobile-only"><span class="ibihub-mm-link__muted">À propos</span><span class="ibihub-mm-link__accent">IbiHub</span></span></a></li>
+						<li><a class="{% if request.resolver_match and request.resolver_match.url_name == 'liste_espaces' %}current{% endif %}" href="{% url 'core:liste_espaces' %}"><span class="ibihub-mm-desktop-only">Trouvez votre espace</span><i class="fa fa-search ibihub-mm-ico" aria-hidden="true"></i><span class="ibihub-mm-link ibihub-mm-mobile-only"><span class="ibihub-mm-link__muted">Trouver un</span><span class="ibihub-mm-link__accent">espace</span></span></a></li>
+						<li><a class="{% if request.resolver_match and request.resolver_match.url_name == 'opportunites_immobilieres' %}current{% endif %}" href="{% url 'core:opportunites_immobilieres' %}"><span class="ibihub-mm-desktop-only">Opportunités immobilières</span><i class="fa fa-building ibihub-mm-ico" aria-hidden="true"></i><span class="ibihub-mm-link ibihub-mm-mobile-only"><span class="ibihub-mm-link__muted">Opportunités</span><span class="ibihub-mm-link__accent">immobilières</span></span></a></li>
+						<li><a class="{% if request.resolver_match and request.resolver_match.url_name == 'contact' %}current{% endif %}" href="{% url 'core:contact' %}"><span class="ibihub-mm-desktop-only">Contactez-nous</span><i class="fa fa-envelope ibihub-mm-ico" aria-hidden="true"></i><span class="ibihub-mm-link ibihub-mm-mobile-only"><span class="ibihub-mm-link__muted">Nous</span><span class="ibihub-mm-link__accent">contacter</span></span></a></li>
+						<li class="ibihub-mm-auth ibihub-mm-auth--signin"><a class="{% if request.resolver_match and request.resolver_match.url_name == 'sign_in' %}current{% endif %}" href="{% url 'core:sign_in' %}"><span class="ibihub-mm-desktop-only">Connectez vous</span><i class="fa fa-sign-in-alt ibihub-mm-ico" aria-hidden="true"></i><span class="ibihub-mm-link ibihub-mm-mobile-only"><span class="ibihub-mm-link__muted">Espace</span><span class="ibihub-mm-link__accent">connexion</span></span></a></li>
+						<li class="ibihub-mm-auth ibihub-mm-auth--signup"><a class="{% if request.resolver_match and request.resolver_match.url_name == 'sign_up' %}current{% endif %}" href="{% url 'core:sign_up' %}"><span class="ibihub-mm-desktop-only">Inscription</span><i class="fa fa-user-plus ibihub-mm-ico" aria-hidden="true"></i><span class="ibihub-mm-link ibihub-mm-mobile-only"><span class="ibihub-mm-link__muted">Créer un</span><span class="ibihub-mm-link__accent">compte</span></span></a></li>
+					</ul>
+				</nav>
+				<div class="clearfix"></div>
+				<!-- Main Navigation / End -->
+				
+			</div>
+			<!-- Left Side Content / End -->
+
+
+			<!-- Right Side Content / End -->
+			<div class="right-side">
+				<!-- Header Widget -->
+				<div class="header-widget">
+					{% if user.is_authenticated %}
+					<a href="{% url 'core:mon_dashboard' %}" class="ibihub-btn-primary">Tableau de bord</a>
+					<form method="post" action="{% url 'core:logout' %}" style="display:inline-block;margin-left:8px;vertical-align:middle;">
+						{% csrf_token %}
+						<button type="submit" class="ibihub-btn-simple" style="border:none;cursor:pointer;font:inherit;border-radius:10px;">Déconnexion</button>
+					</form>
+					{% else %}
+					<a href="{% url 'core:sign_in' %}" class="ibihub-btn-simple">Connectez vous <i class="fa fa-sign-in"></i></a>
+					<a href="{% url 'core:sign_up' %}" class="ibihub-btn-primary ibihub-header-signup">Inscription</a>
+					{% endif %}
+				</div>
+				<!-- Header Widget / End -->
+			</div>
+			<!-- Right Side Content / End -->
+		</div>
+	</div>
+	<!-- Header / End -->
+
+</header>
+<div class="clearfix"></div>
+<!-- Header Container / End -->

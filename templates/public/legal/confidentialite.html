@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Politique de confidentialité — IbiHub{% endblock %}
+{% block content %}
+<div class="container ibihub-legal-page">
+	<h1>Politique de confidentialité</h1>
+	<p><em>Dernière mise à jour : mars 2026</em></p>
+	<p>IbiHub collecte et traite des données personnelles dans le seul but de faire fonctionner la plateforme de mise en relation entre propriétaires d’espaces et utilisateurs.</p>
+	<h2>Données collectées</h2>
+	<p>Compte : identifiant (e-mail), nom, téléphone éventuel, rôle, photo de profil optionnelle. Annonces : informations décrivant les espaces et médias associés. Réservations : dates, montants et statuts nécessaires au suivi des demandes.</p>
+	<h2>Finalités</h2>
+	<p>Gestion des comptes, publication des annonces, traitement des réservations, sécurité, statistiques d’usage agrégées et support utilisateur.</p>
+	<h2>Conservation</h2>
+	<p>Les données sont conservées pendant la durée d’utilisation du service et les délais légaux applicables. Vous pouvez demander la suppression ou la rectification de vos données en nous contactant via la page Contact.</p>
+	<h2>Cookies</h2>
+	<p>Des cookies techniques peuvent être utilisés pour la session et la sécurité (CSRF). Aucun suivi publicitaire n’est requis pour le fonctionnement du site.</p>
+	<h2>Contact</h2>
+	<p>Pour toute question relative à vos données : <a href="{% url 'core:contact' %}">formulaire de contact</a>.</p>
+</div>
+{% endblock %}

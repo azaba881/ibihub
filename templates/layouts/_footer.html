@@ -1,0 +1,61 @@
+{% load static %}
+<!-- Footer
+================================================== -->
+<div id="footer" class="sticky-footer">
+	<!-- Main -->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3 col-sm-6">
+				<img class="footer-logo" src="{% static 'images/logo.png' %}" style="zoom: 2;" alt="">
+				<br><br>
+				<p style="color: rgb(210, 210, 210);">
+					Le hub des commerçants africains. Transformez vos espaces inutilisés en revenus passifs.
+				</p>
+			</div>
+
+			<div class="col-md-3 col-sm-6 ">
+				<h4 class="title-footer-ibihub">Autres liens</h4>
+				<ul class="footer-links">
+					<li><a href="{% url 'core:liste_espaces' %}">Nos espaces</a></li>
+					<li><a href="{% url 'core:opportunites_immobilieres' %}">Opportunités immobilières</a></li>
+					<li><a href="{% url 'core:contact' %}">Contactez-nous</a></li>
+					<li><a href="{% url 'core:home' %}#faq">FAQ</a></li>
+					<li><a href="{% url 'core:reclamation' %}">Réclamation</a></li>
+				</ul>
+				<div class="clearfix"></div>
+			</div>	
+			
+			<div class="col-md-3 col-sm-6 ">
+				<h4 class="title-footer-ibihub">Légal et sécurité</h4>
+				<ul class="footer-links">
+					<li><a href="{% url 'core:legal_confidentialite' %}">Politique de confidentialité</a></li>
+					<li><a href="{% url 'core:legal_cgu' %}">Conditions d'utilisation</a></li>
+					<li><a href="{% url 'core:legal_securite_espaces' %}">Politique de sécurité des espaces</a></li>
+				</ul>
+				<div class="clearfix"></div>
+			</div>	
+
+			<div class="col-md-3  col-sm-12">
+				<h4 class="title-footer-ibihub">Contactez-nous</h4>
+				<div class="text-widget">
+					<ul class="list-unstyled">
+						<li><span class="mb-10" style="color: rgb(210, 210, 210);"><i class="fa fa-map-marker text-white" style="margin-right: 10px;"></i> Godomey-plateau, Benin</span></li>
+						<li><span class="mb-10" style="color: rgb(210, 210, 210);"><i class="fa fa-phone text-white" style="margin-right: 10px;"></i> (+237) 6 99 99 99 99 </span></li>
+						<li><span class="mb-10" style="color: rgb(210, 210, 210);"><i class="fa fa-envelope text-white" style="margin-right: 10px;"></i> <a href="#" class="text-white" style="color: rgb(210, 210, 210);">contact@ibihub.com</a> </span></li>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+		
+		<!-- Copyright -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="copyrights">© 2026 IbiHub. Tous droits réservés.</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+<!-- Footer / End -->

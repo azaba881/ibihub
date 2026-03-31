@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fr">
+<head>
+  <title>Modifier un espace — IbiHub</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/main-color.css' %}" id="colors">
+  <link rel="stylesheet" href="{% static 'css/ibihub-global.css' %}">
+  <link rel="stylesheet" href="{% static 'css/ibihub-pages.css' %}">
+  <link rel="stylesheet" href="{% static 'css/ibibub-dashboard.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<div id="wrapper">
+  <section class="ibihub-dashboard-shell">
+    <div class="ibihub-dashboard">
+      <aside class="ibihub-dashboard-sidebar">
+        <div class="ibihub-dashboard-sidebar__logo"><img src="{% static 'images/favicon.png' %}"><span style="font-family:Poppins;font-size:14px;color:white;">Espace commerçant</span></div>
+        <ul class="ibihub-dashboard-nav">
+          <li><a href="{% url 'core:mon_dashboard' %}"><span class="icon"><i class="fa fa-th-large"></i></span> Tableau de bord</a></li>
+          <li><a href="dashboard-spaces.html" class="is-active"><span class="icon"><i class="fa fa-store"></i></span> Mes espaces</a></li>
+          <li><a href="dashboard-reservations.html"><span class="icon"><i class="fa fa-calendar-check"></i></span> Réservations</a></li>
+          <li><a href="dashboard-settings.html"><span class="icon"><i class="fa fa-cog"></i></span> Paramètres</a></li>
+        </ul>
+      </aside>
+      <main class="ibihub-dashboard-main">
+        <div class="ibihub-dashboard-top">
+          <div><h1 class="text-primary-ibihub title-font-ibihub">Modifier l'espace</h1><p>Mettez à jour les informations de votre annonce.</p></div>
+        </div>
+        <section class="ibihub-dashboard-panel">
+          <form class="ibihub-settings-form">
+            <div class="row">
+              <div class="col-md-6"><label>Titre</label><input type="text" value="Boutique Marché Central"></div>
+              <div class="col-md-6"><label>Type</label><select><option selected>Boutique</option><option>Garage</option><option>Entrepôt</option></select></div>
+              <div class="col-md-6"><label>Ville</label><input type="text" value="Dakar"></div>
+              <div class="col-md-6"><label>Surface (m²)</label><input type="number" value="28"></div>
+              <div class="col-md-6"><label>Prix (FCFA)</label><input type="number" value="125000"></div>
+              <div class="col-md-6"><label>Disponibilité</label><input type="date"></div>
+              <div class="col-md-12"><label>Remplacer image</label><input type="file" accept="image/*"></div>
+              <div class="col-md-12"><label>Description</label><textarea>Local très bien placé avec vitrine sur rue.</textarea></div>
+            </div>
+            <button type="button" class="ibihub-dashboard-add-btn">Enregistrer les modifications</button>
+          </form>
+        </section>
+
+        <section class="ibihub-dashboard-panel" style="margin-top:24px;">
+          <h2 class="text-primary-ibihub title-font-ibihub" style="font-size:20px; margin:0 0 8px;">Calendrier — périodes occupées</h2>
+          <p style="font-family:Poppins,sans-serif; font-size:14px; color:#555; margin:0 0 16px; max-width:720px;">Cliquez sur les jours pour marquer une période comme <strong>occupée</strong> (réservation, travaux, indisponibilité). Les jours libres restent disponibles pour les visiteurs. Les choix sont enregistrés dans ce navigateur (démo) et se reflètent sur la fiche publique de l’espace.</p>
+          <div id="admin-space-calendar" class="ibihub-mini-cal-root" style="max-width:360px;" aria-label="Calendrier d’occupation"></div>
+          <p style="font-size:12px; color:#888; margin-top:12px; font-family:Poppins,sans-serif;">Astuce : ouvrez la <a href="{% url 'core:liste_espaces' %}" style="color:#0d5c4d; font-weight:600;">liste des espaces</a> (puis ouvrez une fiche) dans un autre onglet pour vérifier l’affichage visiteur.</p>
+        </section>
+      </main>
+    </div>
+  </section>
+</div>
+<script type="text/javascript" src="{% static 'js/ibihub-calendar.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.IbihubCalendar) window.IbihubCalendar.initAdmin('admin-space-calendar');
+});
+</script>
+</body>
+</html>

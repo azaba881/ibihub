@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trouvez votre espace — IbiHub{% endblock %}
+
+{% block content %}
+<div class="clearfix"></div>
+<section class="ibihub-listings-hero" aria-labelledby="listings-hero-title">
+	<div class="ibihub-listings-hero__inner">
+		<h1 id="listings-hero-title">Trouvez votre espace idéal</h1>
+		<p>Des boutiques aux entrepôts, parcourez des annonces vérifiées près de chez vous. Filtrez par ville, catégorie et budget.</p>
+		<div class="ibihub-listings-search-card">
+			<form action="{% url 'core:liste_espaces' %}" method="get" class="ibihub-listings-search-row">
+				<div class="ibihub-ls-field">
+					<label for="ls-q">Mot-clé</label>
+					<input type="search" id="ls-q" name="q" placeholder="Titre, adresse, catégorie…" value="{{ filtres.q }}">
+				</div>
+				<div class="ibihub-ls-field">
+					<label for="ls-city">Ville</label>
+					<select id="ls-city" name="ville">
+						<option value="">Toutes les villes</option>
+						{% for val, label in villes_choices %}
+						<option value="{{ val }}" {% if filtres.ville == val %}selected{% endif %}>{{ label }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="ibihub-ls-field">
+					<label for="ls-prix-max">Budget max. (FCFA / jour)</label>
+					<input type="number" id="ls-prix-max" name="prix_max" min="0" step="100" placeholder="Ex. 50000" value="{{ filtres.prix_max }}">
+				</div>
+				<div class="ibihub-ls-field">
+					<label for="ls-cat">Catégorie</label>
+					<select id="ls-cat" name="categorie">
+						<option value="">Toutes</option>
+						{% for c in categories %}
+						<option value="{{ c.pk }}" {% if filtres.categorie == c.pk|stringformat:"d" %}selected{% endif %}>{{ c.nom }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<button type="submit" class="ibihub-listings-search-btn"><i class="fa fa-search" aria-hidden="true"></i> Rechercher</button>
+			</form>
+			<div class="ibihub-listings-chips">
+				{% for c in categories %}
+				<a href="{% url 'core:liste_espaces' %}?categorie={{ c.pk }}" class="ibihub-listings-chip">{{ c.nom }}</a>
+				{% empty %}
+				<span class="ibihub-listings-chip ibihub-listings-chip--muted">Catégories à définir dans l’admin</span>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</section>
+
+<div class="ibihub-listings-body">
+	<div class="container">
+		<div class="ibihub-listings-toolbar">
+			<p class="ibihub-listings-count"><strong>{{ entrepots|length }}</strong> résultat{{ entrepots|length|pluralize }}</p>
+			<div class="ibihub-listings-sort">
+				<label for="ls-sort">Trier par</label>
+				<select id="ls-sort" name="sort">
+					<option>Pertinence</option>
+					<option>Prix croissant</option>
+					<option>Prix décroissant</option>
+					<option>Surface</option>
+					<option>Plus récent</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="ibihub-listings-grid">
+			{% for e in entrepots %}
+				<article class="ibihub-space-card">
+					<a href="{% url 'core:espace_detail' pk=e.pk %}" class="ibihub-space-card__overlay" aria-label="{{ e.titre }}"></a>
+					<div class="ibihub-space-card__media">
+						{% if e.image_principale %}
+						<img src="{{ e.image_principale.url }}" alt="">
+						{% else %}
+						<img src="{% static 'images/category-space/cat-1.png' %}" alt="">
+						{% endif %}
+						<span class="ibihub-space-card__badge">{{ e.categorie.nom|upper }}</span>
+					</div>
+					<div class="ibihub-space-card__body">
+						<h4 class="ibihub-space-card__title">{{ e.titre }}</h4>
+						<p class="ibihub-space-card__location"><i class="fa fa-map-marker text-primary-ibihub" aria-hidden="true"></i> {{ e.get_ville_display }}</p>
+						<p class="ibihub-space-card__meta"><span class="ibihub-space-card__meta-label">Surface</span> {{ e.surface_m2 }} m²</p>
+						<p class="ibihub-space-card__availability{% if e.disponible %} ibihub-space-card__availability--now{% endif %}">{% if e.disponible %}Disponible{% else %}Indisponible{% endif %}</p>
+						<div class="ibihub-space-card__divider"></div>
+						<div class="ibihub-space-card__footer">
+							<div class="ibihub-space-card__footer-price">
+								<span class="ibihub-space-card__price">{{ e.prix_par_jour|floatformat:0 }}</span>
+								<span class="ibihub-space-card__currency">FCFA/j</span>
+							</div>
+							<span class="ibihub-space-card__cta">Voir le détail <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
+						</div>
+					</div>
+				</article>
+			{% empty %}
+				<p class="ibihub-listings-empty">Aucun entrepôt ne correspond à ces critères pour le moment.</p>
+			{% endfor %}
+		</div>
+
+		<div class="pagination-container margin-top-10 margin-bottom-20">
+			<nav class="pagination">
+				<ul>
+					<li><a href="{% url 'core:liste_espaces' %}#" class="current-page">1</a></li>
+					<li><a href="{% url 'core:liste_espaces' %}#">2</a></li>
+					<li><a href="{% url 'core:liste_espaces' %}#">3</a></li>
+					<li><a href="{% url 'core:liste_espaces' %}#"><i class="sl sl-icon-arrow-right"></i></a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+{% endblock %}

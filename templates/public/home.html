@@ -1,0 +1,533 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}IbiHub — Accueil{% endblock %}
+
+{% block content %}
+<!-- Banner
+================================================== -->
+<div class="main-search-container plain-color ibihub-home-hero">
+	<div class="main-search-inner">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="main-search-headlines">
+						<h1 class="text-hero-ibihub">
+							Transformez chaque mètre carré inutilisé en revenus
+						</h1>
+						<p class="text-hero-ibihub-subtitle">
+							Trouvez l'espace idéal pour votre stockage et double ou triple votre revenu sans vous soucier de la location.
+						</p>
+					</div>
+
+					<form method="get" action="{% url 'core:liste_espaces' %}" class="main-search-input ibihub-home-hero-search" id="ibihub-home-hero-search">
+						<div class="main-search-input-item">
+							<label class="screen-reader-text" for="ibihub-home-q">Mot-clé</label>
+							<input id="ibihub-home-q" type="search" name="q" placeholder="Rechercher par nom, localisation ou catégorie" value="" autocomplete="off"/>
+						</div>
+
+						<div class="main-search-input-item location">
+							<label class="screen-reader-text" for="ibihub-home-ville">Ville</label>
+							<div id="autocomplete-container">
+								<input id="autocomplete-input" name="ville" type="text" placeholder="Ville (ex. Cotonou)" value="" autocomplete="address-level2">
+							</div>
+							<span class="ibihub-home-loc-icon" aria-hidden="true"><i class="fa fa-map-marker text-primary-ibihub"></i></span>
+						</div>
+
+						<div class="main-search-input-item">
+							<label class="screen-reader-text" for="ibihub-home-cat-select">Catégorie</label>
+							<select data-placeholder="Toutes les catégories" class="chosen-select" id="ibihub-home-cat-select" name="categorie" aria-label="Catégorie">
+								<option value="">Toutes les catégories</option>
+								{% for c in categories_all %}
+								<option value="{{ c.pk }}">{{ c.nom }} ({{ c.nb }})</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<button type="submit" class="button bg-secondary-ibihub">Rechercher</button>
+					</form>
+				</div>
+			</div>
+			<!-- Features Categories -->
+			<div class="row">
+				<div class="col-md-12">
+					<h5 class="highlighted-categories-headline">Découvrez les espaces disponibles près de chez vous</h5>
+					  
+					<div class="highlighted-categories">
+						{% for c in categories_banner %}
+						<a href="{% url 'core:liste_espaces' %}?categorie={{ c.pk }}" class="highlighted-category bg-primary-ibihub">
+					    	<!-- {% if c.image %}
+					    	<img src="{{ c.image.url }}" alt="" class="highlighted-category__img" width="40" height="40">
+					    	{% else %}
+					    	<i class="{{ c.icone|default:'fas fa-warehouse' }}" aria-hidden="true"></i>
+					    	{% endif %} -->
+					    	<h4>{{ c.nom }} ({{ c.nb }})</h4>
+						</a>
+						{% empty %}
+						<p class="highlighted-categories-headline" style="margin:0;">Les catégories seront affichées dès qu’elles seront créées dans l’administration.</p>
+						{% endfor %}
+					</div>
+					
+				</div>
+			</div>
+			<!-- Featured Categories - End -->
+		</div>
+
+	</div>
+
+	<!-- Main Search Photo Slider -->
+	<div class="container msps-container">
+		<div class="main-search-photo-slider">
+			<div class="msps-slider-container">
+				<div class="msps-slider">
+					<div class="item"><img src="{% static 'images/category-hero/category-box-4.png' %}" class="item" title="Title 1"/></div>
+					<div class="item"><img src="{% static 'images/category-hero/category-box-3.png' %}" class="item" title="Title 1"/></div>
+					<div class="item"><img src="{% static 'images/category-hero/category-box-2.png' %}" class="item" title="Title 1"/></div>
+				</div>
+			</div>
+		</div>
+		<div class="msps-shapes" id="scene">
+			
+		</div>
+	</div>
+</div>
+
+<!-- Comment ça marche -->
+<section class="ibihub-how-it-works margin-top-75" aria-labelledby="how-it-works-title">
+	<div class="container">
+		<div class="col-md-12">
+			<h3 class="headline centered margin-bottom-45">
+				<strong class="headline-with-separator text-primary-ibihub title-ibihub">Comment ça marche ?</strong>
+				<span>Découvrez comment utiliser notre plateforme pour trouver l'espace idéal près de chez vous</span>
+			</h3>
+		</div>
+		<div class="ibihub-how-it-works__track">
+			<div class="row ibihub-how-it-works__row">
+				<div class="col-12 col-sm-6 col-md-3 ibihub-how-it-works__step">
+					<div class="ibihub-how-it-works__icon-group">
+						<div class="ibihub-how-it-works__circle">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+						</div>
+						<span class="ibihub-how-it-works__badge">1</span>
+					</div>
+					<h3 class="ibihub-how-it-works__step-title">Recherchez</h3>
+					<p class="ibihub-how-it-works__step-text">Trouvez l'espace idéal près de chez vous en quelques clics</p>
+				</div>
+				<div class="col-12 col-sm-6 col-md-3 ibihub-how-it-works__step">
+					<div class="ibihub-how-it-works__icon-group">
+						<div class="ibihub-how-it-works__circle">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+						</div>
+						<span class="ibihub-how-it-works__badge">2</span>
+					</div>
+					<h3 class="ibihub-how-it-works__step-title">Réservez</h3>
+					<p class="ibihub-how-it-works__step-text">Réservez directement en ligne de manière simple et rapide</p>
+				</div>
+				<div class="col-12 col-sm-6 col-md-3 ibihub-how-it-works__step">
+					<div class="ibihub-how-it-works__icon-group">
+						<div class="ibihub-how-it-works__circle">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg>
+						</div>
+						<span class="ibihub-how-it-works__badge">3</span>
+					</div>
+					<h3 class="ibihub-how-it-works__step-title">Payez</h3>
+					<p class="ibihub-how-it-works__step-text">Effectuez le paiement de façon sécurisée sur notre plateforme</p>
+				</div>
+				<div class="col-12 col-sm-6 col-md-3 ibihub-how-it-works__step">
+					<div class="ibihub-how-it-works__icon-group">
+						<div class="ibihub-how-it-works__circle">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"></path><path d="m21 2-9.6 9.6"></path><circle cx="7.5" cy="15.5" r="5.5"></circle></svg>
+						</div>
+						<span class="ibihub-how-it-works__badge">4</span>
+					</div>
+					<h3 class="ibihub-how-it-works__step-title">Accédez</h3>
+					<p class="ibihub-how-it-works__step-text">Récupérez vos clés et commencez à utiliser votre espace</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Espaces : sélection aléatoire (6) — données dynamiques -->
+<section class="ibihub-gallery-spaces" aria-labelledby="gallery-spaces-title">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h3 class="headline centered margin-bottom-45">
+					<strong id="gallery-spaces-title" class="headline-with-separator text-primary-ibihub title-ibihub">Espaces à découvrir</strong>
+					<span>Sélection aléatoire de six annonces publiées sur IbiHub</span>
+				</h3>
+			</div>
+		</div>
+		<div class="ibihub-home-recent-grid">
+			{% for e in recent_entrepots %}
+				<article class="ibihub-space-card ibihub-space-card--home-recent">
+					<a href="{% url 'core:espace_detail' pk=e.pk %}" class="ibihub-space-card__overlay" aria-label="{{ e.titre }} — Voir le détail"></a>
+					<div class="ibihub-space-card__media">
+						{% if e.image_principale %}
+						<img src="{{ e.image_principale.url }}" alt="{{ e.titre }}">
+						{% else %}
+						<img src="{% static 'images/category-space/cat-1.png' %}" alt="">
+						{% endif %}
+						<span class="ibihub-space-card__badge">{{ e.categorie.nom|upper }}</span>
+					</div>
+					<div class="ibihub-space-card__body">
+						<h4 class="ibihub-space-card__title">{{ e.titre }}</h4>
+						<p class="ibihub-space-card__location"><i class="fa fa-map-marker text-primary-ibihub" aria-hidden="true"></i> {{ e.get_ville_display }}</p>
+						<p class="ibihub-space-card__meta"><span class="ibihub-space-card__meta-label">Surface</span> {{ e.surface_m2 }} m²</p>
+						<p class="ibihub-space-card__availability{% if e.disponible %} ibihub-space-card__availability--now{% endif %}">{% if e.disponible %}Disponible{% else %}Indisponible{% endif %}</p>
+						<div class="ibihub-space-card__divider"></div>
+						<div class="ibihub-space-card__footer">
+							<div class="ibihub-space-card__footer-price">
+								<span class="ibihub-space-card__price">{{ e.prix_par_jour|floatformat:0 }}</span>
+								<span class="ibihub-space-card__currency">FCFA/j</span>
+							</div>
+							<span class="ibihub-space-card__cta">Voir le détail <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
+						</div>
+					</div>
+				</article>
+			{% empty %}
+			<p class="ibihub-home-recent-empty">Aucune annonce pour le moment. Revenez bientôt ou <a href="{% url 'core:sign_up' %}">créez un compte propriétaire</a>.</p>
+			{% endfor %}
+		</div>
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<a href="{% url 'core:liste_espaces' %}" class="button margin-top-25 ibihub-btn-primary">Voir tous nos espaces maintenant<i class="fa fa-arrow-right"></i></a>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Listings -->
+<div class="container margin-top-75">
+	<div class="row">
+
+		<div class="col-md-12">
+			<h3 class="headline centered margin-bottom-45">
+					<strong class="headline-with-separator text-primary-ibihub title-ibihub">Explorez nos catégories d'espaces</strong>
+				<span>Découvrez les espaces disponibles près de chez vous par catégorie</span>
+			</h3>
+		</div>
+
+		<div class="col-md-12">
+			{% if categories_explore %}
+			<div class="simple-slick-carousel dots-nav">
+				{% for c in categories_explore %}
+				<div class="carousel-item"{% if forloop.first %} style="border-radius: 20px !important;"{% endif %}>
+					<a href="{% url 'core:liste_espaces' %}?categorie={{ c.pk }}" class="listing-item-container">
+						<div class="listing-item">
+							{% if c.image %}
+							<img src="{{ c.image.url }}" alt="{{ c.nom }}">
+							{% else %}
+							{% cycle 'images/category-space/cat-1.png' 'images/category-space/cat-2.png' 'images/category-space/cat-3.png' 'images/category-space/cat-4.png' 'images/category-space/cat-5.png' 'images/category-space/cat-6.webp' as catimg silent %}
+							<img src="{% static catimg %}" alt="{{ c.nom }}">
+							{% endif %}
+							<div class="listing-item-content">
+								<h3 class="text-cat-ibihub">{{ c.nom }} ({{ c.nb }})</h3>
+							</div>
+							<span class="like-icon"></span>
+						</div>
+					</a>
+				</div>
+				{% endfor %}
+			</div>
+			{% else %}
+			<p class="text-center">Aucune catégorie pour le moment.</p>
+			{% endif %}
+		</div>
+
+	</div>
+</div>
+<!-- Listings / End -->
+
+<!-- À propos -->
+<section class="ibihub-about-block fullwidth padding-top-75 padding-bottom-80" data-background-color="#f8faf9" aria-labelledby="about-ibihub-title">
+	<div class="container">
+		<div class="row section-about-ibihub">
+			<div class="col-md-6 col-sm-12 margin-bottom-40 margin-top-60">
+				<h2 id="about-ibihub-title" class="headline-with-separator text-primary-ibihub title-ibihub">À propos de la securite des stockages</h2>
+				<p class="ibihub-about-block__lead">Nous garantissons la securite de vos stockages en mettant en place des mecanismes de securite pour garantir la protection de vos biens.</p>
+				<p class="ibihub-about-block__text">Nous sommes fiers de travailler avec les meilleurs partenaires pour vous offrir les meilleures expériences</p>
+				<ul class="ibihub-about-block__list">
+					<li><i class="fa fa-check bg-primary-ibihub text-white" style="padding: 10px; border-radius: 50%;" aria-hidden="true"></i> Protection 24/7</li>
+					<li><i class="fa fa-check bg-primary-ibihub text-white" style="padding: 10px; border-radius: 50%;" aria-hidden="true"></i> Caméras de surveillance</li>
+					<li><i class="fa fa-check bg-primary-ibihub text-white" style="padding: 10px; border-radius: 50%;" aria-hidden="true"></i> Alarmes et assurance</li>
+				</ul>
+				<a href="{% url 'core:liste_espaces' %}" class="button margin-top-25 ibihub-btn-primary">Trouver un espace</a>
+				<a href="{% url 'core:sign_up' %}" class="button margin-top-25 ibihub-btn-secondary">Rejoignez IbiHub</a>
+			</div>
+			<div class="col-md-6 col-sm-12 margin-top-60">
+				<div class="ibihub-about-block__visual">
+					<img src="{% static 'images/about.png' %}" alt="Illustration des espaces IbiHub">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Testimonials -->
+<section class="fullwidth margin-top-20 padding-top-75 padding-bottom-70" data-background-color="#f9f9f9">
+	<!-- Info Section -->
+	<div class="container">
+
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<h1 class="headline centered text-primary-ibihub title-ibihub">
+					Que disent nos utilisateurs ?
+				</h1>
+				<p class="margin-top-25 text-center text-secondary-ibihub">Nous collectons les avis de nos utilisateurs afin que vous puissiez avoir une opinion honnête sur l'expérience que vous avez avec notre plateforme !</p>
+			</div>
+		</div>
+
+	</div>
+	<!-- Info Section / End -->
+
+	<!-- Categories Carousel -->
+	<div class="fullwidth-carousel-container margin-top-20">
+		<div class="testimonial-carousel testimonials">
+
+			<!-- Item -->
+			<div class="fw-carousel-review">
+				<div class="testimonial-box">
+					<div class="testimonial">J'ai trouvé un espace de stockage pour mon entreprise grâce à IbiHub. C'est une plateforme très simple d'utilisation et je recommande vivement !</div>
+				</div>
+				<div class="testimonial-author">
+					<img src="{% static 'images/reviews/happy-client-01.jpg' %}" alt="">
+					<h4>John Doe <span>Entrepreneur</span></h4>
+				</div>
+			</div>
+			
+			<!-- Item -->
+			<div class="fw-carousel-review">
+				<div class="testimonial-box">
+					<div class="testimonial">IbiHub est une plateforme très simple d'utilisation et je recommande vivement ! Je suis très satisfait de la qualité des espaces que j'ai trouvés.</div>
+				</div>
+				<div class="testimonial-author">
+					<img src="{% static 'images/reviews/happy-client-02.jpg' %}" alt="">
+					<h4>Jane Doe <span>Entrepreneur</span></h4>
+				</div>
+			</div>
+
+			<!-- Item -->
+			<div class="fw-carousel-review">
+				<div class="testimonial-box">
+					<div class="testimonial">IbiHub est une plateforme très simple d'utilisation et je recommande vivement ! Je suis très satisfait de la qualité des espaces que j'ai trouvés.</div>
+				</div>
+				<div class="testimonial-author">
+					<img src="{% static 'images/reviews/happy-client-03.jpg' %}" alt="">
+					<h4>John Doe <span>Entrepreneur</span></h4>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- Categories Carousel / End -->
+
+</section>
+
+<!-- Questions fréquentes -->
+<section class="ibihub-faq-section fullwidth" id="faq" aria-labelledby="faq-title">
+	<div class="container">
+		<h3 class="headline centered margin-bottom-0">
+			<strong id="faq-title" class="headline-with-separator text-primary-ibihub title-ibihub">Questions fréquentes</strong>
+			<span>Les réponses aux demandes les plus courantes sur IbiHub</span>
+		</h3>
+		<div class="ibihub-faq-wrap margin-top-40">
+			<div class="ibihub-faq-columns">
+				<div class="ibihub-faq-col">
+					<details class="ibihub-faq-item">
+						<summary>
+							<span>Comment réserver un espace sur IbiHub ?</span>
+							<i class="fa fa-chevron-down ibihub-faq-chevron" aria-hidden="true"></i>
+						</summary>
+						<div class="ibihub-faq-item__body">
+							<p>Créez un compte, parcourez les annonces, puis choisissez l’espace et les dates qui vous conviennent. Après validation du propriétaire, le paiement sécurisé confirme votre réservation.</p>
+						</div>
+					</details>
+					<details class="ibihub-faq-item">
+						<summary>
+							<span>Les paiements sont-ils sécurisés ?</span>
+							<i class="fa fa-chevron-down ibihub-faq-chevron" aria-hidden="true"></i>
+						</summary>
+						<div class="ibihub-faq-item__body">
+							<p>Oui. Les transactions passent par notre plateforme avec des protocoles de paiement reconnus (carte bancaire, solutions mobiles selon les pays). Nous ne stockons pas vos données bancaires en clair.</p>
+						</div>
+					</details>
+					<details class="ibihub-faq-item">
+						<summary>
+							<span>Puis-je annuler ou modifier une réservation ?</span>
+							<i class="fa fa-chevron-down ibihub-faq-chevron" aria-hidden="true"></i>
+						</summary>
+						<div class="ibihub-faq-item__body">
+							<p>Cela dépend des conditions indiquées sur l’annonce et du délai avant la date d’entrée. Vous pouvez demander une modification ou une annulation depuis votre espace ; le propriétaire valide selon la politique affichée.</p>
+						</div>
+					</details>
+					<details class="ibihub-faq-item">
+						<summary>
+							<span>Quelle est la différence entre commerçant et propriétaire ?</span>
+							<i class="fa fa-chevron-down ibihub-faq-chevron" aria-hidden="true"></i>
+						</summary>
+						<div class="ibihub-faq-item__body">
+							<p>Le <strong>commerçant</strong> recherche et loue des espaces. Le <strong>propriétaire</strong> publie des annonces et gère la mise à disposition. Vous choisissez votre rôle à l’inscription (modifiable selon les règles du compte).</p>
+						</div>
+					</details>
+				</div>
+				<div class="ibihub-faq-col">					
+					<details class="ibihub-faq-item">
+						<summary>
+							<span>Quelles infos sont obligatoires (surface, disponibilité) ?</span>
+							<i class="fa fa-chevron-down ibihub-faq-chevron" aria-hidden="true"></i>
+						</summary>
+						<div class="ibihub-faq-item__body">
+							<p>La surface (m²), l’adresse ou le quartier, le type d’espace, le prix et les créneaux de disponibilité sont requis pour la clarté des annonces et la confiance entre utilisateurs.</p>
+						</div>
+					</details>
+					<details class="ibihub-faq-item">
+						<summary>
+							<span>Comment réinitialiser mon mot de passe ?</span>
+							<i class="fa fa-chevron-down ibihub-faq-chevron" aria-hidden="true"></i>
+						</summary>
+						<div class="ibihub-faq-item__body">
+							<p>Sur la page de connexion, cliquez sur « Mot de passe oublié ? », indiquez votre e-mail et suivez le lien de réinitialisation envoyé dans votre boîte de réception.</p>
+						</div>
+					</details>
+					<details class="ibihub-faq-item">
+						<summary>
+							<span>Comment contacter le support IbiHub ?</span>
+							<i class="fa fa-chevron-down ibihub-faq-chevron" aria-hidden="true"></i>
+						</summary>
+						<div class="ibihub-faq-item__body">
+							<p>Utilisez le formulaire de la page <a href="{% url 'core:contact' %}">Contact</a> ou l’adresse e-mail indiquée en pied de page. Nous répondons en général sous 2 à 3 jours ouvrés.</p>
+						</div>
+					</details>
+					<details class="ibihub-faq-item">
+						<summary>
+							<span>Comment publier une annonce pour mon local ou entrepôt ?</span>
+							<i class="fa fa-chevron-down ibihub-faq-chevron" aria-hidden="true"></i>
+						</summary>
+						<div class="ibihub-faq-item__body">
+							<p>Connectez-vous en tant que propriétaire, accédez à « Publier une annonce », renseignez photos, surface, disponibilité et tarif. Après vérification, votre espace est visible par les commerçants.</p>
+						</div>
+					</details>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<!-- Recent Blog Posts -->
+<section class="fullwidth margin-top-0 padding-top-20 padding-bottom-20" data-background-color="#fff">
+	<div class="container">
+
+		<div class="row">
+			<div class="col-md-12">
+				<h3 class="headline centered margin-bottom-55">
+					<strong class="headline-with-separator title-ibihub text-primary-ibihub">Découvrez nos dernières actualités</strong>
+				</h3>
+			</div>
+		</div>
+
+		<div class="row">
+			<!-- Blog Post Item -->
+			<div class="col-md-4">
+				<a href="pages-blog-post.html" class="blog-compact-item-container">
+					<div class="blog-compact-item">
+						<img src="{% static 'images/blog/blog-1.png' %}" alt="">
+						<span class="blog-item-tag">Actualités</span>
+						<div class="blog-compact-item-content">
+							<h3>IbiHub : Le hub des commerçants africains</h3>
+						</div>
+					</div>
+				</a>
+			</div>
+			<!-- Blog post Item / End -->
+
+			<!-- Blog Post Item -->
+			<div class="col-md-4">
+				<a href="pages-blog-post.html" class="blog-compact-item-container">
+					<div class="blog-compact-item">
+						<img src="{% static 'images/blog/blog-2.png' %}" alt="">
+						<span class="blog-item-tag">Actualités</span>
+						<div class="blog-compact-item-content">
+							<h3>Comment IbiHub transforme les espaces inutilisés en revenus</h3>
+						</div>
+					</div>
+				</a>
+			</div>
+			<!-- Blog post Item / End -->
+
+			<!-- Blog Post Item -->
+			<div class="col-md-4">
+				<a href="pages-blog-post.html" class="blog-compact-item-container">
+					<div class="blog-compact-item">
+						<img src="{% static 'images/blog/blog-3.png' %}" alt="">
+						<span class="blog-item-tag">Actualités</span>
+						<div class="blog-compact-item-content">
+							<h3>Comment trouver un espace dans votre ville</h3>
+						</div>
+					</div>
+				</a>
+			</div>
+			<!-- Blog post Item / End -->
+		</div>
+
+	</div>
+</section>
+<!-- Recent Blog Posts / End -->
+
+<section class="fullwidth margin-top-20 margin-bottom-0 padding-top-60 padding-bottom-65" data-background-color="#ffffff">
+	<!-- Logo Carousel -->
+	<div class="container">
+		<div class="row">
+
+			<div class="col-md-12">
+				<h3 class="headline centered margin-bottom-40 margin-top-10">
+					<strong class="headline-with-separator title-ibihub text-primary-ibihub">Nos partenaires</strong>
+					<span>Nous sommes fiers de travailler avec les meilleurs partenaires pour vous offrir les meilleures expériences</span>
+				</h3>
+			</div>
+			
+			<!-- Carousel -->
+			<div class="col-md-12">
+				<div class="logo-slick-carousel dot-navigation">
+					
+					<div class="item">
+						<img src="{% static 'images/patner/logo-01.png' %}" alt="">
+					</div>
+					
+					<div class="item">
+						<img src="{% static 'images/patner/logo-02.png' %}" alt="">
+					</div>
+					
+					<div class="item">
+						<img src="{% static 'images/patner/logo-03.png' %}" alt="">
+					</div>
+					
+					<div class="item">
+						<img src="{% static 'images/patner/logo-04.png' %}" alt="">
+					</div>
+					
+					<div class="item">
+						<img src="{% static 'images/patner/logo-05.png' %}" alt="">
+					</div>		
+
+					<div class="item">
+						<img src="{% static 'images/patner/logo-06.png' %}" alt="">
+					</div>	
+
+					<div class="item">
+						<img src="{% static 'images/patner/logo-07.png' %}" alt="">
+					</div>
+
+
+				</div>
+			</div>
+			<!-- Carousel / End -->
+
+		</div>
+	</div>
+	<!-- Logo Carousel / End -->
+</section>
+{% endblock %}
