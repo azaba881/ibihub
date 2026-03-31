@@ -1,4 +1,7 @@
-# 📦 Ibihub - Plateforme de Partage d'Espaces de Stockage (Bénin)
+<img width="500" height="500" alt="logo-ibihub" src="https://github.com/user-attachments/assets/2249034c-21e6-4367-b516-ef56412a2f59" />
+
+
+# Ibihub - Plateforme de Partage d'Espaces de Stockage (Bénin)
 
 **Ibihub** est une solution technologique conçue pour optimiser la logistique au Bénin. Elle permet aux propriétaires d'espaces sous-utilisés de monétiser leurs m² et aux commerçants de trouver des solutions de stockage flexibles, sécurisées et assurées.
 
