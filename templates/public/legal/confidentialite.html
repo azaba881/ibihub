@@ -1,8 +1,23 @@
 {% extends 'base.html' %}
 {% block title %}Politique de confidentialité — IbiHub{% endblock %}
 {% block content %}
-<div class="container ibihub-legal-page">
+
+<div class="ibihub-contact-hero">
+	<div class="container ibihub-contact-hero__top">
+		<nav class="ibihub-breadcrumb" aria-label="Fil d'Ariane">
+			<ol>
+				<li><a href="{% url 'core:home' %}">Accueil</a></li>
+				<li aria-current="page">Politique de confidentialité</li>
+			</ol>
+		</nav>
+	</div>
 	<h1>Politique de confidentialité</h1>
+	<svg class="ibihub-contact-wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+		<path d="M0,40 C360,90 720,0 1080,40 C1260,60 1380,50 1440,45 L1440,80 L0,80 Z"></path>
+	</svg>
+</div>
+
+<div class="container ibihub-legal-page">
 	<p><em>Dernière mise à jour : mars 2026</em></p>
 	<p>IbiHub collecte et traite des données personnelles dans le seul but de faire fonctionner la plateforme de mise en relation entre propriétaires d’espaces et utilisateurs.</p>
 	<h2>Données collectées</h2>

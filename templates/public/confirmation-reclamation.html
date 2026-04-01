@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Réclamation envoyée — IbiHub{% endblock %}
+
+{% block extra_css %}
+<style>
+	@media (max-width: 576px) {
+		.ibihub-confirm-wrap { margin: 16px auto !important; padding: 24px 16px !important; }
+		.ibihub-confirm-wrap h1 { font-size: 24px !important; }
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="clearfix"></div>
+<section class="ibihub-confirm-page" style="padding:48px 0 64px; background:#f5f7f6; min-height:50vh;">
+	<div class="container ibihub-confirm-wrap" style="max-width:760px; margin:0 auto; background:#fff; border-radius:16px; padding:38px; text-align:center; box-shadow:0 10px 32px rgba(0,0,0,.08);">
+		<img src="{% static 'images/logo.png' %}" alt="IbiHub" style="max-width:170px; margin:0 auto 18px;">
+		<h1 style="font-family:Poppins,sans-serif; margin:0 0 10px; color:#0d5c4d;">Réclamation transmise</h1>
+		<p style="font-family:Poppins,sans-serif; margin:0 0 20px; color:#444;">Merci pour votre signalement. Notre équipe en prend connaissance et vous recontacte si nécessaire.</p>
+		<a href="{% url 'core:home' %}" style="display:inline-block; background:#0d5c4d; color:#fff; padding:12px 18px; border-radius:8px; font-family:Poppins,sans-serif; font-weight:600;">Retour à l’accueil</a>
+	</div>
+</section>
+{% endblock %}

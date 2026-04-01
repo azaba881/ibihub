@@ -106,7 +106,9 @@ EMAIL_HOST = env('EMAIL_HOST', default='localhost')
 EMAIL_PORT = env.int('EMAIL_PORT', default=1025)
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+# Maildev / SMTP local : laisser False (TLS sur le port 1025 casse la connexion)
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=False)
+EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='IbiHub <noreply@ibihub.local>')
 CONTACT_RECIPIENT_EMAIL = env(
     'CONTACT_RECIPIENT_EMAIL',

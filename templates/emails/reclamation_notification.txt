@@ -1,0 +1,15 @@
+Nouvelle réclamation — IbiHub
+=============================
+
+Type : {{ type_label }}
+Référence : {{ reference }}
+Objet : {{ subject }}
+
+Nom : {{ name }}
+E-mail : {{ email }}
+Téléphone : {{ phone }}
+
+Description :
+{{ detail }}
+
+Répondre à : {{ email }}

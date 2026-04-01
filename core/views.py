@@ -26,10 +26,12 @@ from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, TemplateView, UpdateView
 
 from .forms import (
+    RECLAMATION_TYPE_CHOICES,
     ContactForm,
     EntrepotAvisForm,
     EntrepotForm,
     IbiHubAuthenticationForm,
+    ReclamationForm,
     UserProfileForm,
     UserRegistrationForm,
 )
@@ -41,7 +43,12 @@ from .models import (
     Reservation,
     UserCustom,
 )
-from .utils_reservation import entrepot_blocked_date_ranges_iso, entrepot_has_blocking_reservations
+from .utils_reservation import (
+    booking_range_unavailable,
+    entrepot_blocked_date_ranges_iso,
+    entrepot_blocked_date_strings_iso,
+    entrepot_has_blocking_reservations,
+)
 
 
 def home(request):
@@ -175,18 +182,66 @@ def contact(request):
                 if settings.DEBUG:
                     messages.info(request, str(exc))
             else:
-                messages.success(
-                    request,
-                    'Merci ! Votre message a bien été envoyé. Nous vous répondons sous 2 jours ouvrés.',
-                )
-                return redirect('core:contact')
+                return redirect('core:confirmation_contact')
     else:
         form = ContactForm()
     return render(request, 'public/contact.html', {'form': form})
 
 
+def confirmation_contact(request):
+    return render(request, 'public/confirmation-contact.html')
+
+
+@never_cache
 def reclamation(request):
-    return render(request, 'public/reclamation.html')
+    if request.method == 'POST':
+        form = ReclamationForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            ctx_mail = {
+                'type_label': dict(RECLAMATION_TYPE_CHOICES).get(
+                    cd['type_reclamation'], cd['type_reclamation']
+                ),
+                'reference': cd.get('reference') or '—',
+                'subject': cd['subject'],
+                'detail': cd['detail'],
+                'name': cd['name'],
+                'email': cd['email'],
+                'phone': cd.get('phone') or '—',
+            }
+            html_body = render_to_string('emails/reclamation_notification.html', ctx_mail)
+            text_body = render_to_string('emails/reclamation_notification.txt', ctx_mail)
+            recipient = getattr(
+                settings,
+                'CONTACT_RECIPIENT_EMAIL',
+                settings.DEFAULT_FROM_EMAIL,
+            )
+            msg = EmailMultiAlternatives(
+                subject=f'[IbiHub — Réclamation] {cd["subject"]}',
+                body=text_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[recipient],
+                reply_to=[cd['email']],
+            )
+            msg.attach_alternative(html_body, 'text/html')
+            try:
+                msg.send(fail_silently=False)
+            except Exception as exc:
+                messages.error(
+                    request,
+                    'L’envoi de la réclamation a échoué. Réessayez plus tard.',
+                )
+                if settings.DEBUG:
+                    messages.info(request, str(exc))
+            else:
+                return redirect('core:confirmation_reclamation')
+    else:
+        form = ReclamationForm()
+    return render(request, 'public/reclamation.html', {'form': form})
+
+
+def confirmation_reclamation(request):
+    return render(request, 'public/confirmation-reclamation.html')
 
 
 def politique_confidentialite(request):
@@ -278,21 +333,6 @@ def _parse_reservation_dates(post) -> tuple:
     return d0, d1
 
 
-def _reservation_dates_overlap_entrepot(entrepot, date_debut, date_fin) -> bool:
-    """True si une réservation en attente ou confirmée chevauche [date_debut, date_fin]."""
-    return (
-        Reservation.objects.filter(
-            entrepot=entrepot,
-            statut__in=[
-                Reservation.Statut.EN_ATTENTE,
-                Reservation.Statut.CONFIRME,
-            ],
-            date_debut__lte=date_fin,
-            date_fin__gte=date_debut,
-        ).exists()
-    )
-
-
 @login_required
 def mon_dashboard(request):
     user = request.user
@@ -327,17 +367,26 @@ def mon_dashboard(request):
             )
     else:
         today = timezone.now().date()
+        actives_qs = Reservation.objects.filter(
+            client=user,
+            statut__in=[
+                Reservation.Statut.EN_ATTENTE,
+                Reservation.Statut.CONFIRME,
+            ],
+            date_fin__gte=today,
+        )
+        ctx['merchant_reservations_actives_count'] = actives_qs.count()
+        depense_terminee = Reservation.objects.filter(
+            client=user,
+            statut=Reservation.Statut.TERMINE,
+        ).aggregate(t=Sum('montant_total'))['t']
+        ctx['merchant_depense_terminee'] = depense_terminee or Decimal('0')
+        montant_actifs = actives_qs.aggregate(t=Sum('montant_total'))['t']
+        ctx['merchant_montant_actifs'] = montant_actifs or Decimal('0')
         merchant_list = list(
-            Reservation.objects.filter(
-                client=user,
-                statut__in=[
-                    Reservation.Statut.EN_ATTENTE,
-                    Reservation.Statut.CONFIRME,
-                ],
-                date_fin__gte=today,
-            )
-            .select_related('entrepot', 'entrepot__categorie')
-            .order_by('-date_debut')[:12]
+            actives_qs.select_related('entrepot', 'entrepot__categorie').order_by(
+                '-date_debut'
+            )[:12]
         )
         for r in merchant_list:
             if r.statut == Reservation.Statut.CONFIRME and r.qr_code_auth:
@@ -605,10 +654,10 @@ def reserver_espace(request, pk):
         )
         return redirect_detail
 
-    if _reservation_dates_overlap_entrepot(entrepot, date_debut, date_fin):
+    if booking_range_unavailable(entrepot, date_debut, date_fin):
         messages.error(
             request,
-            'Ces dates se chevauchent avec une réservation déjà en cours ou en attente.',
+            'Ces dates ne sont pas disponibles (réservation existante ou période fermée).',
         )
         return redirect_detail
 
@@ -617,7 +666,7 @@ def reserver_espace(request, pk):
         client=request.user,
         date_debut=date_debut,
         date_fin=date_fin,
-        statut=Reservation.Statut.EN_ATTENTE,
+        statut=Reservation.Statut.CONFIRME,
     )
     reservation.save()
 
@@ -697,6 +746,10 @@ class EntrepotDetailView(DetailView):
         ctx['avis_form'] = EntrepotAvisForm() if can_post_avis else None
         ctx['availability_ranges_json'] = json.dumps(
             entrepot_blocked_date_ranges_iso(e),
+            ensure_ascii=False,
+        )
+        ctx['availability_blocked_days_json'] = json.dumps(
+            entrepot_blocked_date_strings_iso(e),
             ensure_ascii=False,
         )
         return ctx

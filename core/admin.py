@@ -6,6 +6,7 @@ from .models import (
     Entrepot,
     EntrepotAvis,
     EntrepotImage,
+    EntrepotPeriodeBloquee,
     Reservation,
     UserCustom,
 )
@@ -39,6 +40,12 @@ class EntrepotImageInline(admin.TabularInline):
     fields = ('image', 'ordre')
 
 
+class EntrepotPeriodeBloqueeInline(admin.TabularInline):
+    model = EntrepotPeriodeBloquee
+    extra = 0
+    fields = ('date_debut', 'date_fin', 'motif')
+
+
 @admin.register(EntrepotAvis)
 class EntrepotAvisAdmin(admin.ModelAdmin):
     list_display = ('entrepot', 'auteur', 'note', 'created_at')
@@ -56,7 +63,7 @@ class EntrepotImageAdmin(admin.ModelAdmin):
 
 @admin.register(Entrepot)
 class EntrepotAdmin(admin.ModelAdmin):
-    inlines = (EntrepotImageInline,)
+    inlines = (EntrepotPeriodeBloqueeInline, EntrepotImageInline)
     list_display = (
         'titre',
         'proprietaire',

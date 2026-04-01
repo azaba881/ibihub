@@ -123,6 +123,27 @@ class Entrepot(models.Model):
         return self.titre
 
 
+class EntrepotPeriodeBloquee(models.Model):
+    """Périodes verrouillées par le propriétaire / admin (maintenance, usage perso…)."""
+
+    entrepot = models.ForeignKey(
+        Entrepot,
+        on_delete=models.CASCADE,
+        related_name='periodes_bloquees',
+    )
+    date_debut = models.DateField()
+    date_fin = models.DateField()
+    motif = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ['date_debut']
+        verbose_name = 'période bloquée'
+        verbose_name_plural = 'périodes bloquées'
+
+    def __str__(self) -> str:
+        return f'{self.entrepot.titre} — {self.date_debut} → {self.date_fin}'
+
+
 class EntrepotImage(models.Model):
     """Photos additionnelles pour la fiche entrepôt (galerie)."""
 

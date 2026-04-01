@@ -38,6 +38,11 @@ urlpatterns = [
     ),
     path('contact/', views.contact, name='contact'),
     path(
+        'contact/confirmation/',
+        views.confirmation_contact,
+        name='confirmation_contact',
+    ),
+    path(
         'auth/mot-de-passe-oublie/',
         auth_views.PasswordResetView.as_view(
             template_name='public/auth/password_reset_form.html',
@@ -87,6 +92,11 @@ urlpatterns = [
         name='logout',
     ),
     path('reclamation/', views.reclamation, name='reclamation'),
+    path(
+        'reclamation/confirmation/',
+        views.confirmation_reclamation,
+        name='confirmation_reclamation',
+    ),
     path('dashboard/', views.mon_dashboard, name='mon_dashboard'),
     path('dashboard/espaces/', views.dashboard_spaces, name='dashboard_spaces'),
     path(

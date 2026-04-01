@@ -515,6 +515,7 @@ span.like-icon:after {
         width: 100vw !important;
         max-width: none !important;
         min-width: 0 !important;
+        background: #0e6b45 !important;
     }
 
     .mm-wrapper_opening .mm-menu_offcanvas ~ .mm-slideout {
@@ -1471,4 +1472,72 @@ div.ibihub-equipements-checkboxes label {
 .ibihub-legal-page li {
     font-size: 15px;
     color: #4a5c55;
+}
+
+/* Accueil : ordre des blocs hero (desktop = texte → recherche → 3 catégories → images) */
+.ibihub-home-hero .ibihub-home-hero-flow {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 768px) {
+    .ibihub-home-hero-flow__head {
+        order: 1;
+    }
+
+    .ibihub-home-hero-flow__search {
+        order: 2;
+    }
+
+    .ibihub-home-hero-flow__categories {
+        order: 3;
+    }
+
+    .ibihub-home-hero-flow__slider {
+        order: 4;
+    }
+}
+
+@media (max-width: 767px) {
+    .ibihub-home-hero-flow__head {
+        order: 1;
+    }
+
+    .ibihub-home-hero-flow__slider {
+        order: 2;
+    }
+
+    .ibihub-home-hero-flow__search {
+        order: 3;
+    }
+
+    .ibihub-home-hero-flow__categories {
+        display: none !important;
+    }
+}
+
+.ibihub-avail-dot--lock {
+    background: #f0e6dc;
+    border: 1px solid #c4a882;
+}
+
+.ibihub-avail-cell--busy-lock {
+    background: #f5ebe3;
+    color: #6b5344;
+}
+
+.ibihub-avail-cell--busy-res {
+    background: #e8ebea;
+    color: #5a6562;
+}
+
+/* Flatpickr aligné fiche espace */
+.ibihub-space-reservation-form .flatpickr-input {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 10px 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
 }

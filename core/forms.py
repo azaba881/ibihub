@@ -178,6 +178,83 @@ class ContactForm(forms.Form):
     )
 
 
+RECLAMATION_TYPE_CHOICES = [
+    ('transaction', 'Litige lié à une transaction ou réservation'),
+    ('listing', 'Annonce inexacte ou trompeuse'),
+    ('conduct', 'Comportement d’un utilisateur'),
+    ('technical', 'Dysfonctionnement technique'),
+    ('other', 'Autre'),
+]
+
+
+class ReclamationForm(forms.Form):
+    type_reclamation = forms.ChoiceField(
+        label='Type de réclamation',
+        choices=[('', 'Choisir une catégorie')] + RECLAMATION_TYPE_CHOICES,
+        widget=forms.Select(attrs={'class': 'ibihub-form__select'}),
+    )
+    reference = forms.CharField(
+        label='Référence (facultatif)',
+        required=False,
+        max_length=120,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'ibihub-form__input',
+                'placeholder': 'N° d’annonce, de réservation…',
+            }
+        ),
+    )
+    subject = forms.CharField(
+        label='Objet',
+        max_length=200,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'ibihub-form__input',
+                'placeholder': 'Résumé en une ligne',
+            }
+        ),
+    )
+    detail = forms.CharField(
+        label='Description détaillée',
+        widget=forms.Textarea(
+            attrs={
+                'rows': 7,
+                'class': 'ibihub-form__textarea ibihub-form__textarea--large',
+                'placeholder': 'Faits, dates, montants, échanges…',
+            }
+        ),
+    )
+    name = forms.CharField(
+        label='Nom et prénom',
+        max_length=120,
+        widget=forms.TextInput(
+            attrs={'class': 'ibihub-form__input', 'autocomplete': 'name'}
+        ),
+    )
+    email = forms.EmailField(
+        label='Email',
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'ibihub-form__input',
+                'autocomplete': 'email',
+                'placeholder': 'vous@exemple.com',
+            }
+        ),
+    )
+    phone = forms.CharField(
+        label='Téléphone',
+        required=False,
+        max_length=40,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'ibihub-form__input',
+                'placeholder': '+229 …',
+                'autocomplete': 'tel',
+            }
+        ),
+    )
+
+
 EQUIPEMENT_CHOICES = [
     ('Gardiennage', 'Gardiennage'),
     ('Caméras de surveillance', 'Caméras de surveillance'),

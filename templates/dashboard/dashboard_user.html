@@ -7,7 +7,7 @@
 <div class="ibihub-dashboard-top">
 	<div>
 		<h1 class="text-primary-ibihub title-font-ibihub">Bonjour, {{ request.user.get_full_name|default:request.user.username }}</h1>
-		<p>Suivez vos espaces, réservations et revenus en un coup d’œil.</p>
+		<p>{% if is_owner %}Suivez vos espaces, réservations et revenus en un coup d’œil.{% else %}Suivez vos réservations et le détail de vos dépenses en un coup d’œil.{% endif %}</p>
 	</div>
 </div>
 
@@ -66,11 +66,21 @@
 </div>
 
 {% else %}
-<div class="ibihub-dashboard-cards">
+<div class="ibihub-dashboard-cards ibihub-dashboard-cards--three">
 	<article class="ibihub-dashboard-card">
 		<div class="ibihub-dashboard-card__label">Réservations en cours</div>
-		<div class="ibihub-dashboard-card__value">{{ merchant_reservations|length }}</div>
-		<div class="ibihub-dashboard-card__hint">En attente ou confirmées (date de fin ≥ aujourd’hui)</div>
+		<div class="ibihub-dashboard-card__value">{{ merchant_reservations_actives_count }}</div>
+		<div class="ibihub-dashboard-card__hint">En attente ou confirmées (fin ≥ aujourd’hui)</div>
+	</article>
+	<article class="ibihub-dashboard-card">
+		<div class="ibihub-dashboard-card__label">Total déjà dépensé</div>
+		<div class="ibihub-dashboard-card__value">{{ merchant_depense_terminee|floatformat:0 }}&nbsp;FCFA</div>
+		<div class="ibihub-dashboard-card__hint">Somme des locations terminées</div>
+	</article>
+	<article class="ibihub-dashboard-card">
+		<div class="ibihub-dashboard-card__label">Montant des séjours actifs</div>
+		<div class="ibihub-dashboard-card__value">{{ merchant_montant_actifs|floatformat:0 }}&nbsp;FCFA</div>
+		<div class="ibihub-dashboard-card__hint">Réservations en cours (montants cumulés)</div>
 	</article>
 </div>
 

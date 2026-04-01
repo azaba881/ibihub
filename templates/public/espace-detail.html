@@ -3,6 +3,12 @@
 
 {% block title %}{{ entrepot.titre }} — IbiHub{% endblock %}
 
+{% block extra_css %}
+{% if can_submit_reservation %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="ibihub-space-page">
 	{% if messages %}
@@ -218,24 +224,26 @@
 						{% elif not entrepot.disponible %}
 						<p class="ibihub-space-calendar-card__hint" style="color:#666;">Cet espace n’est pas disponible à la réservation pour le moment.</p>
 						{% else %}
-						<form method="post" action="{% url 'core:reserver_espace' pk=entrepot.pk %}" class="ibihub-space-reservation-form">
+						<script type="application/json" id="ibihub-blocked-days-data">{{ availability_blocked_days_json|safe }}</script>
+						<form method="post" action="{% url 'core:reserver_espace' pk=entrepot.pk %}" class="ibihub-space-reservation-form" id="ibihub-reservation-form">
 							{% csrf_token %}
 							<label for="id_date_debut">Date de début</label>
-							<input type="date" name="date_debut" id="id_date_debut" required min="{% now 'Y-m-d' %}" style="width:100%;box-sizing:border-box;border-radius:8px;border:1px solid rgba(0,0,0,.12);padding:10px 12px;font-family:Poppins,sans-serif;font-size:14px;">
+							<input type="text" name="date_debut" id="id_date_debut" required autocomplete="off" placeholder="Choisir…" class="flatpickr-input">
 							<label for="id_date_fin" style="margin-top:12px;">Date de fin</label>
-							<input type="date" name="date_fin" id="id_date_fin" required min="{% now 'Y-m-d' %}" style="width:100%;box-sizing:border-box;border-radius:8px;border:1px solid rgba(0,0,0,.12);padding:10px 12px;font-family:Poppins,sans-serif;font-size:14px;">
-							<button type="submit" class="ibihub-space-book__cta" style="margin-top:16px;width:100%;border:0;cursor:pointer;">Demander la réservation</button>
+							<input type="text" name="date_fin" id="id_date_fin" required autocomplete="off" placeholder="Choisir…" class="flatpickr-input">
+							<button type="submit" class="ibihub-space-book__cta" style="margin-top:16px;width:100%;border:0;cursor:pointer;">Confirmer la réservation</button>
 						</form>
-						<p class="ibihub-space-calendar-card__hint" style="margin-top:12px;">La demande est envoyée au propriétaire. Vous serez notifié après validation.</p>
+						<p class="ibihub-space-calendar-card__hint" style="margin-top:12px;">Les dates grisées ne sont pas sélectionnables. La réservation est confirmée immédiatement si la période est libre.</p>
 						{% endif %}
 					</div>
 
 					<div class="ibihub-space-calendar-card ibihub-space-availability-card" id="section-disponibilite">
 						<h4>Calendrier de disponibilité</h4>
-						<p class="ibihub-space-calendar-card__hint">Les plages grisées correspondent à des demandes en attente ou à des locations confirmées.</p>
+						<p class="ibihub-space-calendar-card__hint">Réservations confirmées ou en attente (gris) ; fermetures définies par le propriétaire / admin (beige).</p>
 						<div class="ibihub-avail-legend">
 							<span><i class="ibihub-avail-dot ibihub-avail-dot--free"></i> Libre</span>
-							<span><i class="ibihub-avail-dot ibihub-avail-dot--busy"></i> Indisponible</span>
+							<span><i class="ibihub-avail-dot ibihub-avail-dot--busy"></i> Réservation</span>
+							<span><i class="ibihub-avail-dot ibihub-avail-dot--lock"></i> Fermeture</span>
 						</div>
 						<script type="application/json" id="ibihub-availability-data">{{ availability_ranges_json|safe }}</script>
 						<div id="ibihub-availability-calendar" class="ibihub-availability-calendar"></div>
@@ -261,16 +269,48 @@
 {% endblock %}
 
 {% block extra_js %}
+{% if can_submit_reservation %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/fr.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  var d0 = document.getElementById('id_date_debut');
-  var d1 = document.getElementById('id_date_fin');
-  if (d0 && d1) {
-    d0.addEventListener('change', function () {
-      d1.min = d0.value || '';
-      if (d1.value && d1.value < d0.value) d1.value = d0.value;
-    });
+  var blocked = [];
+  try {
+    var bd = document.getElementById('ibihub-blocked-days-data');
+    if (bd) blocked = JSON.parse(bd.textContent || '[]');
+  } catch (e) {}
+  if (typeof flatpickr !== 'undefined' && flatpickr.l10ns && flatpickr.l10ns.fr) {
+    flatpickr.localize(flatpickr.l10ns.fr);
   }
+  var dDebut = document.getElementById('id_date_debut');
+  var dFin = document.getElementById('id_date_fin');
+  if (!dDebut || !dFin || typeof flatpickr === 'undefined') return;
+  var fpFin = flatpickr(dFin, {
+    dateFormat: 'Y-m-d',
+    minDate: 'today',
+    disable: blocked,
+    onChange: function (selectedDates, dateStr) {
+      var s = document.getElementById('id_date_debut').value;
+      if (s && dateStr && dateStr < s) {
+        fpFin.setDate(s, false);
+      }
+    }
+  });
+  flatpickr(dDebut, {
+    dateFormat: 'Y-m-d',
+    minDate: 'today',
+    disable: blocked,
+    onChange: function (selectedDates, dateStr) {
+      fpFin.set('minDate', dateStr || 'today');
+      var f = document.getElementById('id_date_fin').value;
+      if (f && dateStr && f < dateStr) fpFin.setDate(dateStr, false);
+    }
+  });
+});
+</script>
+{% endif %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
   var calRoot = document.getElementById('ibihub-availability-calendar');
   var dataEl = document.getElementById('ibihub-availability-data');
   if (!calRoot || !dataEl) return;
@@ -282,17 +322,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var b = new Date(r.fin + 'T12:00:00');
     return day >= dOnly(a) && day <= dOnly(b);
   }
-  function isBusy(day) {
+  function busyKind(day) {
     for (var i = 0; i < ranges.length; i++) {
-      if (inRange(day, ranges[i])) return true;
+      if (inRange(day, ranges[i])) return ranges[i].kind || 'reservation';
     }
-    return false;
+    return null;
   }
   var monthNames = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
   var today = dOnly(new Date());
   var start = new Date(today);
   calRoot.innerHTML = '';
-  for (var m = 0; m < 2; m++) {
+  for (var m = 0; m < 3; m++) {
     var ref = new Date(start.getFullYear(), start.getMonth() + m, 1);
     var wrap = document.createElement('div');
     wrap.className = 'ibihub-avail-month';
@@ -322,8 +362,12 @@ document.addEventListener('DOMContentLoaded', function () {
       cell.className = 'ibihub-avail-cell';
       cell.textContent = String(day);
       if (dt < today) cell.classList.add('ibihub-avail-cell--past');
-      else if (isBusy(dt)) cell.classList.add('ibihub-avail-cell--busy');
-      else cell.classList.add('ibihub-avail-cell--free');
+      else {
+        var k = busyKind(dt);
+        if (k === 'lock') cell.classList.add('ibihub-avail-cell--busy-lock');
+        else if (k) cell.classList.add('ibihub-avail-cell--busy-res');
+        else cell.classList.add('ibihub-avail-cell--free');
+      }
       grid.appendChild(cell);
     }
     wrap.appendChild(grid);
