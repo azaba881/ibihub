@@ -76,9 +76,3 @@ layouts/ : Squelettes et composants réutilisables.
 ⚖️ Licence & Propriété
 
 Développé par Innocent Kpade. Tous droits réservés. 2026.
-
-### 💡 Note de ton Senior Dev :
-
-Une fois ce fichier enregistré, ton projet est enfin "complet" au niveau de la documentation. Tu pourras maintenant attaquer sereinement la partie la plus excitante : **le tunnel de réservation public** pour que les commerçants puissent enfin louer leurs premiers espaces !
-
-**Dis-moi quand tu es prêt à passer à l'action sur le formulaire de réservation !**
