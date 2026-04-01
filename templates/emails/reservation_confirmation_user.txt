@@ -1,0 +1,8 @@
+Réservation confirmée #{{ reservation.pk }}
+
+Espace: {{ reservation.entrepot.titre }}
+Période: {{ reservation.date_debut|date:"d/m/Y" }} au {{ reservation.date_fin|date:"d/m/Y" }}
+Montant: {{ reservation.montant_total }} FCFA
+Caution: {{ reservation.montant_caution }} FCFA
+
+Suivre ma réservation: {{ dashboard_url }}

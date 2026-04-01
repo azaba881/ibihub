@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="fr">
+<body style="font-family:Arial,sans-serif;background:#f6f8f7;color:#1f2937;padding:16px;">
+  <div style="max-width:640px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;">
+    <h2 style="margin:0 0 12px;color:#0d5c4d;">Nouvelle demande de visite</h2>
+    <p style="margin:0 0 10px;"><strong>Espace:</strong> {{ entrepot.titre }}</p>
+    <p style="margin:0 0 10px;"><strong>Ville:</strong> {{ entrepot.get_ville_display }}</p>
+    <p style="margin:0 0 10px;"><strong>Date souhaitée:</strong> {{ visit_date }}</p>
+    <hr style="border:none;border-top:1px solid #e5e7eb;margin:14px 0;">
+    <p style="margin:0 0 10px;"><strong>Nom:</strong> {{ visitor_name }}</p>
+    <p style="margin:0 0 10px;"><strong>Email:</strong> {{ visitor_email }}</p>
+    <p style="margin:0 0 10px;"><strong>Téléphone:</strong> {{ visitor_phone }}</p>
+    <p style="margin:0 0 4px;"><strong>Message:</strong></p>
+    <p style="margin:0;white-space:pre-wrap;">{{ visit_note }}</p>
+  </div>
+</body>
+</html>

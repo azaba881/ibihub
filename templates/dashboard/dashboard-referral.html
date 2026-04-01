@@ -1,0 +1,23 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Parrainage — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<section class="ibihub-dashboard-panel">
+  <h1 class="ibihub-dashboard-panel__title">Mon parrainage</h1>
+  <p>Partagez votre code pour inviter vos proches.</p>
+  <p><strong>Gagnez 500 FCFA pour chaque première réservation terminée de vos amis !</strong></p>
+  <div style="font-size:34px;font-weight:800;letter-spacing:2px;color:#0d5c4d;margin:10px 0 18px;">
+    {{ referral_code }}
+  </div>
+  <a
+    href="https://api.whatsapp.com/send?text={{ share_text|urlencode }}"
+    target="_blank"
+    rel="noopener"
+    class="ibihub-dashboard-add-btn"
+  >
+    Partager sur WhatsApp
+  </a>
+  <p style="margin-top:12px;"><strong>Lien direct :</strong> <a href="{{ share_link_direct }}">{{ share_link_direct }}</a></p>
+</section>
+{% endblock %}

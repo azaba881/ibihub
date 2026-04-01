@@ -39,6 +39,12 @@
 				</ul>
 				<div class="ibihub-dash-space-card__actions">
 					<a href="{% url 'core:espace_detail' pk=e.pk %}" class="ibihub-dash-space-card__btn ibihub-dash-space-card__btn--ghost">Voir la fiche</a>
+					<form method="post" action="{% url 'core:dashboard_boost_space' pk=e.pk %}" style="display:inline;">
+						{% csrf_token %}
+						<button type="submit" class="ibihub-dash-space-card__btn" style="background:#f59e0b;color:#111827;">
+							{% if e.is_boosted %}⭐ Boost actif{% else %}⭐ Boost 7 jours{% endif %}
+						</button>
+					</form>
 					{% if e.can_owner_edit %}
 					<a href="{% url 'core:dashboard_edit_space' pk=e.pk %}" class="ibihub-dash-space-card__btn ibihub-dash-space-card__btn--primary">Modifier</a>
 					{% else %}

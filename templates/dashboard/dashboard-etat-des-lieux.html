@@ -1,0 +1,15 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}État des lieux — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<section class="ibihub-dashboard-panel">
+  <h1 class="ibihub-dashboard-panel__title">État des lieux — Réservation #{{ reservation.pk }}</h1>
+  <p>Ajoutez les photos d'entrée/sortie pour sécuriser la caution.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="ibihub-dashboard-add-btn">Enregistrer</button>
+  </form>
+</section>
+{% endblock %}

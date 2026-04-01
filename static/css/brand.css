@@ -1541,3 +1541,180 @@ div.ibihub-equipements-checkboxes label {
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
 }
+
+/* ==========================================================================
+   2026 Mobile-first refinements
+   ========================================================================== */
+@media (max-width: 767px) {
+    .main-search-container.ibihub-home-hero {
+        display: flex;
+        flex-direction: column;
+        height: auto !important;
+        min-height: 0 !important;
+        padding-bottom: 20px !important;
+    }
+
+    .main-search-container.ibihub-home-hero .main-search-inner {
+        order: 1;
+        padding-top: 12px !important;
+        padding-bottom: 8px !important;
+        margin-top: 0 !important;
+    }
+
+    .main-search-container.ibihub-home-hero .msps-container {
+        order: 2;
+        margin-top: 8px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .main-search-container.ibihub-home-hero .main-search-photo-slider {
+        max-width: 340px !important;
+        margin: 0 auto !important;
+    }
+
+    .main-search-container.ibihub-home-hero .main-search-input {
+        order: 3;
+        margin-top: 8px !important;
+    }
+
+    .main-search-container.ibihub-home-hero .highlighted-categories-headline {
+        margin-top: 14px !important;
+        margin-bottom: 10px !important;
+        text-align: left !important;
+        padding-left: 2px !important;
+    }
+
+    .main-search-container.ibihub-home-hero .highlighted-categories {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .mm-menu.mm-offcanvas,
+    .mm-menu.mm-offcanvas .mm-panel,
+    .mm-menu.mm-offcanvas .mm-navbar {
+        background: #0d5c4d !important;
+    }
+
+    .mm-menu.mm-offcanvas .mm-navbar__title,
+    .mm-menu.mm-offcanvas .mm-navbar .mm-btn_prev {
+        display: none !important;
+    }
+
+    .mm-menu.mm-offcanvas .mm-listitem,
+    .mm-menu.mm-offcanvas .mm-listitem:after,
+    .mm-menu.mm-offcanvas .mm-listitem > a {
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .mm-menu.mm-offcanvas .mm-listitem > a {
+        justify-content: flex-start !important;
+        padding: 12px 18px !important;
+        color: #fff !important;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-ico {
+        display: none !important;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-link__muted {
+        display: none !important;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-link__accent {
+        color: #fff !important;
+        font-weight: 600 !important;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-brand__logo {
+        filter: brightness(0) invert(1) saturate(0) contrast(200%) !important;
+    }
+
+    .ibihub-mm-close-bar {
+        justify-content: flex-end !important;
+        padding: 10px 12px !important;
+    }
+
+    .ibihub-mm-close {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        color: #fff !important;
+        font-size: 28px !important;
+        line-height: 1 !important;
+    }
+}
+
+/* Final mmenu cleanup overrides (must stay last) */
+@media (max-width: 1024px) {
+    .mm-menu.mm-offcanvas .mm-navbar,
+    .mm-menu.mm-offcanvas .mm-navbar * {
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .mm-menu.mm-offcanvas .mm-navbar__title,
+    .mm-menu.mm-offcanvas .mm-navbar .mm-navbar__title,
+    .mm-menu.mm-offcanvas .mm-navbar .mm-btn_prev,
+    .mm-menu.mm-offcanvas .mm-navbar .mm-btn_next {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .mm-menu.mm-offcanvas .mm-listitem,
+    .mm-menu.mm-offcanvas .mm-listitem:after,
+    .mm-menu.mm-offcanvas .mm-listitem > a,
+    .mm-menu.mm-offcanvas .mm-listitem > span {
+        border: 0 !important;
+        border-bottom: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .mm-menu.mm-offcanvas .mm-listview {
+        margin: 0 !important;
+    }
+
+    .mm-menu.mm-offcanvas .mm-listitem:not(.ibihub-mm-brand-item) > a {
+        justify-content: flex-start !important;
+        text-align: left !important;
+        padding: 12px 18px !important;
+    }
+
+    .mm-menu.mm-offcanvas .ibihub-mm-mobile-only {
+        text-align: left !important;
+        align-items: flex-start !important;
+    }
+
+    .ibihub-mm-close-bar {
+        position: absolute !important;
+        top: 8px !important;
+        right: 10px !important;
+        left: auto !important;
+        z-index: 100010 !important;
+        width: auto !important;
+        padding: 0 !important;
+        pointer-events: auto !important;
+    }
+
+    .ibihub-mm-close {
+        display: inline-flex !important;
+        width: 34px !important;
+        height: 34px !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        color: #fff !important;
+        font-size: 28px !important;
+        line-height: 1 !important;
+        padding: 0 !important;
+    }
+}

@@ -1,0 +1,112 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Gérer les disponibilités — IbiHub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+<style>
+  .ibihub-dispos-wrap { max-width: 600px; margin: 0 auto; }
+  .ibihub-dispos-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .ibihub-dispos-pagination ul { display:flex; flex-wrap: wrap; gap:8px; list-style:none; padding:0; justify-content:center; margin:16px 0 0; }
+  .ibihub-dispos-pagination a { display:inline-block; border:1px solid #d1d5db; border-radius:8px; padding:6px 10px; color:#0f172a; }
+  .ibihub-dispos-pagination a.current-page { background:#0d5c4d; color:#fff; border-color:#0d5c4d; }
+  @media (max-width: 768px) {
+    .ibihub-dispos-wrap { max-width: 100%; }
+    .ibihub-dispos-wrap .ibihub-dashboard-add-btn { width: 100%; }
+  }
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<section class="ibihub-dashboard-panel">
+  <h1 class="ibihub-dashboard-panel__title">Gérer les disponibilités</h1>
+  <p>Choisissez une plage de dates à bloquer pour vos entrepôts.</p>
+
+  <form method="post" class="ibihub-dispos-wrap" style="display:grid;grid-template-columns:1fr;gap:10px;align-items:end;">
+    {% csrf_token %}
+    <div>
+      <label for="id_date_range">Plage calendrier</label>
+      <input id="id_date_range" type="text" placeholder="Sélectionner une plage" style="width:100%;">
+    </div>
+    <div>{{ form.entrepot.label_tag }} {{ form.entrepot }}</div>
+    <div>{{ form.date_debut.label_tag }} {{ form.date_debut }}</div>
+    <div>{{ form.date_fin.label_tag }} {{ form.date_fin }}</div>
+    <div>{{ form.raison.label_tag }} {{ form.raison }}</div>
+    <button type="submit" class="ibihub-dashboard-add-btn">Marquer indisponible</button>
+  </form>
+
+  <div style="margin-top:18px;">
+    <h3 style="margin-bottom:8px;">Indisponibilités enregistrées</h3>
+    <div class="ibihub-dispos-table-wrap">
+    <table class="ibihub-dashboard-table">
+      <thead><tr><th>Entrepôt</th><th>Début</th><th>Fin</th><th>Raison</th><th></th></tr></thead>
+      <tbody>
+      {% for i in indispos %}
+        <tr>
+          <td>{{ i.entrepot.titre }}</td>
+          <td>{{ i.date_debut|date:"d/m/Y" }}</td>
+          <td>{{ i.date_fin|date:"d/m/Y" }}</td>
+          <td>{{ i.raison|default:"—" }}</td>
+          <td>
+            <form method="post" action="{% url 'core:dashboard_disponibilites_delete' pk=i.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="ibihub-dashboard-add-btn ibihub-dashboard-add-btn--muted">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5">Aucune indisponibilité définie.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    {% if page_obj and page_obj.paginator.num_pages > 1 %}
+    <nav class="ibihub-dispos-pagination">
+      <ul>
+        {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% endif %}
+        {% for p in page_obj.paginator.page_range %}
+        <li><a href="?page={{ p }}" class="{% if page_obj.number == p %}current-page{% endif %}">{{ p }}</a></li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block dashboard_extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/fr.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var range = document.getElementById('id_date_range');
+  var d0 = document.getElementById('id_date_debut');
+  var d1 = document.getElementById('id_date_fin');
+  if (!range || !d0 || !d1 || typeof flatpickr === 'undefined') return;
+  if (flatpickr.l10ns && flatpickr.l10ns.fr) flatpickr.localize(flatpickr.l10ns.fr);
+  flatpickr(range, {
+    mode: 'range',
+    disableMobile: true,
+    minDate: 'today',
+    dateFormat: 'Y-m-d',
+    allowInput: false,
+    onChange: function(selectedDates) {
+      if (selectedDates.length > 0) d0.value = flatpickr.formatDate(selectedDates[0], 'Y-m-d');
+      if (selectedDates.length > 1) d1.value = flatpickr.formatDate(selectedDates[1], 'Y-m-d');
+    },
+    onClose: function(selectedDates) {
+      if (selectedDates.length === 1) {
+        var only = flatpickr.formatDate(selectedDates[0], 'Y-m-d');
+        d0.value = only;
+        d1.value = only;
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Commissions — Admin IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<div class="ibihub-dashboard-top">
+	<div>
+		<h1 class="text-primary-ibihub title-font-ibihub">Commissions plateforme</h1>
+		<p>Cumul des frais par mois de début de réservation — réservations confirmées ou terminées.</p>
+	</div>
+</div>
+
+<div class="ibihub-dashboard-panel">
+	<div style="overflow-x:auto;">
+		<table class="ibihub-dashboard-table">
+			<thead>
+				<tr>
+					<th>Mois (début de location)</th>
+					<th>Nombre de réservations</th>
+					<th>Total commissions (FCFA)</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in rows %}
+				<tr>
+					<td>{% if row.month %}{{ row.month|date:"F Y" }}{% else %}—{% endif %}</td>
+					<td>{{ row.nb_reservations }}</td>
+					<td><strong>{{ row.total_commission|floatformat:0 }}</strong></td>
+				</tr>
+				{% empty %}
+				<tr><td colspan="3">Aucune donnée pour le moment.</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="ibihub-dashboard-panel margin-top-30">
+	<h2 class="ibihub-dashboard-panel__title">Cautions à libérer</h2>
+	<p class="ibihub-dashboard-panel__subtitle">Cliquez sur "Libérer la caution" après validation logistique de sortie.</p>
+	<div style="overflow-x:auto;">
+		<table class="ibihub-dashboard-table">
+			<thead>
+				<tr><th>#</th><th>Espace</th><th>Client</th><th>Période</th><th>Montant caution</th><th>Statut</th><th>Action</th></tr>
+			</thead>
+			<tbody>
+				{% for r in cautions %}
+				<tr>
+					<td>{{ r.pk }}</td>
+					<td>{{ r.entrepot.titre }}</td>
+					<td>{{ r.client.get_full_name|default:r.client.username }}</td>
+					<td>{{ r.date_debut|date:"d/m/Y" }} — {{ r.date_fin|date:"d/m/Y" }}</td>
+					<td><strong>{{ r.montant_caution|floatformat:0 }} FCFA</strong></td>
+					<td>{% if r.caution_rendue %}Rendue{% else %}Bloquée{% endif %}</td>
+					<td>
+						<form method="post" action="{% url 'core:reservation_liberer_caution' pk=r.pk %}">
+							{% csrf_token %}
+							<button type="submit" class="ibihub-dashboard-add-btn" {% if r.caution_rendue or not r.can_release_caution %}disabled{% endif %}>Libérer la caution</button>
+							{% if not r.can_release_caution %}<small style="display:block;color:#b45309;">2 photos de sortie requises</small>{% endif %}
+						</form>
+					</td>
+				</tr>
+				{% empty %}
+				<tr><td colspan="7">Aucune caution en attente de libération.</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}

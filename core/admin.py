@@ -5,8 +5,13 @@ from .models import (
     CategorieStorage,
     Entrepot,
     EntrepotAvis,
+    EntrepotIndisponibilite,
+    EtatDesLieux,
     EntrepotImage,
     EntrepotPeriodeBloquee,
+    Favori,
+    Litige,
+    ParrainageGain,
     Reservation,
     UserCustom,
 )
@@ -15,7 +20,22 @@ from .models import (
 @admin.register(UserCustom)
 class UserCustomAdmin(BaseUserAdmin):
     fieldsets = BaseUserAdmin.fieldsets + (
-        ('Ibihub', {'fields': ('role', 'telephone', 'photo_profil', 'is_verified')}),
+        (
+            'Ibihub',
+            {
+                'fields': (
+                    'role',
+                    'can_post_announcements',
+                    'telephone',
+                    'photo_profil',
+                    'is_verified',
+                    'code_parrainage',
+                    'parrain',
+                    'type_piece',
+                    'piece_identite',
+                )
+            },
+        ),
     )
     add_fieldsets = (
         (None, {
@@ -46,6 +66,12 @@ class EntrepotPeriodeBloqueeInline(admin.TabularInline):
     fields = ('date_debut', 'date_fin', 'motif')
 
 
+class EntrepotIndisponibiliteInline(admin.TabularInline):
+    model = EntrepotIndisponibilite
+    extra = 0
+    fields = ('date_debut', 'date_fin', 'raison')
+
+
 @admin.register(EntrepotAvis)
 class EntrepotAvisAdmin(admin.ModelAdmin):
     list_display = ('entrepot', 'auteur', 'note', 'created_at')
@@ -63,7 +89,7 @@ class EntrepotImageAdmin(admin.ModelAdmin):
 
 @admin.register(Entrepot)
 class EntrepotAdmin(admin.ModelAdmin):
-    inlines = (EntrepotPeriodeBloqueeInline, EntrepotImageInline)
+    inlines = (EntrepotPeriodeBloqueeInline, EntrepotIndisponibiliteInline, EntrepotImageInline)
     list_display = (
         'titre',
         'proprietaire',
@@ -71,6 +97,10 @@ class EntrepotAdmin(admin.ModelAdmin):
         'ville',
         'prix_par_jour',
         'surface_m2',
+        'caution_requise',
+        'montant_caution_fixe',
+        'is_boosted',
+        'boost_expires_at',
         'disponible',
         'created_at',
     )
@@ -90,10 +120,61 @@ class ReservationAdmin(admin.ModelAdmin):
         'date_fin',
         'montant_total',
         'frais_assurance',
+        'montant_caution',
+        'caution_rendue',
+        'code_court',
+        'type_paiement',
+        'prochaine_echeance',
+        'revenu_net_proprietaire',
         'statut',
         'qr_code_auth',
     )
     list_filter = ('statut', 'date_debut')
     search_fields = ('entrepot__titre', 'client__username', 'qr_code_auth')
     raw_id_fields = ('entrepot', 'client')
-    readonly_fields = ('montant_total', 'frais_assurance', 'qr_code_auth')
+    readonly_fields = (
+        'montant_total',
+        'frais_assurance',
+        'montant_caution',
+        'caution_rendue',
+        'revenu_net_proprietaire',
+        'qr_code_auth',
+        'code_court',
+        'contrat_pdf',
+        'ticket_pdf',
+    )
+
+
+@admin.register(EntrepotIndisponibilite)
+class EntrepotIndisponibiliteAdmin(admin.ModelAdmin):
+    list_display = ('entrepot', 'date_debut', 'date_fin', 'raison', 'created_at')
+    list_filter = ('date_debut',)
+    search_fields = ('entrepot__titre', 'raison')
+
+
+@admin.register(ParrainageGain)
+class ParrainageGainAdmin(admin.ModelAdmin):
+    list_display = ('parrain', 'filleul', 'reservation', 'montant', 'created_at', 'notified')
+    list_filter = ('created_at', 'notified')
+    search_fields = ('parrain__username', 'filleul__username')
+
+
+@admin.register(Favori)
+class FavoriAdmin(admin.ModelAdmin):
+    list_display = ('user', 'entrepot', 'created_at')
+    search_fields = ('user__username', 'entrepot__titre')
+
+
+@admin.register(EtatDesLieux)
+class EtatDesLieuxAdmin(admin.ModelAdmin):
+    list_display = ('reservation', 'date_validation')
+    search_fields = ('reservation__id', 'reservation__client__username')
+    raw_id_fields = ('reservation',)
+
+
+@admin.register(Litige)
+class LitigeAdmin(admin.ModelAdmin):
+    list_display = ('reservation', 'motif', 'statut', 'created_at')
+    list_filter = ('statut', 'created_at')
+    search_fields = ('motif', 'description', 'reservation__id')
+    raw_id_fields = ('reservation',)

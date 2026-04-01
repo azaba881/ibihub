@@ -1,0 +1,42 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Vérification du compte — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<div class="ibihub-dashboard-top">
+	<div>
+		<h1 class="text-primary-ibihub title-font-ibihub">Vérification du compte propriétaire</h1>
+		<p>Transmettez une copie lisible de votre pièce d’identité. L’équipe IbiHub active ensuite le statut <strong>vérifié</strong>, nécessaire pour publier une annonce en ligne.</p>
+	</div>
+</div>
+
+{% if request.user.is_verified %}
+<div class="ibihub-dashboard-panel" style="border-left:4px solid #0d5c4d;">
+	<p style="margin:0;font-weight:600;color:#0d5c4d;">Votre compte est vérifié.</p>
+	<p class="ibihub-dashboard-panel__subtitle" style="margin-top:8px;">Vous pouvez mettre vos annonces « disponibles » sur la plateforme.</p>
+</div>
+{% endif %}
+
+<div class="ibihub-dashboard-panel margin-top-20">
+	<h2 class="ibihub-dashboard-panel__title">Pièce d’identité</h2>
+	<p class="ibihub-dashboard-panel__subtitle">Formats acceptés : image (JPG, PNG) ou PDF selon navigateur. Fichier net, sans reflet.</p>
+	<form method="post" enctype="multipart/form-data" class="ibihub-form" style="max-width:520px;">
+		{% csrf_token %}
+		{% if form.non_field_errors %}
+		<div style="color:#b71c1c;margin-bottom:12px;">{{ form.non_field_errors }}</div>
+		{% endif %}
+		<div class="ibihub-form__group">
+			<label class="ibihub-form__label" for="{{ form.type_piece.id_for_label }}">{{ form.type_piece.label }}</label>
+			{{ form.type_piece }}
+			{{ form.type_piece.errors }}
+		</div>
+		<div class="ibihub-form__group">
+			<label class="ibihub-form__label" for="{{ form.piece_identite.id_for_label }}">{{ form.piece_identite.label }}</label>
+			{{ form.piece_identite }}
+			{{ form.piece_identite.errors }}
+		</div>
+		<button type="submit" class="ibihub-form__submit ibihub-form__submit--accent">Envoyer pour vérification</button>
+	</form>
+</div>
+{% endblock %}

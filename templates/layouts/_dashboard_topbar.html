@@ -1,5 +1,8 @@
 {% load static %}
 <header class="ibihub-dashboard-main-header" role="banner">
+	<button type="button" class="ibihub-dashboard-mobile-toggle" id="ibihubDashboardMenuToggle" aria-label="Ouvrir le menu">
+		<i class="fa fa-bars"></i>
+	</button>
 	<form class="ibihub-dashboard-search" method="get" action="{% url 'core:liste_espaces' %}" role="search">
 		<label class="screen-reader-text" for="dashboard-ts-q">Rechercher un espace</label>
 		<input type="search" id="dashboard-ts-q" name="q" placeholder="Rechercher un espace sur IbiHub…" value="" autocomplete="off">

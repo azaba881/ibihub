@@ -21,7 +21,7 @@
 					<li>
 						<button type="button" class="{% if active_settings_tab == 'profile' %}is-active {% endif %}" data-tab-target="tab-profile" aria-selected="{% if active_settings_tab == 'profile' %}true{% else %}false{% endif %}">
 							<i class="fa fa-user" aria-hidden="true"></i>
-							<span class="label">Infos personnelles</span>
+							<span class="label">Profil</span>
 							<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
 						</button>
 					</li>
@@ -30,9 +30,9 @@
 			<div class="col-md-6 col-sm-12">
 				<ul class="ibihub-dashboard-actions-list">
 					<li>
-						<button type="button" class="{% if active_settings_tab == 'photo' %}is-active {% endif %}" data-tab-target="tab-photo" aria-selected="{% if active_settings_tab == 'photo' %}true{% else %}false{% endif %}">
-							<i class="fa fa-camera" aria-hidden="true"></i>
-							<span class="label">Photo de profil</span>
+						<button type="button" class="{% if active_settings_tab == 'billing' %}is-active {% endif %}" data-tab-target="tab-billing" aria-selected="{% if active_settings_tab == 'billing' %}true{% else %}false{% endif %}">
+							<i class="fa fa-wallet" aria-hidden="true"></i>
+							<span class="label">Facturation</span>
 							<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
 						</button>
 					</li>
@@ -41,9 +41,9 @@
 			<div class="col-md-6 col-sm-12">
 				<ul class="ibihub-dashboard-actions-list">
 					<li>
-						<button type="button" class="{% if active_settings_tab == 'password' %}is-active {% endif %}" data-tab-target="tab-password" aria-selected="{% if active_settings_tab == 'password' %}true{% else %}false{% endif %}">
+						<button type="button" class="{% if active_settings_tab == 'security' or active_settings_tab == 'password' %}is-active {% endif %}" data-tab-target="tab-security" aria-selected="{% if active_settings_tab == 'security' or active_settings_tab == 'password' %}true{% else %}false{% endif %}">
 							<i class="fa fa-lock" aria-hidden="true"></i>
-							<span class="label">Mot de passe</span>
+							<span class="label">Sécurité</span>
 							<span class="chevron"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
 						</button>
 					</li>
@@ -87,7 +87,7 @@
 				</div>
 			</div>
 
-			<div id="tab-photo" class="ibihub-settings-tab{% if active_settings_tab == 'photo' %} is-active{% endif %}" role="tabpanel">
+			<div id="tab-photo" class="ibihub-settings-tab{% if active_settings_tab == 'profile' %} is-active{% endif %}" role="tabpanel">
 				<h2 class="ibihub-dashboard-panel__title">Photo de profil</h2>
 				<p class="ibihub-dashboard-panel__subtitle">Une photo claire renforce la confiance.</p>
 				<div class="ibihub-profile-photo-card">
@@ -107,12 +107,78 @@
 					</div>
 				</div>
 			</div>
+
+			<div id="tab-billing" class="ibihub-settings-tab{% if active_settings_tab == 'billing' %} is-active{% endif %}" role="tabpanel">
+				<h2 class="ibihub-dashboard-panel__title">Facturation</h2>
+				<p class="ibihub-dashboard-panel__subtitle">Moyens de paiement, historique PDF et solde parrainage.</p>
+				<div class="row">
+					<div class="col-md-6 col-sm-12">
+						<label for="{{ form.reseau_momo.id_for_label }}">{{ form.reseau_momo.label }}</label>
+						{{ form.reseau_momo.errors }}
+						{{ form.reseau_momo }}
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<label for="{{ form.numero_momo.id_for_label }}">{{ form.numero_momo.label }}</label>
+						{{ form.numero_momo.errors }}
+						{{ form.numero_momo }}
+						<small class="ibihub-dashboard-field-hint">Utilisé pour remboursements de caution et gains de parrainage.</small>
+					</div>
+				</div>
+				<div class="margin-top-20" style="padding:12px;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa;">
+					<p style="margin:0 0 4px;"><strong>Solde Parrainage :</strong> {{ referral_balance|floatformat:0 }} FCFA</p>
+					<p style="margin:0;color:#4b5563;">Filleuls inscrits : {{ referral_children_count }}</p>
+				</div>
+				<div class="margin-top-20 ibihub-settings-billing-section">
+					<h4>Historique des factures</h4>
+					<div class="ibihub-settings-table-wrap">
+					<table class="ibihub-dashboard-table">
+						<thead><tr><th>Réservation</th><th>Espace</th><th>Période</th><th>Montant</th><th>PDF</th></tr></thead>
+						<tbody>
+							{% for r in billing_history %}
+							<tr>
+								<td>#{{ r.pk }}</td>
+								<td>{{ r.entrepot.titre }}</td>
+								<td>{{ r.date_debut|date:"d/m/Y" }} — {{ r.date_fin|date:"d/m/Y" }}</td>
+								<td>{{ r.montant_total|floatformat:0 }} FCFA</td>
+								<td>
+									{% if r.ticket_pdf %}<a href="{% url 'core:reservation_ticket_pdf' pk=r.pk %}">Ticket PDF</a>
+									{% elif r.contrat_pdf %}<a href="{% url 'core:reservation_contrat_pdf' pk=r.pk %}">Contrat PDF</a>
+									{% else %}—{% endif %}
+								</td>
+							</tr>
+							{% empty %}
+							<tr><td colspan="5">Aucune facture disponible.</td></tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					</div>
+				</div>
+				<div class="margin-top-20 ibihub-settings-billing-section">
+					<h4>Historique des parrainages</h4>
+					<div class="ibihub-settings-table-wrap">
+					<table class="ibihub-dashboard-table">
+						<thead><tr><th>Filleul</th><th>Date réservation</th><th>Montant gagné</th></tr></thead>
+						<tbody>
+							{% for g in referral_history %}
+							<tr>
+								<td>{{ g.filleul.get_full_name|default:g.filleul.username }}</td>
+								<td>{{ g.reservation.date_fin|date:"d/m/Y" }}</td>
+								<td>{{ g.montant|floatformat:0 }} FCFA</td>
+							</tr>
+							{% empty %}
+							<tr><td colspan="3">Aucun gain de parrainage pour le moment.</td></tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					</div>
+				</div>
+			</div>
 		</form>
 
 		<form method="post" class="ibihub-settings-form" id="ibihub-settings-password-form" autocomplete="on">
 			{% csrf_token %}
 			<input type="hidden" name="form_type" value="password">
-			<div id="tab-password" class="ibihub-settings-tab{% if active_settings_tab == 'password' %} is-active{% endif %}" role="tabpanel">
+			<div id="tab-security" class="ibihub-settings-tab{% if active_settings_tab == 'security' or active_settings_tab == 'password' %} is-active{% endif %}" role="tabpanel">
 				<h2 class="ibihub-dashboard-panel__title">Mot de passe</h2>
 				<p class="ibihub-dashboard-panel__subtitle">Pour votre sécurité, utilisez un mot de passe long et unique.</p>
 				{% if password_form.non_field_errors %}
@@ -170,7 +236,7 @@
 			btn.setAttribute('aria-selected', active ? 'true' : 'false');
 		});
 		if (btnProfile && btnPassword) {
-			var isPassword = id === 'tab-password';
+			var isPassword = id === 'tab-security';
 			btnProfile.hidden = isPassword;
 			btnPassword.hidden = !isPassword;
 		}
@@ -181,7 +247,7 @@
 		});
 	});
 	var initial = '{{ active_settings_tab|default:"profile" }}';
-	var map = { profile: 'tab-profile', photo: 'tab-photo', password: 'tab-password' };
+	var map = { profile: 'tab-profile', billing: 'tab-billing', security: 'tab-security', password: 'tab-security' };
 	if (map[initial]) showTab(map[initial]);
 })();
 </script>

@@ -5,7 +5,7 @@ from datetime import date, timedelta
 from django.db.models import Q
 from django.utils import timezone
 
-from .models import EntrepotPeriodeBloquee, Reservation
+from .models import EntrepotIndisponibilite, EntrepotPeriodeBloquee, Reservation
 
 
 def entrepot_has_blocking_reservations(entrepot) -> bool:
@@ -38,6 +38,12 @@ def _blocage_ranges_qs(entrepot):
     )
 
 
+def _owner_unavailability_ranges_qs(entrepot):
+    return EntrepotIndisponibilite.objects.filter(entrepot=entrepot).values_list(
+        'date_debut', 'date_fin'
+    )
+
+
 def entrepot_blocked_date_ranges_iso(entrepot):
     """
     Périodes indisponibles : réservations (en attente / confirmées) + verrous admin.
@@ -58,6 +64,14 @@ def entrepot_blocked_date_ranges_iso(entrepot):
                 'debut': d0.isoformat(),
                 'fin': d1.isoformat(),
                 'kind': 'lock',
+            }
+        )
+    for d0, d1 in _owner_unavailability_ranges_qs(entrepot):
+        out.append(
+            {
+                'debut': d0.isoformat(),
+                'fin': d1.isoformat(),
+                'kind': 'owner_lock',
             }
         )
     return out
@@ -96,6 +110,10 @@ def booking_range_unavailable(entrepot, date_debut: date, date_fin: date) -> boo
     if res:
         return True
     return EntrepotPeriodeBloquee.objects.filter(
+        entrepot=entrepot,
+        date_debut__lte=date_fin,
+        date_fin__gte=date_debut,
+    ).exists() or EntrepotIndisponibilite.objects.filter(
         entrepot=entrepot,
         date_debut__lte=date_fin,
         date_fin__gte=date_debut,

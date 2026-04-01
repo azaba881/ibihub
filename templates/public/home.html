@@ -5,14 +5,14 @@
 {% block title %}IbiHub — Accueil{% endblock %}
 
 {% block content %}
-<!-- Banner
-================================================== -->
+
+<!-- Banner -->
 <div class="main-search-container plain-color ibihub-home-hero">
-	<div class="main-search-inner">
+	<div class="main-search-inner ibihub-home-hero-flow">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12">
-					<div class="main-search-headlines">
+					<div class="main-search-headlines ibihub-home-hero-flow__head">
 						<h1 class="text-hero-ibihub">
 							Transformez chaque mètre carré inutilisé en revenus
 						</h1>
@@ -21,7 +21,7 @@
 						</p>
 					</div>
 
-					<form method="get" action="{% url 'core:liste_espaces' %}" class="main-search-input ibihub-home-hero-search" id="ibihub-home-hero-search">
+					<form method="get" action="{% url 'core:liste_espaces' %}" class="main-search-input ibihub-home-hero-search ibihub-home-hero-flow__search" id="ibihub-home-hero-search">
 						<div class="main-search-input-item">
 							<label class="screen-reader-text" for="ibihub-home-q">Mot-clé</label>
 							<input id="ibihub-home-q" type="search" name="q" placeholder="Rechercher par nom, localisation ou catégorie" value="" autocomplete="off"/>
@@ -50,7 +50,7 @@
 				</div>
 			</div>
 			<!-- Features Categories -->
-			<div class="row">
+			<div class="row ibihub-home-hero-flow__categories">
 				<div class="col-md-12">
 					<h5 class="highlighted-categories-headline">Découvrez les espaces disponibles près de chez vous</h5>
 					  
@@ -77,7 +77,7 @@
 	</div>
 
 	<!-- Main Search Photo Slider -->
-	<div class="container msps-container">
+	<div class="container msps-container ibihub-home-hero-flow__slider">
 		<div class="main-search-photo-slider">
 			<div class="msps-slider-container">
 				<div class="msps-slider">
@@ -171,6 +171,7 @@
 						<img src="{% static 'images/category-space/cat-1.png' %}" alt="">
 						{% endif %}
 						<span class="ibihub-space-card__badge">{{ e.categorie.nom|upper }}</span>
+						{% if e.is_boosted %}<span class="ibihub-space-card__badge" style="left:auto;right:10px;background:#f59e0b;color:#111827;">Premium</span>{% endif %}
 					</div>
 					<div class="ibihub-space-card__body">
 						<h4 class="ibihub-space-card__title">{{ e.titre }}</h4>
@@ -266,8 +267,106 @@
 	</div>
 </section>
 
+<!-- Tarifs -->
+<section class="fullwidth margin-top-30 padding-top-35 padding-bottom-40" data-background-color="#f8faf9" aria-labelledby="pricing-title">
+	<style>
+		.ibihub-pricing-card {
+			position: relative;
+			background: #fff;
+			border: 1px solid #e5e7eb;
+			border-radius: 18px;
+			padding: 22px 20px;
+			height: 100%;
+			box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
+			transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+		}
+		.ibihub-pricing-card:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 16px 30px rgba(15, 23, 42, 0.09);
+		}
+		.ibihub-pricing-card--pro {
+			border: 2px solid #0d5c4d;
+			box-shadow: 0 18px 35px rgba(13, 92, 77, .14);
+		}
+		.ibihub-pricing-badge {
+			display: inline-block;
+			padding: 5px 10px;
+			border-radius: 999px;
+			font-size: 12px;
+			font-weight: 700;
+			margin-bottom: 10px;
+		}
+		.ibihub-pricing-badge--free { background: #dcfce7; color: #166534; }
+		.ibihub-pricing-badge--pro { background: #dcf4ef; color: #0d5c4d; }
+		.ibihub-pricing-badge--ent { background: #e0e7ff; color: #3730a3; }
+		.ibihub-pricing-title { margin: 0 0 6px; font-size: 21px; }
+		.ibihub-pricing-sub { color: #4b5563; min-height: 42px; margin-bottom: 14px; }
+		.ibihub-pricing-list { padding-left: 0; margin: 0; list-style: none; }
+		.ibihub-pricing-list li { margin-bottom: 8px; color: #1f2937; font-weight: 500; }
+		.ibihub-pricing-list i { color: #0d5c4d; margin-right: 8px; }
+		.ibihub-pricing-price {
+			font-size: 28px;
+			font-weight: 800;
+			color: #0f172a;
+			line-height: 1.1;
+			margin-bottom: 6px;
+		}
+	</style>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h3 class="headline centered margin-bottom-35">
+					<strong id="pricing-title" class="headline-with-separator text-primary-ibihub title-ibihub">Nos Tarifs</strong>
+					<span>Des offres claires selon votre rythme de stockage</span>
+				</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 col-sm-12">
+				<div class="ibihub-pricing-card">
+					<span class="ibihub-pricing-badge ibihub-pricing-badge--free">GRATUIT</span>
+					<h4 class="ibihub-pricing-title">Pack Découverte</h4>
+					<p class="ibihub-pricing-sub">Pour les petits stockages ponctuels (&lt; 7 jours).</p>
+					<div class="ibihub-pricing-price">0 FCFA</div>
+					<ul class="ibihub-pricing-list">
+						<li><i class="fa fa-check-circle" aria-hidden="true"></i>0 FCFA de frais fixes</li>
+						<li><i class="fa fa-check-circle" aria-hidden="true"></i>5% d'assurance uniquement</li>
+						<li><i class="fa fa-check-circle" aria-hidden="true"></i>Réservation immédiate</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-4 col-sm-12 margin-top-20">
+				<div class="ibihub-pricing-card ibihub-pricing-card--pro">
+					<span class="ibihub-pricing-badge ibihub-pricing-badge--pro">RECOMMANDÉ</span>
+					<h4 class="ibihub-pricing-title">Pack Pro</h4>
+					<p class="ibihub-pricing-sub">Pour les commerçants réguliers et les flux récurrents.</p>
+					<div class="ibihub-pricing-price">5% / réservation</div>
+					<ul class="ibihub-pricing-list">
+						<li><i class="fa fa-check-circle" aria-hidden="true"></i>Gestion d'inventaire photo</li>
+						<li><i class="fa fa-check-circle" aria-hidden="true"></i>Support WhatsApp prioritaire</li>
+						<li><i class="fa fa-check-circle" aria-hidden="true"></i>Contrat PDF automatique</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-4 col-sm-12 margin-top-20">
+				<div class="ibihub-pricing-card">
+					<span class="ibihub-pricing-badge ibihub-pricing-badge--ent">ENTREPRISE</span>
+					<h4 class="ibihub-pricing-title">Pack Entreprise</h4>
+					<p class="ibihub-pricing-sub">Pour les gros volumes et les locations longue durée.</p>
+					<div class="ibihub-pricing-price">Sur mesure</div>
+					<ul class="ibihub-pricing-list">
+						<li><i class="fa fa-check-circle" aria-hidden="true"></i>Paiement échelonné</li>
+						<li><i class="fa fa-check-circle" aria-hidden="true"></i>Caution flexible</li>
+						<li><i class="fa fa-check-circle" aria-hidden="true"></i>Assurance Premium</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
 <!-- Testimonials -->
-<section class="fullwidth margin-top-20 padding-top-75 padding-bottom-70" data-background-color="#f9f9f9">
+<section class="fullwidth margin-top-20 padding-top-50 padding-bottom-50" data-background-color="#f9f9f9">
 	<!-- Info Section -->
 	<div class="container">
 

@@ -1,0 +1,16 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Activation Propriétaire — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<section class="ibihub-dashboard-panel" style="max-width:760px;">
+  <h1 class="ibihub-dashboard-panel__title">Activation du mode Propriétaire</h1>
+  <p style="margin-top:8px;">
+    Passez au niveau Business : envoyez votre pièce d'identité pour commencer à gagner de l'argent.
+  </p>
+  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+    <a href="{% url 'core:dashboard_owner_kyc' %}" class="ibihub-dashboard-add-btn">Soumettre ma pièce d’identité</a>
+    <a href="{% url 'core:dashboard_switch_mode' %}" class="ibihub-dashboard-add-btn ibihub-dashboard-add-btn--muted">Revenir en mode Commerçant</a>
+  </div>
+</section>
+{% endblock %}

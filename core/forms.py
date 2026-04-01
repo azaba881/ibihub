@@ -8,7 +8,14 @@ from django.contrib.auth.forms import (
     UserCreationForm,
 )
 
-from .models import Entrepot, EntrepotAvis, UserCustom
+from .models import (
+    Entrepot,
+    EntrepotAvis,
+    EntrepotIndisponibilite,
+    EtatDesLieux,
+    Litige,
+    UserCustom,
+)
 
 
 class IbiHubPasswordResetForm(PasswordResetForm):
@@ -80,6 +87,22 @@ class UserRegistrationForm(UserCreationForm):
         )
         self.fields['role'].widget = forms.HiddenInput()
         self.fields['role'].initial = 'MERCHANT'
+        self.fields['parrainage_code_input'] = forms.CharField(
+            required=False,
+            max_length=20,
+            label='Code de parrainage (optionnel)',
+            widget=forms.TextInput(
+                attrs={
+                    'placeholder': 'Ex: AB12CD34',
+                    'autocomplete': 'off',
+                    'class': 'ibihub-auth-input',
+                }
+            ),
+        )
+        if self.initial.get('parrainage_code_input'):
+            self.fields['parrainage_code_input'].initial = self.initial.get(
+                'parrainage_code_input'
+            )
 
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
@@ -97,9 +120,22 @@ class UserRegistrationForm(UserCreationForm):
             return ''
         return raw
 
+    def clean_parrainage_code_input(self):
+        code = (self.cleaned_data.get('parrainage_code_input') or '').strip().upper()
+        if not code:
+            return ''
+        if not UserCustom.objects.filter(code_parrainage__iexact=code).exists():
+            raise forms.ValidationError('Code de parrainage invalide.')
+        return code
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = user.username
+        code = (self.cleaned_data.get('parrainage_code_input') or '').strip().upper()
+        if code:
+            parrain = UserCustom.objects.filter(code_parrainage__iexact=code).first()
+            if parrain and parrain.pk != user.pk:
+                user.parrain = parrain
         if commit:
             user.save()
         return user
@@ -267,6 +303,29 @@ EQUIPEMENT_CHOICES = [
 ]
 
 
+class OwnerKycForm(forms.ModelForm):
+    """Envoi pièce d’identité pour vérification du compte propriétaire."""
+
+    class Meta:
+        model = UserCustom
+        fields = ('type_piece', 'piece_identite')
+        labels = {
+            'type_piece': 'Type de pièce',
+            'piece_identite': 'Fichier (scan ou photo nette)',
+        }
+        widgets = {
+            'type_piece': forms.Select(attrs={'class': 'ibihub-form__select'}),
+            'piece_identite': forms.ClearableFileInput(
+                attrs={'class': 'ibihub-form__input'}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['type_piece'].required = True
+        self.fields['piece_identite'].required = True
+
+
 class EntrepotForm(forms.ModelForm):
     """Équipements : cases à cocher + champ libre (pas de JSON)."""
 
@@ -303,21 +362,36 @@ class EntrepotForm(forms.ModelForm):
             'image_principale',
             'prix_par_jour',
             'surface_m2',
+            'caution_requise',
+            'montant_caution_fixe',
             'disponible',
         )
+        labels = {
+            'caution_requise': 'Caution requise',
+            'montant_caution_fixe': 'Montant caution fixe (FCFA)',
+        }
         widgets = {
             'description_detaillee': forms.Textarea(attrs={'rows': 5}),
             'prix_par_jour': forms.NumberInput(attrs={'step': '0.01', 'min': '0'}),
             'titre': forms.TextInput(attrs={'placeholder': 'Ex. Entrepôt zone industrielle'}),
             'adresse': forms.TextInput(attrs={'placeholder': 'Quartier, rue…'}),
             'surface_m2': forms.NumberInput(attrs={'min': '1', 'placeholder': 'm²'}),
+            'caution_requise': forms.CheckboxInput(),
+            'montant_caution_fixe': forms.NumberInput(
+                attrs={
+                    'step': '0.01',
+                    'min': '0',
+                    'placeholder': 'Ex. 50000',
+                }
+            ),
             'categorie': forms.Select(),
             'ville': forms.Select(),
             'image_principale': forms.ClearableFileInput(),
             'disponible': forms.CheckboxInput(),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, owner=None, **kwargs):
+        self._owner = owner
         super().__init__(*args, **kwargs)
         preset = {k for k, _ in EQUIPEMENT_CHOICES}
         if self.instance.pk and self.instance.equipements:
@@ -345,6 +419,19 @@ class EntrepotForm(forms.ModelForm):
         cleaned['_equipements_list'] = list(choices) + extras
         return cleaned
 
+    def clean_disponible(self):
+        disponible = self.cleaned_data.get('disponible')
+        if disponible:
+            owner = self._owner
+            if owner is None and self.instance.pk:
+                owner = getattr(self.instance, 'proprietaire', None)
+            if owner is not None and not owner.is_verified:
+                raise forms.ValidationError(
+                    'Compte non vérifié : vous ne pouvez pas mettre l’annonce en ligne. '
+                    'Transmettez votre pièce d’identité (menu Vérification du compte).'
+                )
+        return disponible
+
     def save(self, commit=True):
         instance = super().save(commit=False)
         instance.equipements = self.cleaned_data.get('_equipements_list') or []
@@ -358,13 +445,23 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserCustom
-        fields = ('first_name', 'last_name', 'email', 'telephone', 'photo_profil')
+        fields = (
+            'first_name',
+            'last_name',
+            'email',
+            'telephone',
+            'photo_profil',
+            'reseau_momo',
+            'numero_momo',
+        )
         labels = {
             'first_name': 'Prénom',
             'last_name': 'Nom',
             'email': 'Adresse e-mail',
             'telephone': 'Téléphone',
             'photo_profil': 'Photo de profil',
+            'reseau_momo': 'Réseau Mobile Money',
+            'numero_momo': 'Numéro Mobile Money',
         }
         widgets = {
             'first_name': forms.TextInput(attrs={'autocomplete': 'given-name'}),
@@ -377,6 +474,10 @@ class UserProfileForm(forms.ModelForm):
                 }
             ),
             'photo_profil': forms.ClearableFileInput(),
+            'reseau_momo': forms.Select(),
+            'numero_momo': forms.TextInput(
+                attrs={'placeholder': '+229... (pour remboursements/gains)'}
+            ),
         }
 
     def clean_email(self):
@@ -397,3 +498,49 @@ class UserProfileForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class EtatDesLieuxForm(forms.ModelForm):
+    class Meta:
+        model = EtatDesLieux
+        fields = (
+            'photo_entree_1',
+            'photo_entree_2',
+            'photo_sortie_1',
+            'photo_sortie_2',
+            'commentaire_proprietaire',
+            'commentaire_commercant',
+        )
+        widgets = {
+            'commentaire_proprietaire': forms.Textarea(attrs={'rows': 3}),
+            'commentaire_commercant': forms.Textarea(attrs={'rows': 3}),
+        }
+
+
+class LitigeForm(forms.ModelForm):
+    class Meta:
+        model = Litige
+        fields = ('motif', 'description')
+        widgets = {
+            'motif': forms.TextInput(attrs={'placeholder': 'Ex: refus de sortie sans motif'}),
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }
+
+
+class EntrepotIndisponibiliteForm(forms.ModelForm):
+    class Meta:
+        model = EntrepotIndisponibilite
+        fields = ('entrepot', 'date_debut', 'date_fin', 'raison')
+        widgets = {
+            'date_debut': forms.DateInput(attrs={'type': 'date'}),
+            'date_fin': forms.DateInput(attrs={'type': 'date'}),
+            'raison': forms.TextInput(attrs={'placeholder': 'Maintenance, usage interne...'}),
+        }
+
+    def clean(self):
+        cleaned = super().clean()
+        d0 = cleaned.get('date_debut')
+        d1 = cleaned.get('date_fin')
+        if d0 and d1 and d1 < d0:
+            raise forms.ValidationError('La date de fin doit être après la date de début.')
+        return cleaned

@@ -1,0 +1,12 @@
+Nouvelle demande de visite IbiHub
+
+Espace: {{ entrepot.titre }}
+Ville: {{ entrepot.get_ville_display }}
+Date souhaitee: {{ visit_date }}
+
+Nom: {{ visitor_name }}
+Email: {{ visitor_email }}
+Telephone: {{ visitor_phone }}
+
+Message:
+{{ visit_note }}

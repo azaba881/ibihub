@@ -3,7 +3,11 @@
 	<div class="ibihub-dashboard-sidebar__logo">
 		<a href="{% url 'core:home' %}"><img src="{% static 'images/favicon.png' %}" alt="IbiHub"></a>
 		<span style="font-family:Poppins;font-size:14px;color:white;">
-			{% if request.user.role == 'OWNER' %}Espace propriétaire{% else %}Espace commerçant{% endif %}
+			{% if request.user.has_owner_access and request.session.dashboard_mode == 'OWNER' %}
+				Espace propriétaire
+			{% else %}
+				Espace commerçant
+			{% endif %}
 		</span>
 	</div>
 	<ul class="ibihub-dashboard-nav">
@@ -12,28 +16,77 @@
 				<span class="icon"><i class="fa fa-th-large" aria-hidden="true"></i></span> Tableau de bord
 			</a>
 		</li>
-		{% if request.user.role == 'OWNER' %}
+		{% if request.session.dashboard_mode == 'OWNER' %}
 		<li>
 			<a href="{% url 'core:dashboard_spaces' %}" class="{% if request.resolver_match.url_name == 'dashboard_spaces' %}is-active{% endif %}">
-				<span class="icon"><i class="fa fa-store" aria-hidden="true"></i></span> Mes espaces
+				<span class="icon"><i class="fa fa-store" aria-hidden="true"></i></span> Mes entrepôts
 			</a>
 		</li>
 		<li>
-			<a href="{% url 'core:dashboard_add_space' %}" class="{% if request.resolver_match.url_name == 'dashboard_add_space' %}is-active{% endif %}">
-				<span class="icon"><i class="fa fa-plus-circle" aria-hidden="true"></i></span> Ajouter un espace
+			{% if request.user.is_verified %}
+				<a href="{% url 'core:dashboard_add_space' %}" class="{% if request.resolver_match.url_name == 'dashboard_add_space' %}is-active{% endif %}">
+					<span class="icon"><i class="fa fa-plus-circle" aria-hidden="true"></i></span> Ajouter un espace
+				</a>
+			{% else %}
+				<a href="{% url 'core:dashboard_owner_kyc' %}" class="{% if request.resolver_match.url_name == 'dashboard_owner_kyc' %}is-active{% endif %}">
+					<span class="icon"><i class="fa fa-id-card" aria-hidden="true"></i></span> Vérification KYC requise
+				</a>
+			{% endif %}
+		</li>
+		{% if not request.user.is_verified %}
+		<li>
+			<a href="{% url 'core:dashboard_owner_kyc' %}" class="{% if request.resolver_match.url_name == 'dashboard_owner_kyc' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-id-card" aria-hidden="true"></i></span> Vérification KYC
 			</a>
 		</li>
 		{% endif %}
+		{% if request.user.is_staff %}
+		<li>
+			<a href="{% url 'core:dashboard_admin_analytics' %}" class="{% if request.resolver_match.url_name == 'dashboard_admin_analytics' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-chart-line" aria-hidden="true"></i></span> Analytics commissions
+			</a>
+		</li>
+		{% endif %}
+		<li>
+			<a href="{% url 'core:dashboard_disponibilites' %}" class="{% if request.resolver_match.url_name == 'dashboard_disponibilites' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-calendar-times" aria-hidden="true"></i></span> Gérer disponibilités
+			</a>
+		</li>
 		<li>
 			<a href="{% url 'core:dashboard_reservations' %}" class="{% if request.resolver_match.url_name == 'dashboard_reservations' %}is-active{% endif %}">
 				<span class="icon"><i class="fa fa-calendar-check" aria-hidden="true"></i></span> Réservations
 			</a>
 		</li>
+		{% else %}
+		<li>
+			<a href="{% url 'core:dashboard_reservations' %}" class="{% if request.resolver_match.url_name == 'dashboard_reservations' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-calendar-check" aria-hidden="true"></i></span> Mes Stockages
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'core:dashboard_favorites' %}" class="{% if request.resolver_match.url_name == 'dashboard_favorites' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-heart" aria-hidden="true"></i></span> Mes favoris
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'core:dashboard_referral' %}" class="{% if request.resolver_match.url_name == 'dashboard_referral' %}is-active{% endif %}">
+				<span class="icon"><i class="fa fa-share-alt" aria-hidden="true"></i></span> Parrainage
+			</a>
+		</li>
+		{% endif %}
 		<li>
 			<a href="{% url 'core:dashboard_settings' %}" class="{% if request.resolver_match.url_name == 'dashboard_settings' %}is-active{% endif %}">
 				<span class="icon"><i class="fa fa-cog" aria-hidden="true"></i></span> Paramètres
 			</a>
 		</li>
+		{% if not request.user.has_owner_access %}
+		<li>
+			<a href="{% url 'core:dashboard_switch_mode' %}">
+				<span class="icon"><i class="fa fa-exchange-alt" aria-hidden="true"></i></span>
+				{% if request.session.dashboard_mode == 'OWNER' %}Passer en mode Commerçant{% else %}Passer en mode Propriétaire{% endif %}
+			</a>
+		</li>
+		{% endif %}
 		<li>
 			<form method="post" action="{% url 'core:logout' %}" class="ibihub-dashboard-logout-form">
 				{% csrf_token %}

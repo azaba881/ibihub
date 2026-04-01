@@ -1,0 +1,7 @@
+Bienvenue sur IbiHub {{ user.get_full_name|default:user.username }} !
+
+Votre compte est actif.
+Accédez à votre espace: {{ dashboard_url }}
+
+Merci,
+Équipe IbiHub

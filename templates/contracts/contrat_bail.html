@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @page { size: a4; margin: 1.5cm; }
+    body { font-family: DejaVu Sans, Helvetica, Arial, sans-serif; font-size: 11pt; color: #1a2e28; line-height: 1.45; }
+    h1 { font-size: 18pt; color: #0d5c4d; margin: 0 0 8px; }
+    h2 { font-size: 12pt; color: #0d5c4d; margin: 18px 0 8px; border-bottom: 1px solid #dcebe6; padding-bottom: 4px; }
+    .logo { max-height: 48px; margin-bottom: 12px; }
+    table.meta { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    table.meta td { padding: 6px 8px; vertical-align: top; border: 1px solid #e8f0ed; }
+    table.meta td.label { width: 32%; background: #f6faf8; font-weight: bold; color: #5a6f68; }
+    .clause { background: #f9fafb; border: 1px solid #e5e7eb; padding: 12px; margin-top: 16px; font-size: 10pt; }
+    .footer { margin-top: 24px; font-size: 9pt; color: #6b7280; }
+  </style>
+</head>
+<body>
+  {% load static %}
+  <img class="logo" src="{% static 'images/logo.png' %}" alt="IbiHub">
+
+  <h1>Contrat de mise à disposition d’espace de stockage</h1>
+  <p style="margin:0 0 16px;color:#5a6f68;">Référence réservation n° <strong>{{ reservation.pk }}</strong> — {{ site_name }}</p>
+
+  <h2>Parties</h2>
+  <table class="meta">
+    <tr>
+      <td class="label">Bailleur / Exploitant</td>
+      <td>
+        {{ proprietaire.get_full_name|default:proprietaire.username }}<br>
+        E-mail : {{ proprietaire.email|default:proprietaire.username }}
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Locataire / Client</td>
+      <td>
+        {{ client.get_full_name|default:client.username }}<br>
+        E-mail : {{ client.email|default:client.username }}
+      </td>
+    </tr>
+  </table>
+
+  <h2>Lieu et objet</h2>
+  <table class="meta">
+    <tr>
+      <td class="label">Désignation</td>
+      <td>{{ entrepot.titre }}</td>
+    </tr>
+    <tr>
+      <td class="label">Adresse</td>
+      <td>{{ entrepot.adresse }}, {{ entrepot.get_ville_display }}</td>
+    </tr>
+    <tr>
+      <td class="label">Surface</td>
+      <td>{{ entrepot.surface_m2 }}&nbsp;m²</td>
+    </tr>
+  </table>
+
+  <h2>Conditions financières et période</h2>
+  <table class="meta">
+    <tr>
+      <td class="label">Date de début</td>
+      <td>{{ reservation.date_debut|date:"d/m/Y" }}</td>
+    </tr>
+    <tr>
+      <td class="label">Date de fin</td>
+      <td>{{ reservation.date_fin|date:"d/m/Y" }}</td>
+    </tr>
+    <tr>
+      <td class="label">Montant total de la location</td>
+      <td>{{ reservation.montant_total }}&nbsp;FCFA (hors modalités de paiement externes)</td>
+    </tr>
+    <tr>
+      <td class="label">Frais plateforme ({{ reservation.taux_commission_display }})</td>
+      <td>{{ reservation.frais_assurance }}&nbsp;FCFA</td>
+    </tr>
+    <tr>
+      <td class="label">Caution indiquée</td>
+      <td>{{ reservation.montant_caution }}&nbsp;FCFA</td>
+    </tr>
+  </table>
+
+  {% if reservation.inventaire_depot %}
+  <h2>Inventaire déclaré par le locataire</h2>
+  <p style="white-space:pre-wrap;border:1px solid #e8f0ed;padding:10px;background:#fafafa;">{{ reservation.inventaire_depot }}</p>
+  {% endif %}
+
+  <h2>Responsabilité</h2>
+  <div class="clause">
+    <p><strong>Clause de responsabilité.</strong> Le locataire demeure seul responsable du contenu stocké, de sa conformité aux lois en vigueur et de l’exactitude de l’inventaire déclaré. Le bailleur et {{ site_name }} ne sauraient être tenus responsables des pertes, vols, dégradations ou dommages indirects, sauf faute lourde prouvée. Le présent document est généré automatiquement à titre d’annexe informative ; les parties peuvent conclure tout acte complémentaire de leur choix.</p>
+    <p>En cas de litige, les parties s’efforceront d’abord d’une résolution amiable. À défaut, les tribunaux compétents du Bénin pourront être saisis, sous réserve des dispositions impératives applicables.</p>
+  </div>
+
+  <p class="footer">Document émis par {{ site_name }} — ne vaut pas signature électronique avancée. Conservez ce PDF avec votre dossier.</p>
+</body>
+</html>

@@ -7,6 +7,14 @@
 {% if can_submit_reservation %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
 {% endif %}
+<style>
+  .ibihub-avail-cell--busy-lock { background:#fee2e2 !important; color:#991b1b !important; }
+  .ibihub-share-links { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .ibihub-share-links a { display:inline-flex; align-items:center; gap:8px; padding:9px 12px; border-radius:999px; color:#fff; font-weight:600; }
+  .ibihub-share-wa { background:#25D366; }
+  .ibihub-share-fb { background:#1877F2; }
+  .ibihub-share-li { background:#0A66C2; }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -102,6 +110,22 @@
 						{% endfor %}
 					</div>
 					{% endif %}
+					<div style="margin-top:16px;padding-top:12px;border-top:1px solid #e5e7eb;">
+						<h4 style="margin-bottom:8px;">Partager cet espace</h4>
+						{% if user.is_authenticated %}
+						<form method="post" action="{% url 'core:toggle_favori' pk=entrepot.pk %}" style="margin-bottom:10px;">
+							{% csrf_token %}
+							<button type="submit" style="border:0;border-radius:999px;padding:8px 12px;font-weight:700;background:{% if is_favori %}#fee2e2{% else %}#f3f4f6{% endif %};color:#111827;">
+								{% if is_favori %}❤ Retirer des favoris{% else %}♡ Ajouter aux favoris{% endif %}
+							</button>
+						</form>
+						{% endif %}
+						<div class="ibihub-share-links">
+							<a class="ibihub-share-wa" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?text={{ entrepot.titre|add:' - '|add:share_absolute_url|urlencode }}"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+							<a class="ibihub-share-fb" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u={{ share_absolute_url|urlencode }}"><i class="fab fa-facebook-f"></i> Facebook</a>
+							<a class="ibihub-share-li" target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url={{ share_absolute_url|urlencode }}"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+						</div>
+					</div>
 				</section>
 
 				<section id="section-tarifs" class="ibihub-space-card">
@@ -114,8 +138,8 @@
 						</div>
 						<div class="ibihub-space-tarif">
 							<h4>Caution</h4>
-							<p>À convenir avec le propriétaire lors de la réservation.</p>
-							<div class="ibihub-space-tarif__amount">—</div>
+							<p>{% if entrepot.montant_caution_fixe %}Montant fixe appliqué à toute réservation.{% else %}Calculée automatiquement (20% du loyer, si aucun montant fixe n’est défini).{% endif %}</p>
+							<div class="ibihub-space-tarif__amount">{% if entrepot.montant_caution_fixe %}{{ entrepot.montant_caution_fixe|floatformat:0 }} FCFA{% else %}Auto{% endif %}</div>
 						</div>
 						<div class="ibihub-space-tarif">
 							<h4>Honoraires IbiHub</h4>
@@ -194,11 +218,22 @@
 						<div class="ibihub-space-book__verified"><i class="fa fa-check" aria-hidden="true"></i> Annonce IbiHub</div>
 						<div class="ibihub-space-book__price">{{ entrepot.prix_par_jour|floatformat:0 }} <small>FCFA / jour</small></div>
 						<p class="ibihub-space-book__hint">{% if entrepot.disponible %}Disponible pour réservation{% else %}Actuellement indisponible{% endif %}</p>
-						<label for="visit-date">Date de visite souhaitée</label>
-						<input type="date" id="visit-date" name="visit">
-						<label for="visit-note" style="margin-top:14px;">Message</label>
-						<textarea id="visit-note" placeholder="Présentez votre projet…"></textarea>
-						<a href="{% url 'core:contact' %}" class="ibihub-space-book__cta">Demander une visite</a>
+						<form method="post" action="{% url 'core:demander_visite' pk=entrepot.pk %}">
+							{% csrf_token %}
+							<label for="visit-date">Date de visite souhaitée</label>
+							<input type="date" id="visit-date" name="visit_date" required>
+							<label for="visit-note" style="margin-top:14px;">Message</label>
+							<textarea id="visit-note" name="visit_note" placeholder="Présentez votre projet…"></textarea>
+							{% if not user.is_authenticated %}
+							<label for="visit-name" style="margin-top:14px;">Nom</label>
+							<input type="text" id="visit-name" name="visit_name" required>
+							<label for="visit-email" style="margin-top:14px;">Email</label>
+							<input type="email" id="visit-email" name="visit_email" required>
+							<label for="visit-phone" style="margin-top:14px;">Téléphone (optionnel)</label>
+							<input type="text" id="visit-phone" name="visit_phone">
+							{% endif %}
+							<button type="submit" class="ibihub-space-book__cta" style="width:100%;border:0;cursor:pointer;margin-top:12px;">Demander une visite</button>
+						</form>
 						<a href="#small-dialog" class="ibihub-space-book__secondary popup-with-zoom-anim">Écrire au propriétaire</a>
 
 						<div class="ibihub-space-host">
@@ -225,12 +260,35 @@
 						<p class="ibihub-space-calendar-card__hint" style="color:#666;">Cet espace n’est pas disponible à la réservation pour le moment.</p>
 						{% else %}
 						<script type="application/json" id="ibihub-blocked-days-data">{{ availability_blocked_days_json|safe }}</script>
-						<form method="post" action="{% url 'core:reserver_espace' pk=entrepot.pk %}" class="ibihub-space-reservation-form" id="ibihub-reservation-form">
+						<form method="post" enctype="multipart/form-data" action="{% url 'core:reserver_espace' pk=entrepot.pk %}" class="ibihub-space-reservation-form" id="ibihub-reservation-form">
 							{% csrf_token %}
 							<label for="id_date_debut">Date de début</label>
-							<input type="text" name="date_debut" id="id_date_debut" required autocomplete="off" placeholder="Choisir…" class="flatpickr-input">
+							<input type="text" name="date_debut" id="id_date_debut" required autocomplete="off" placeholder="Choisir…" class="flatpickr-input" value="{{ reservation_form_initial.date_debut|default:'' }}">
 							<label for="id_date_fin" style="margin-top:12px;">Date de fin</label>
-							<input type="text" name="date_fin" id="id_date_fin" required autocomplete="off" placeholder="Choisir…" class="flatpickr-input">
+							<input type="text" name="date_fin" id="id_date_fin" required autocomplete="off" placeholder="Choisir…" class="flatpickr-input" value="{{ reservation_form_initial.date_fin|default:'' }}">
+							
+							<label for="id_inventaire_depot" style="margin-top:12px;">Inventaire de dépôt (marchandises)</label>
+							<textarea name="inventaire_depot" id="id_inventaire_depot" rows="4" placeholder="Ex. 25 sacs de riz, 10 cartons d'huile…" style="width:100%;box-sizing:border-box;border-radius:8px;border:1px solid rgba(0,0,0,.12);padding:10px 12px;font-family:Poppins,sans-serif;font-size:14px;">{{ reservation_form_initial.inventaire_depot|default:'' }}</textarea>
+							<label for="id_inventaire_photo" style="margin-top:12px;">Photo des marchandises (recommandé)</label>
+							<input type="file" name="inventaire_photo" id="id_inventaire_photo" accept="image/*" style="width:100%;box-sizing:border-box;border-radius:8px;border:1px solid rgba(0,0,0,.12);padding:10px 12px;font-family:Poppins,sans-serif;font-size:14px;background:#fff;">
+							<label for="id_type_paiement" style="margin-top:12px;">Mode de paiement</label>
+							<select name="type_paiement" id="id_type_paiement" style="width:100%;box-sizing:border-box;border-radius:8px;border:1px solid rgba(0,0,0,.12);padding:10px 12px;font-family:Poppins,sans-serif;font-size:14px;">
+								<option value="UNIQUE" {% if reservation_form_initial.type_paiement == 'UNIQUE' or not reservation_form_initial.type_paiement %}selected{% endif %}>Paiement unique</option>
+								<option value="MENSUEL" {% if reservation_form_initial.type_paiement == 'MENSUEL' %}selected{% endif %}>Paiement mensuel (recommandé > 30 jours)</option>
+							</select>
+							<div style="margin-top:10px;padding:10px;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa;">
+								<label for="id_sim_boxes" style="display:block;margin-bottom:6px;">Simulateur de volume (m² estimés)</label>
+								<input type="number" id="id_sim_boxes" min="0" step="1" placeholder="Nombre de cartons/sacs" style="width:100%;box-sizing:border-box;border-radius:8px;border:1px solid rgba(0,0,0,.12);padding:8px 10px;font-family:Poppins,sans-serif;font-size:14px;">
+								<p style="margin:8px 0 0;font-size:13px;color:#4b5563;">Estimation: <strong><span id="id_sim_m2">0</span> m²</strong> (base: 0.15 m² / unité)</p>
+							</div>
+							
+							<div style="margin-top:10px;padding:10px;border:1px dashed #d1d5db;border-radius:8px;background:#fff;">
+								<div style="display:flex;justify-content:space-between;font-size:13px;">
+									<span>Caution <span title="La caution est obligatoire pour les stockages de plus de 2 semaines pour garantir la sécurité des lieux." style="cursor:help;color:#0d5c4d;font-weight:700;">(?)</span></span>
+									<strong id="id_caution_label">0 FCFA (Offert)</strong>
+								</div>
+							</div>
+
 							<button type="submit" class="ibihub-space-book__cta" style="margin-top:16px;width:100%;border:0;cursor:pointer;">Confirmer la réservation</button>
 						</form>
 						<p class="ibihub-space-calendar-card__hint" style="margin-top:12px;">Les dates grisées ne sont pas sélectionnables. La réservation est confirmée immédiatement si la période est libre.</p>
@@ -239,11 +297,11 @@
 
 					<div class="ibihub-space-calendar-card ibihub-space-availability-card" id="section-disponibilite">
 						<h4>Calendrier de disponibilité</h4>
-						<p class="ibihub-space-calendar-card__hint">Réservations confirmées ou en attente (gris) ; fermetures définies par le propriétaire / admin (beige).</p>
+						<p class="ibihub-space-calendar-card__hint">Réservations confirmées ou en attente (gris) ; indisponibilités propriétaire/admin (rouge).</p>
 						<div class="ibihub-avail-legend">
 							<span><i class="ibihub-avail-dot ibihub-avail-dot--free"></i> Libre</span>
 							<span><i class="ibihub-avail-dot ibihub-avail-dot--busy"></i> Réservation</span>
-							<span><i class="ibihub-avail-dot ibihub-avail-dot--lock"></i> Fermeture</span>
+							<span><i class="ibihub-avail-dot ibihub-avail-dot--lock"></i> Indisponible</span>
 						</div>
 						<script type="application/json" id="ibihub-availability-data">{{ availability_ranges_json|safe }}</script>
 						<div id="ibihub-availability-calendar" class="ibihub-availability-calendar"></div>
@@ -284,6 +342,25 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   var dDebut = document.getElementById('id_date_debut');
   var dFin = document.getElementById('id_date_fin');
+
+  var cautionReq = {{ entrepot_caution_requise|yesno:"true,false" }};
+  var cautionFixed = Number('{{ entrepot_caution_fixe|default:"0" }}'.replace(',', '.')) || 0;
+  var cautionLabel = document.getElementById('id_caution_label');
+  function updateCautionLine() {
+    if (!cautionLabel || !dDebut || !dFin) return;
+    var sd = dDebut.value;
+    var ed = dFin.value;
+    if (!sd || !ed) { cautionLabel.textContent = '0 FCFA (Offert)'; return; }
+    var a = new Date(sd + 'T12:00:00');
+    var b = new Date(ed + 'T12:00:00');
+    var days = Math.floor((b - a) / 86400000) + 1;
+    if (cautionReq && days >= 14) {
+      cautionLabel.textContent = Math.round(cautionFixed).toLocaleString('fr-FR') + ' FCFA';
+    } else {
+      cautionLabel.textContent = '0 FCFA (Offert)';
+    }
+  }
+
   if (!dDebut || !dFin || typeof flatpickr === 'undefined') return;
   var fpFin = flatpickr(dFin, {
     dateFormat: 'Y-m-d',
@@ -294,6 +371,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (s && dateStr && dateStr < s) {
         fpFin.setDate(s, false);
       }
+      updateCautionLine();
     }
   });
   flatpickr(dDebut, {
@@ -304,8 +382,22 @@ document.addEventListener('DOMContentLoaded', function () {
       fpFin.set('minDate', dateStr || 'today');
       var f = document.getElementById('id_date_fin').value;
       if (f && dateStr && f < dateStr) fpFin.setDate(dateStr, false);
+      updateCautionLine();
     }
   });
+  if (dFin) dFin.addEventListener('change', updateCautionLine);
+  if (dDebut) dDebut.addEventListener('change', updateCautionLine);
+  updateCautionLine();
+
+  var simInput = document.getElementById('id_sim_boxes');
+  var simOut = document.getElementById('id_sim_m2');
+  if (simInput && simOut) {
+    simInput.addEventListener('input', function () {
+      var n = Number(simInput.value || 0);
+      if (n < 0 || Number.isNaN(n)) n = 0;
+      simOut.textContent = (n * 0.15).toFixed(2);
+    });
+  }
 });
 </script>
 {% endif %}
@@ -364,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (dt < today) cell.classList.add('ibihub-avail-cell--past');
       else {
         var k = busyKind(dt);
-        if (k === 'lock') cell.classList.add('ibihub-avail-cell--busy-lock');
+        if (k === 'lock' || k === 'owner_lock') cell.classList.add('ibihub-avail-cell--busy-lock');
         else if (k) cell.classList.add('ibihub-avail-cell--busy-res');
         else cell.classList.add('ibihub-avail-cell--free');
       }

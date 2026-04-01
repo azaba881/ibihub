@@ -930,8 +930,8 @@
 
   .ibihub-dashboard-top-bell-menu,
   .ibihub-dashboard-top-user-menu {
-    right: auto;
-    left: 0;
+    right: 0;
+    left: auto;
   }
 
   .ibihub-dashboard-bottom--settings {
@@ -1241,8 +1241,9 @@ div.ibihub-equipements-checkboxes label {
 
 @media (max-width: 640px) {
   .ibihub-dashboard-main-header {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .ibihub-dashboard-main-header-spacer {
@@ -1259,11 +1260,36 @@ div.ibihub-equipements-checkboxes label {
   }
 
   .ibihub-dashboard-main-header-actions {
-    width: 100%;
+    width: auto;
     justify-content: flex-end;
   }
 
   div.ibihub-equipements-checkboxes {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Billing/settings mobile readability */
+.ibihub-settings-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .ibihub-settings-billing-section h4 {
+    font-size: 15px;
+  }
+
+  .ibihub-dashboard-bottom--settings {
+    gap: 12px;
+  }
+
+  .ibihub-settings-form-footer {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ibihub-settings-form-footer .ibihub-dashboard-add-btn {
+    width: 100%;
   }
 }

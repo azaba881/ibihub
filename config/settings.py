@@ -2,6 +2,7 @@
 Django settings for config project (Ibihub — Store-Sharing Bénin).
 """
 
+from decimal import Decimal
 from pathlib import Path
 
 import environ
@@ -34,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_cleanup.apps.CleanupConfig',
-    'core',
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -96,6 +97,12 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Commission plateforme (micro-assurance / frais) — taux appliqué sur le montant de la location
+IBIHUB_COMMISSION_RATE = Decimal('0.05')
+
+# Caution : taux sur le montant de la location si l’entrepôt n’a pas de montant fixe
+IBIHUB_CAUTION_RATE = Decimal('0.20')
 
 # E-mail (dev : console par défaut — voir .env.example)
 EMAIL_BACKEND = env(

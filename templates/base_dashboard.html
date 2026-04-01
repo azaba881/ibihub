@@ -28,6 +28,63 @@
 			text-align: left;
 		}
 		.ibihub-dashboard-logout-form { margin: 0; padding: 0; }
+		.ibihub-dashboard-mobile-toggle {
+			display: none;
+			border: 0;
+			background: #0d5c4d;
+			color: #fff;
+			width: 42px;
+			height: 42px;
+			border-radius: 10px;
+			font-size: 18px;
+			align-items: center;
+			justify-content: center;
+			flex: 0 0 42px;
+		}
+		@media (max-width: 992px) {
+			.ibihub-dashboard-mobile-toggle { display: inline-flex; }
+			.ibihub-dashboard-sidebar {
+				position: fixed;
+				left: 0;
+				top: 0;
+				height: 100vh;
+				z-index: 10000;
+				transform: translateX(-105%);
+				transition: transform .22s ease;
+			}
+			body.ibihub-mobile-menu-open .ibihub-dashboard-sidebar { transform: translateX(0); }
+			body.ibihub-mobile-menu-open::before {
+				content: "";
+				position: fixed;
+				inset: 0;
+				background: rgba(0, 0, 0, .35);
+				z-index: 9999;
+			}
+			.ibihub-dashboard-main-header {
+				display: flex;
+				align-items: center;
+				justify-content: flex-start;
+				flex-wrap: nowrap;
+				min-height: 54px;
+				padding-left: 0;
+				gap: 8px;
+			}
+			.ibihub-dashboard-mobile-toggle { margin-right: auto; }
+			.ibihub-dashboard-search { display: none !important; }
+			.ibihub-dashboard-main-header-spacer { display: none !important; }
+			.ibihub-dashboard-main-header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+			.ibihub-dashboard-top-avatar img { width: 34px; height: 34px; }
+			/* Mobile: keep only icons, hide dropdown panels/links */
+			.ibihub-dashboard-top-bell-menu,
+			.ibihub-dashboard-top-user-menu {
+				display: none !important;
+			}
+			/* Prevent clipping to right */
+			.ibihub-dashboard-main-header-actions {
+				overflow: visible !important;
+				padding-right: 0;
+			}
+		}
 	</style>
 	{% block extra_css %}{% endblock %}
 </head>
@@ -50,6 +107,10 @@
 			</div>
 		</section>
 	</div>
+	<a href="https://wa.me/22995748884?text=Bonjour%20IbiHub%2C%20j%27ai%20besoin%20d%27aide." target="_blank" rel="noopener"
+	   style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#25D366;color:#fff;padding:12px 14px;border-radius:999px;box-shadow:0 10px 25px rgba(0,0,0,.18);font-weight:700;">
+		Besoin d'aide ? Cliquez pour nous parler
+	</a>
 	<script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/jquery-migrate-3.3.2.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/mmenu.min.js' %}"></script>
@@ -97,6 +158,19 @@
 					notif.classList.remove('is-open');
 					notifBtn.setAttribute('aria-expanded', 'false');
 				}
+			});
+		}
+		var menuBtn = document.getElementById('ibihubDashboardMenuToggle');
+		if (menuBtn) {
+			menuBtn.addEventListener('click', function() {
+				document.body.classList.toggle('ibihub-mobile-menu-open');
+			});
+			document.addEventListener('click', function (e) {
+				var sidebar = document.querySelector('.ibihub-dashboard-sidebar');
+				if (!sidebar) return;
+				if (window.innerWidth > 992) return;
+				if (sidebar.contains(e.target) || menuBtn.contains(e.target)) return;
+				document.body.classList.remove('ibihub-mobile-menu-open');
 			});
 		}
 	})();

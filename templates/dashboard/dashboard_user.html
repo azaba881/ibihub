@@ -11,6 +11,13 @@
 	</div>
 </div>
 
+{% if is_owner and not request.user.is_verified %}
+<div class="ibihub-kyc-banner" role="alert" style="margin:0 0 20px;padding:16px 20px;border-radius:12px;background:#fff8e6;border:1px solid #f0d060;color:#5c4a12;font-family:Poppins,sans-serif;font-size:14px;">
+	<strong>Compte non vérifié.</strong> Vous ne pouvez pas mettre vos annonces en ligne tant que l’équipe IbiHub n’a pas validé votre identité.
+	<a href="{% url 'core:dashboard_owner_kyc' %}" style="display:inline-block;margin-top:10px;font-weight:600;color:#0d5c4d;">Transmettre ma pièce d’identité →</a>
+</div>
+{% endif %}
+
 {% if is_owner %}
 <div class="ibihub-dashboard-cards ibihub-dashboard-cards--three">
 	<article class="ibihub-dashboard-card">
@@ -65,7 +72,22 @@
 	</aside>
 </div>
 
+<section class="ibihub-dashboard-panel margin-top-30 ibihub-owner-occupancy-card" aria-labelledby="owner-occ-title" style="width:50%;">
+	<h2 id="owner-occ-title" class="ibihub-dashboard-panel__title">Taux d’occupation (aperçu)</h2>
+	<p class="ibihub-dashboard-panel__subtitle">Estimation sur vos entrepôts : jours avec au moins une réservation active / capacité (nombre d’entrepôts × jours du mois). Données des 6 derniers mois.</p>
+	<div class="ibihub-owner-occupancy-wrap" style="width:100%;min-width:320px;">
+		<canvas id="ibihubOwnerOccupancyChart" height="220" aria-label="Graphique occupation"></canvas>
+	</div>
+</section>
+
 {% else %}
+{% if not request.user.has_owner_access %}
+<div class="ibihub-dashboard-panel" style="margin-bottom:20px;border:1px solid #dbeafe;background:#eff6ff;">
+	<strong>Vous avez un espace à louer ?</strong>
+	<p style="margin:6px 0 10px;">Activez le mode propriétaire sans changer de compte.</p>
+	<a href="{% url 'core:activate_owner_mode' %}" class="ibihub-dashboard-add-btn">Devenez Propriétaire</a>
+</div>
+{% endif %}
 <div class="ibihub-dashboard-cards ibihub-dashboard-cards--three">
 	<article class="ibihub-dashboard-card">
 		<div class="ibihub-dashboard-card__label">Réservations en cours</div>
@@ -150,5 +172,45 @@
 		</ul>
 	</aside>
 </div>
+{% endif %}
+{% endblock %}
+
+{% block dashboard_extra_js %}
+{% if is_owner %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+	var el = document.getElementById('ibihubOwnerOccupancyChart');
+	if (!el || typeof Chart === 'undefined') return;
+	var labels = {{ owner_occupancy_labels_json|safe }};
+	var values = {{ owner_occupancy_values_json|safe }};
+	new Chart(el, {
+		type: 'line',
+		data: {
+			labels: labels,
+			datasets: [{
+				label: 'Occupation (%)',
+				data: values,
+				borderColor: '#0d5c4d',
+				backgroundColor: 'rgba(13, 92, 77, 0.12)',
+				fill: true,
+				tension: 0.25
+			}]
+		},
+		options: {
+			scales: {
+				y: { beginAtZero: true, max: 100, ticks: { callback: function (v) { return v + '%'; } } }
+			},
+			plugins: { legend: { display: false } }
+		}
+	});
+})();
+</script>
+<style>
+@media (max-width: 900px) {
+	.ibihub-owner-occupancy-card { width:100% !important; }
+	.ibihub-owner-occupancy-wrap { width:100% !important; min-width:0 !important; }
+}
+</style>
 {% endif %}
 {% endblock %}

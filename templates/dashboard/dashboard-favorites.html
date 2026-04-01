@@ -1,0 +1,30 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Mes favoris — IbiHub{% endblock %}
+
+{% block dashboard_content %}
+<section class="ibihub-dashboard-panel">
+  <h1 class="ibihub-dashboard-panel__title">Mes favoris</h1>
+  <p>Retrouvez ici les espaces que vous avez enregistrés.</p>
+  {% if favoris %}
+  <div style="overflow-x:auto;">
+    <table class="ibihub-dashboard-table">
+      <thead><tr><th>Espace</th><th>Ville</th><th>Prix/jour</th><th></th></tr></thead>
+      <tbody>
+        {% for f in favoris %}
+        <tr>
+          <td>{{ f.entrepot.titre }}</td>
+          <td>{{ f.entrepot.get_ville_display }}</td>
+          <td>{{ f.entrepot.prix_par_jour|floatformat:0 }} FCFA</td>
+          <td><a href="{% url 'core:espace_detail' pk=f.entrepot.pk %}">Voir</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p>Aucun favori pour le moment.</p>
+  {% endif %}
+  <a href="{% url 'core:liste_espaces' %}" class="ibihub-dashboard-add-btn">Voir les espaces</a>
+</section>
+{% endblock %}
