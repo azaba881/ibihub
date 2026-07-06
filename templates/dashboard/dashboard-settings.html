@@ -110,7 +110,7 @@
 
 			<div id="tab-billing" class="ibihub-settings-tab{% if active_settings_tab == 'billing' %} is-active{% endif %}" role="tabpanel">
 				<h2 class="ibihub-dashboard-panel__title">Facturation</h2>
-				<p class="ibihub-dashboard-panel__subtitle">Moyens de paiement, historique PDF et solde parrainage.</p>
+				<p class="ibihub-dashboard-panel__subtitle">Moyens de paiement et historique des factures PDF.</p>
 				<div class="row">
 					<div class="col-md-6 col-sm-12">
 						<label for="{{ form.reseau_momo.id_for_label }}">{{ form.reseau_momo.label }}</label>
@@ -121,12 +121,8 @@
 						<label for="{{ form.numero_momo.id_for_label }}">{{ form.numero_momo.label }}</label>
 						{{ form.numero_momo.errors }}
 						{{ form.numero_momo }}
-						<small class="ibihub-dashboard-field-hint">Utilisé pour remboursements de caution et gains de parrainage.</small>
+						<small class="ibihub-dashboard-field-hint">Utilisé pour les remboursements de caution le cas échéant.</small>
 					</div>
-				</div>
-				<div class="margin-top-20" style="padding:12px;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa;">
-					<p style="margin:0 0 4px;"><strong>Solde Parrainage :</strong> {{ referral_balance|floatformat:0 }} FCFA</p>
-					<p style="margin:0;color:#4b5563;">Filleuls inscrits : {{ referral_children_count }}</p>
 				</div>
 				<div class="margin-top-20 ibihub-settings-billing-section">
 					<h4>Historique des factures</h4>
@@ -148,25 +144,6 @@
 							</tr>
 							{% empty %}
 							<tr><td colspan="5">Aucune facture disponible.</td></tr>
-							{% endfor %}
-						</tbody>
-					</table>
-					</div>
-				</div>
-				<div class="margin-top-20 ibihub-settings-billing-section">
-					<h4>Historique des parrainages</h4>
-					<div class="ibihub-settings-table-wrap">
-					<table class="ibihub-dashboard-table">
-						<thead><tr><th>Filleul</th><th>Date réservation</th><th>Montant gagné</th></tr></thead>
-						<tbody>
-							{% for g in referral_history %}
-							<tr>
-								<td>{{ g.filleul.get_full_name|default:g.filleul.username }}</td>
-								<td>{{ g.reservation.date_fin|date:"d/m/Y" }}</td>
-								<td>{{ g.montant|floatformat:0 }} FCFA</td>
-							</tr>
-							{% empty %}
-							<tr><td colspan="3">Aucun gain de parrainage pour le moment.</td></tr>
 							{% endfor %}
 						</tbody>
 					</table>

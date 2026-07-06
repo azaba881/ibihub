@@ -251,10 +251,7 @@
 
 					<div class="ibihub-space-calendar-card">
 						<h4>Réserver cet espace</h4>
-						{% if booking_requires_login %}
-						<p class="ibihub-space-calendar-card__hint" style="color:#b71c1c;margin-bottom:12px;"><strong>Connexion requise.</strong> Connectez-vous pour soumettre une demande de réservation.</p>
-						<p style="margin:0;"><a href="{% url 'core:sign_in' %}?next={{ request.path|urlencode }}" class="ibihub-space-book__cta" style="display:inline-block;text-align:center;">Se connecter</a></p>
-						{% elif booking_blocked_own %}
+						{% if booking_blocked_own %}
 						<p class="ibihub-space-calendar-card__hint" style="color:#b71c1c;margin-bottom:0;"><strong>Vous êtes le propriétaire de cet espace.</strong> Vous ne pouvez pas réserver votre propre annonce.</p>
 						{% elif not entrepot.disponible %}
 						<p class="ibihub-space-calendar-card__hint" style="color:#666;">Cet espace n’est pas disponible à la réservation pour le moment.</p>
@@ -262,6 +259,13 @@
 						<script type="application/json" id="ibihub-blocked-days-data">{{ availability_blocked_days_json|safe }}</script>
 						<form method="post" enctype="multipart/form-data" action="{% url 'core:reserver_espace' pk=entrepot.pk %}" class="ibihub-space-reservation-form" id="ibihub-reservation-form">
 							{% csrf_token %}
+							{% if booking_express_allowed %}
+							<div style="padding:10px 12px;border:1px solid #d1fae5;border-radius:10px;background:#ecfdf5;margin-bottom:10px;color:#065f46;font-weight:600;">Réservez en 1 minute</div>
+							<label for="id_nom_client">Nom complet</label>
+							<input type="text" name="nom_client" id="id_nom_client" required placeholder="Ex. Innocent K." value="{{ reservation_form_initial.nom_client|default:'' }}">
+							<label for="id_telephone_client" style="margin-top:12px;">Téléphone (WhatsApp/Mobile Money)</label>
+							<input type="text" name="telephone_client" id="id_telephone_client" required placeholder="+22997123456" value="{{ reservation_form_initial.telephone_client|default:'' }}">
+							{% endif %}
 							<label for="id_date_debut">Date de début</label>
 							<input type="text" name="date_debut" id="id_date_debut" required autocomplete="off" placeholder="Choisir…" class="flatpickr-input" value="{{ reservation_form_initial.date_debut|default:'' }}">
 							<label for="id_date_fin" style="margin-top:12px;">Date de fin</label>

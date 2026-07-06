@@ -6,5 +6,8 @@ venv/
 # Base de données locale
 db.sqlite3
 
+# Fichiers collectés (production)
+staticfiles/
+
 # Python
 __pycache__/

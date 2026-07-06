@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Actualités — IbiHub{% endblock %}
+
+{% block content %}
+<section class="ibihub-listings-hero" style="padding-bottom:28px;" aria-labelledby="blog-title">
+	<div class="ibihub-listings-hero__inner">
+		<h1 id="blog-title">Nos actualités</h1>
+		<p>Articles, conseils et nouvelles autour du stockage et de la logistique au Bénin.</p>
+	</div>
+</section>
+
+<div class="container margin-bottom-50" style="padding-top:24px;">
+	<div class="row">
+		{% for article in page_obj %}
+		<div class="col-md-4 col-sm-12 margin-bottom-25">
+			<a href="{% url 'core:blog_article_detail' slug=article.slug %}" class="blog-compact-item-container">
+				<div class="blog-compact-item">
+					{% if article.image_couverture %}
+					<img src="{{ article.image_couverture.url }}" alt="">
+					{% else %}
+					<img src="{% static 'images/blog/blog-1.png' %}" alt="">
+					{% endif %}
+					<span class="blog-item-tag">{{ article.categorie.nom }}</span>
+					<div class="blog-compact-item-content">
+						<h3>{{ article.titre }}</h3>
+						{% if article.published_at %}
+						<p style="margin:6px 0 0;font-size:12px;color:#9ca3af;">{{ article.published_at|date:"d/m/Y" }}</p>
+						{% endif %}
+						{% if article.resume %}<p style="margin:8px 0 0;font-size:14px;color:#4b5563;">{{ article.resume|truncatewords:24 }}</p>{% endif %}
+					</div>
+				</div>
+			</a>
+		</div>
+		{% empty %}
+		<div class="col-md-12 text-center">
+			<p style="color:#6b7280;">Aucun article publié pour le moment.</p>
+		</div>
+		{% endfor %}
+	</div>
+
+	{% if page_obj.paginator.num_pages > 1 %}
+	<div class="pagination-container margin-top-20 margin-bottom-20">
+		<nav class="pagination">
+			<ul>
+				{% if page_obj.has_previous %}
+				<li><a href="?page={{ page_obj.previous_page_number }}"><i class="sl sl-icon-arrow-left"></i></a></li>
+				{% endif %}
+				{% for p in page_obj.paginator.page_range %}
+				<li><a href="?page={{ p }}" class="{% if page_obj.number == p %}current-page{% endif %}">{{ p }}</a></li>
+				{% endfor %}
+				{% if page_obj.has_next %}
+				<li><a href="?page={{ page_obj.next_page_number }}"><i class="sl sl-icon-arrow-right"></i></a></li>
+				{% endif %}
+			</ul>
+		</nav>
+	</div>
+	{% endif %}
+</div>
+{% endblock %}

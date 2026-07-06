@@ -1,5 +1,12 @@
 # Documentation Technique - IbiHub
 
+## Réservation express (conversion)
+
+- **Fiche espace** : un visiteur non connecté peut soumettre une réservation en renseignant **nom** + **téléphone** (en plus des dates et de l’inventaire).
+- **Backend** (`reserver_espace`) : normalisation téléphone E.164 ; recherche d’un utilisateur existant par `telephone` ; sinon création `UserCustom` avec `username` = téléphone, mot de passe aléatoire, `must_set_password=True`, puis `login()`.
+- **URLs** : `reservation/express/succes/`, `reservation/express/mot-de-passe/` pour la page de succès et le formulaire de mot de passe.
+- **Sécurité produit** : tant que `must_set_password` est vrai, le client ne voit pas le QR dans le dashboard et ne peut pas télécharger ticket/contrat PDF ; redirection vers la page de définition de mot de passe si tentative de téléchargement.
+
 ## Nouvelles fonctions UX terrain
 
 - **Code court d'accès**: chaque `Reservation` génère un code `ABC-123` (`code_court`) affiché en grand sur le dashboard commerçant.
@@ -10,6 +17,7 @@
 
 ## Modèles ajoutés / enrichis
 
+- `UserCustom`: `must_set_password` (mur d’accès pass PDF/QR pour comptes créés via réservation express).
 - `Reservation`: `code_court`, `ticket_pdf`, `inventaire_photo`, `type_paiement`, `prochaine_echeance`, `checkin_at`, `checkout_at`.
 - `Entrepot`: `is_boosted`, `boost_expires_at`.
 - `EtatDesLieux`: photos entrée/sortie + commentaires + date de validation.
@@ -38,15 +46,12 @@
 
 - Session `dashboard_mode` (`MERCHANT` / `OWNER`) avec bascule depuis la sidebar.
 - Un compte peut combiner:
-  - flux client (réservations, favoris, parrainage),
+  - flux client (réservations, favoris),
   - flux propriétaire (entrepôts, disponibilités, revenus).
 - La publication d’annonce reste protégée par `is_verified`.
 
-## Parrainage automatisé
+## Blog / actualités
 
-- Signal `post_save` sur `Reservation`:
-  - si statut `TERMINE` + client parrainé,
-  - crédit `+500 FCFA` au parrain,
-  - écriture d’historique `ParrainageGain`,
-  - verrou anti-doublon `gain_parrainage_verse=True`.
-- Notification en dashboard au parrain lors de sa prochaine session.
+- Modèles `ArticleCategorie` et `Article` (titre, slug « nom de lecture », catégorie, chapô, contenu, image, publication).
+- Rédaction réservée au **super-utilisateur** dans l’admin Django (`Article`, `ArticleCategorie`).
+- Pages publiques : liste `/actualites/`, détail `/actualites/<slug>/`.

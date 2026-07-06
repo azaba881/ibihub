@@ -19,6 +19,7 @@
 						<p class="text-hero-ibihub-subtitle">
 							Trouvez l'espace idéal pour votre stockage et double ou triple votre revenu sans vous soucier de la location.
 						</p>
+						<p style="margin:10px 0 0;font-weight:700;color:#0d5c4d;">Réservez en 1 minute, même sans compte.</p>
 					</div>
 
 					<form method="get" action="{% url 'core:liste_espaces' %}" class="main-search-input ibihub-home-hero-search ibihub-home-hero-flow__search" id="ibihub-home-hero-search">
@@ -247,16 +248,17 @@
 	<div class="container">
 		<div class="row section-about-ibihub">
 			<div class="col-md-6 col-sm-12 margin-bottom-40 margin-top-60">
-				<h2 id="about-ibihub-title" class="headline-with-separator text-primary-ibihub title-ibihub">À propos de la securite des stockages</h2>
-				<p class="ibihub-about-block__lead">Nous garantissons la securite de vos stockages en mettant en place des mecanismes de securite pour garantir la protection de vos biens.</p>
-				<p class="ibihub-about-block__text">Nous sommes fiers de travailler avec les meilleurs partenaires pour vous offrir les meilleures expériences</p>
+				<h2 id="about-ibihub-title" class="headline-with-separator text-primary-ibihub title-ibihub">À propos de la sécurité des stockages</h2>
+				<p class="ibihub-about-block__lead">Nous mettons en place des mécanismes pour protéger vos biens : contrôle d’accès, traçabilité des réservations et encadrement avec les propriétaires partenaires.</p>
+				<p class="ibihub-about-block__text">En cas de problème (litige, non-conformité, incident), vous pouvez <strong>formuler une réclamation ou une plainte</strong> : notre équipe examine chaque dossier et vous répond dans les meilleurs délais.</p>
 				<ul class="ibihub-about-block__list">
 					<li><i class="fa fa-check bg-primary-ibihub text-white" style="padding: 10px; border-radius: 50%;" aria-hidden="true"></i> Protection 24/7</li>
 					<li><i class="fa fa-check bg-primary-ibihub text-white" style="padding: 10px; border-radius: 50%;" aria-hidden="true"></i> Caméras de surveillance</li>
 					<li><i class="fa fa-check bg-primary-ibihub text-white" style="padding: 10px; border-radius: 50%;" aria-hidden="true"></i> Alarmes et assurance</li>
 				</ul>
 				<a href="{% url 'core:liste_espaces' %}" class="button margin-top-25 ibihub-btn-primary">Trouver un espace</a>
-				<a href="{% url 'core:sign_up' %}" class="button margin-top-25 ibihub-btn-secondary">Rejoignez IbiHub</a>
+				<a href="{% url 'core:reclamation' %}" class="button margin-top-25 ibihub-btn-secondary">Faire une réclamation</a>
+				<a href="{% url 'core:sign_up' %}" class="button margin-top-25" style="background:#fff;color:#0d5c4d;border:1px solid #0d5c4d;">Rejoindre IbiHub</a>
 			</div>
 			<div class="col-md-6 col-sm-12 margin-top-60">
 				<div class="ibihub-about-block__visual">
@@ -441,7 +443,7 @@
 							<i class="fa fa-chevron-down ibihub-faq-chevron" aria-hidden="true"></i>
 						</summary>
 						<div class="ibihub-faq-item__body">
-							<p>Créez un compte, parcourez les annonces, puis choisissez l’espace et les dates qui vous conviennent. Après validation du propriétaire, le paiement sécurisé confirme votre réservation.</p>
+							<p>Réservez en 1 minute, même sans compte: choisissez l’espace et vos dates, puis finalisez votre accès en définissant un mot de passe.</p>
 						</div>
 					</details>
 					<details class="ibihub-faq-item">
@@ -529,47 +531,34 @@
 		</div>
 
 		<div class="row">
-			<!-- Blog Post Item -->
+			{% for article in blog_articles_recent %}
 			<div class="col-md-4">
-				<a href="pages-blog-post.html" class="blog-compact-item-container">
+				<a href="{% url 'core:blog_article_detail' slug=article.slug %}" class="blog-compact-item-container">
 					<div class="blog-compact-item">
+						{% if article.image_couverture %}
+						<img src="{{ article.image_couverture.url }}" alt="">
+						{% else %}
 						<img src="{% static 'images/blog/blog-1.png' %}" alt="">
-						<span class="blog-item-tag">Actualités</span>
+						{% endif %}
+						<span class="blog-item-tag">{{ article.categorie.nom }}</span>
 						<div class="blog-compact-item-content">
-							<h3>IbiHub : Le hub des commerçants africains</h3>
+							<h3>{{ article.titre }}</h3>
+							{% if article.resume %}<p style="margin:8px 0 0;font-size:13px;color:#6b7280;">{{ article.resume|truncatewords:18 }}</p>{% endif %}
 						</div>
 					</div>
 				</a>
 			</div>
-			<!-- Blog post Item / End -->
+			{% empty %}
+			<div class="col-md-12 text-center">
+				<p style="color:#6b7280;">Les prochains articles seront publiés ici. Revenez bientôt.</p>
+			</div>
+			{% endfor %}
+		</div>
 
-			<!-- Blog Post Item -->
-			<div class="col-md-4">
-				<a href="pages-blog-post.html" class="blog-compact-item-container">
-					<div class="blog-compact-item">
-						<img src="{% static 'images/blog/blog-2.png' %}" alt="">
-						<span class="blog-item-tag">Actualités</span>
-						<div class="blog-compact-item-content">
-							<h3>Comment IbiHub transforme les espaces inutilisés en revenus</h3>
-						</div>
-					</div>
-				</a>
+		<div class="row margin-top-30">
+			<div class="col-md-12 text-center">
+				<a href="{% url 'core:blog_list' %}" class="button ibihub-btn-primary">Consulter tous nos articles</a>
 			</div>
-			<!-- Blog post Item / End -->
-
-			<!-- Blog Post Item -->
-			<div class="col-md-4">
-				<a href="pages-blog-post.html" class="blog-compact-item-container">
-					<div class="blog-compact-item">
-						<img src="{% static 'images/blog/blog-3.png' %}" alt="">
-						<span class="blog-item-tag">Actualités</span>
-						<div class="blog-compact-item-content">
-							<h3>Comment trouver un espace dans votre ville</h3>
-						</div>
-					</div>
-				</a>
-			</div>
-			<!-- Blog post Item / End -->
 		</div>
 
 	</div>

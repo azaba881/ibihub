@@ -87,22 +87,6 @@ class UserRegistrationForm(UserCreationForm):
         )
         self.fields['role'].widget = forms.HiddenInput()
         self.fields['role'].initial = 'MERCHANT'
-        self.fields['parrainage_code_input'] = forms.CharField(
-            required=False,
-            max_length=20,
-            label='Code de parrainage (optionnel)',
-            widget=forms.TextInput(
-                attrs={
-                    'placeholder': 'Ex: AB12CD34',
-                    'autocomplete': 'off',
-                    'class': 'ibihub-auth-input',
-                }
-            ),
-        )
-        if self.initial.get('parrainage_code_input'):
-            self.fields['parrainage_code_input'].initial = self.initial.get(
-                'parrainage_code_input'
-            )
 
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
@@ -120,22 +104,9 @@ class UserRegistrationForm(UserCreationForm):
             return ''
         return raw
 
-    def clean_parrainage_code_input(self):
-        code = (self.cleaned_data.get('parrainage_code_input') or '').strip().upper()
-        if not code:
-            return ''
-        if not UserCustom.objects.filter(code_parrainage__iexact=code).exists():
-            raise forms.ValidationError('Code de parrainage invalide.')
-        return code
-
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = user.username
-        code = (self.cleaned_data.get('parrainage_code_input') or '').strip().upper()
-        if code:
-            parrain = UserCustom.objects.filter(code_parrainage__iexact=code).first()
-            if parrain and parrain.pk != user.pk:
-                user.parrain = parrain
         if commit:
             user.save()
         return user

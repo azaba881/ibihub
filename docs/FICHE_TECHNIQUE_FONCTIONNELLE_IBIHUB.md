@@ -83,6 +83,7 @@
 ### 3.1 Authentification & comptes
 
 - **Inscription :** rôle (souvent commerçant par défaut), username e-mail, téléphone **E.164** (+229…), mot de passe.
+- **Réservation express :** sans inscription préalable, création implicite d’un compte à partir du **téléphone** saisi sur la fiche espace ; mot de passe temporaire aléatoire ; flag **`must_set_password`** jusqu’à ce que l’utilisateur définisse un mot de passe (déblocage QR / PDF).
 - **Connexion hybride :** identifiant = **e-mail** (`username`) ou **numéro** (variantes Bénin normalisées côté backend).
 - **Profil :** mise à jour nom, e-mail, téléphone, **photo de profil** (`photo_profil`).
 - **Vérification :** flag `is_verified` géré côté **admin** ; bloque la publication d’espaces tant que `False`.
@@ -126,7 +127,12 @@
 **QR Code (pass d’accès)**
 
 - Lorsque `statut == CONFIRME`, génération d’un **slug unique** `qr_code_auth` si absent.
-- Affichage en **data URI** (PNG) pour le client / le tableau de bord.
+- Affichage en **data URI** (PNG) pour le client / le tableau de bord, **sauf** si le client a **`must_set_password = True`** (réservation express non finalisée) : dans ce cas le QR n’est pas exposé tant que le mot de passe n’est pas défini ; les téléchargements PDF ticket/contrat côté client sont également refusés jusqu’à levée du flag.
+
+**Réservation sans session préalable**
+
+- Formulaire fiche espace : champs **nom** et **téléphone** pour les visiteurs non authentifiés, en plus des dates et de l’inventaire.
+- Post-traitement : association ou création `UserCustom`, connexion automatique, redirection vers flux « succès express » + invitation à sécuriser le compte (mot de passe).
 
 ### 3.4 Autres parcours publics
 
@@ -162,7 +168,7 @@ UserCustom (1) ──< (N) EntrepotAvis [auteur]
 
 | Modèle | Rôle |
 |--------|------|
-| **UserCustom** | Utilisateur Django étendu : `role`, `telephone`, `photo_profil`, `is_verified`. |
+| **UserCustom** | Utilisateur Django étendu : `role`, `telephone`, `photo_profil`, `is_verified`, `must_set_password` (mur pass express). |
 | **CategorieStorage** | Taxonomie métier (nom, icône Font Awesome, image optionnelle). |
 | **Entrepot** | Annonce d’espace : lien propriétaire + catégorie, prix/jour, JSON équipements, ville, médias. |
 | **EntrepotImage** | Galerie ordonnée rattachée à un entrepôt. |
@@ -190,7 +196,7 @@ UserCustom (1) ──< (N) EntrepotAvis [auteur]
 
 ### 5.4 Fiche espace
 
-- Hero + détails + calendrier de disponibilité (légende réservation vs fermeture) + formulaire réservation (Flatpickr) pour utilisateurs éligibles (non propriétaire, connecté, espace disponible).
+- Hero + détails + calendrier de disponibilité (légende réservation vs fermeture) + formulaire réservation (Flatpickr) pour utilisateurs éligibles (non propriétaire, espace disponible, propriétaire vérifié). Les **visiteurs non connectés** peuvent réserver en indiquant **nom et téléphone** (réservation express).
 
 ---
 
@@ -230,13 +236,17 @@ UserCustom (1) ──< (N) EntrepotAvis [auteur]
 
 ### 8.2 Monétisation & facturation
 - Section tarifs sur l’accueil (`Découverte`, `Pro`, `Entreprise`).
-- Onglet facturation: Mobile Money, factures PDF, solde parrainage.
+- Onglet facturation: Mobile Money, factures PDF.
 - WhatsApp support unifié (numéro officiel configuré).
 
-### 8.3 Parrainage automatisé
-- Récompense parrain: `500 FCFA` sur première réservation terminée du filleul.
-- Historisation dédiée (`ParrainageGain`) et message de notification en dashboard.
+### 8.3 Actualités (blog)
+- Articles avec catégorie et slug (nom de lecture) ; rédaction admin réservée au super-utilisateur.
 
 ### 8.4 Opérations logistiques avancées
 - Indisponibilités propriétaire via dashboard + calendrier.
 - Code court d’accès, ticket PDF simplifié, actions terrain check-in/check-out.
+
+### 8.5 Réservation express (growth)
+- Parcours **« Réservez en 1 minute »** : pas d’inscription obligatoire avant la réservation sur la fiche espace.
+- Compte auto lié au **téléphone** ; sécurisation par définition du mot de passe avant exposition du **QR** et des **PDF** côté client.
+- Message d’accroche possible sur l’accueil / FAQ aligné sur ce parcours.

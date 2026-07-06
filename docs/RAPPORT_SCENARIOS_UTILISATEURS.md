@@ -10,6 +10,9 @@ Ce document décrit les parcours complets des utilisateurs, **de l’inscription
 Trouver un espace de stockage adapté, réserver, déposer ses marchandises, suivre son dossier jusqu’à clôture.
 
 ### 1.2 Parcours complet (de bout en bout)
+
+**Variante A — compte créé avant la réservation**
+
 1. **Inscription**
    - Le commerçant crée un compte avec e-mail, téléphone, mot de passe.
    - Le rôle est `MERCHANT`.
@@ -47,6 +50,23 @@ Trouver un espace de stockage adapté, réserver, déposer ses marchandises, sui
 9. **Fin de cycle**
    - Réservation terminée.
    - Caution potentiellement libérée par l’admin selon processus de sortie.
+
+### 1.2 bis Variante B — réservation express (sans compte préalable)
+
+1. **Recherche et fiche espace** (sans être connecté)
+   - Même parcours de découverte (liste, filtres, fiche détaillée).
+
+2. **Réservation**
+   - Saisie **nom complet** et **téléphone** (identité pour le dossier), dates, inventaire, options habituelles.
+   - Si le téléphone existe déjà : la réservation est liée au compte existant.
+   - Sinon : création automatique d’un compte `MERCHANT` avec mot de passe interne aléatoire ; **connexion automatique** à la session.
+
+3. **Sécurisation du compte**
+   - Message invitant à **définir un mot de passe** pour obtenir le **Pass d’accès** (QR, documents PDF).
+   - Tant que le mot de passe n’est pas défini, le pass n’est pas exposé comme pour un utilisateur classique.
+
+4. **Suite du parcours**
+   - Identique à la variante A après définition du mot de passe (dashboard, suivi, fin de cycle).
 
 ### 1.3 Dernière action métier (commerçant)
 - Télécharger le contrat PDF, utiliser le pass QR, clôturer le cycle de stockage.
@@ -184,4 +204,4 @@ Permettre à un utilisateur d’opérer comme commerçant **et** propriétaire s
 
 ### 7.3 Impact UX
 - Sidebar contextualisée au mode actif.
-- Notifications de gains (parrainage / loyers) visibles quel que soit le mode.
+- Notifications liées aux loyers / réservations visibles selon le contexte du tableau de bord.

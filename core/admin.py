@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.utils import timezone
 
 from .models import (
+    Article,
+    ArticleCategorie,
     CategorieStorage,
     Entrepot,
     EntrepotAvis,
@@ -11,7 +14,6 @@ from .models import (
     EntrepotPeriodeBloquee,
     Favori,
     Litige,
-    ParrainageGain,
     Reservation,
     UserCustom,
 )
@@ -29,8 +31,6 @@ class UserCustomAdmin(BaseUserAdmin):
                     'telephone',
                     'photo_profil',
                     'is_verified',
-                    'code_parrainage',
-                    'parrain',
                     'type_piece',
                     'piece_identite',
                 )
@@ -152,11 +152,52 @@ class EntrepotIndisponibiliteAdmin(admin.ModelAdmin):
     search_fields = ('entrepot__titre', 'raison')
 
 
-@admin.register(ParrainageGain)
-class ParrainageGainAdmin(admin.ModelAdmin):
-    list_display = ('parrain', 'filleul', 'reservation', 'montant', 'created_at', 'notified')
-    list_filter = ('created_at', 'notified')
-    search_fields = ('parrain__username', 'filleul__username')
+class SuperuserBlogMixin:
+    """Réservé aux super-utilisateurs (rédaction des articles vitrine)."""
+
+    def has_module_permission(self, request):
+        return request.user.is_active and request.user.is_superuser
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_active and request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_active and request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_active and request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_active and request.user.is_superuser
+
+
+@admin.register(ArticleCategorie)
+class ArticleCategorieAdmin(SuperuserBlogMixin, admin.ModelAdmin):
+    list_display = ('nom', 'slug')
+    prepopulated_fields = {'slug': ('nom',)}
+    search_fields = ('nom', 'slug')
+
+
+@admin.register(Article)
+class ArticleAdmin(SuperuserBlogMixin, admin.ModelAdmin):
+    list_display = ('titre', 'categorie', 'is_publie', 'published_at', 'auteur', 'updated_at')
+    list_filter = ('is_publie', 'categorie', 'published_at')
+    search_fields = ('titre', 'slug', 'resume', 'contenu')
+    prepopulated_fields = {'slug': ('titre',)}
+    raw_id_fields = ('auteur',)
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        (None, {'fields': ('titre', 'slug', 'categorie', 'resume', 'contenu', 'image_couverture')}),
+        ('Publication', {'fields': ('is_publie', 'published_at', 'auteur')}),
+        ('Métadonnées', {'fields': ('created_at', 'updated_at')}),
+    )
+
+    def save_model(self, request, obj, form, change):
+        if obj.is_publie and not obj.published_at:
+            obj.published_at = timezone.now()
+        if not obj.auteur_id and request.user.is_authenticated:
+            obj.auteur = request.user
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(Favori)

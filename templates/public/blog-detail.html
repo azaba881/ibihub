@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ article.titre }} — IbiHub{% endblock %}
+
+{% block content %}
+<article class="container margin-top-30 margin-bottom-50" style="max-width:800px;">
+	<nav class="ibihub-breadcrumb" aria-label="Fil d'Ariane" style="margin-bottom:16px;">
+		<ol style="list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px;font-size:14px;">
+			<li><a href="{% url 'core:home' %}">Accueil</a></li>
+			<li aria-hidden="true">/</li>
+			<li><a href="{% url 'core:blog_list' %}">Actualités</a></li>
+			<li aria-hidden="true">/</li>
+			<li aria-current="page">{{ article.categorie.nom }}</li>
+		</ol>
+	</nav>
+	<p style="margin:0 0 8px;">
+		<span class="blog-item-tag" style="display:inline-block;">{{ article.categorie.nom }}</span>
+		{% if article.published_at %}
+		<span style="color:#6b7280;font-size:14px;margin-left:10px;">{{ article.published_at|date:"d/m/Y" }}</span>
+		{% endif %}
+	</p>
+	<h1 class="title-ibihub text-primary-ibihub" style="font-size:28px;margin-bottom:16px;">{{ article.titre }}</h1>
+	{% if article.auteur %}
+	<p style="color:#6b7280;font-size:14px;margin-bottom:20px;">Par {{ article.auteur.get_full_name|default:article.auteur.username }}</p>
+	{% endif %}
+	{% if article.image_couverture %}
+	<div style="margin-bottom:24px;border-radius:12px;overflow:hidden;">
+		<img src="{{ article.image_couverture.url }}" alt="" style="width:100%;height:auto;display:block;">
+	</div>
+	{% endif %}
+	{% if article.resume %}
+	<p class="lead" style="font-size:18px;color:#374151;line-height:1.5;margin-bottom:20px;">{{ article.resume }}</p>
+	{% endif %}
+	<div class="ibihub-blog-body" style="line-height:1.7;color:#1f2937;">
+		{{ article.contenu|linebreaks }}
+	</div>
+	<p style="margin-top:32px;">
+		<a href="{% url 'core:blog_list' %}" class="button ibihub-btn-primary">← Tous les articles</a>
+	</p>
+</article>
+{% endblock %}

@@ -22,9 +22,11 @@ IbiHub est une marketplace de stockage logistique qui connecte :
 - Consultation des fiches (prix, surface, équipements, avis, disponibilités).
 
 ### 2) Réserver facilement
+- **Sans compte au préalable** : sur la fiche espace, saisie **nom + téléphone** (format international, ex. `+229…`), puis les mêmes étapes que pour un utilisateur connecté.
 - Choix des dates (calendrier bloquant automatiquement les jours indisponibles).
 - Saisie de l’inventaire de dépôt.
 - Simulation rapide des m² nécessaires.
+- Après validation, **compte créé automatiquement** si le téléphone est nouveau, puis **connexion automatique** ; l’utilisateur est invité à **définir son mot de passe** pour débloquer le pass d’accès (QR, PDF).
 
 ### 3) Comprendre le coût
 - Prix total affiché clairement.
@@ -33,8 +35,9 @@ IbiHub est une marketplace de stockage logistique qui connecte :
   - ≥ 14 jours (si caution activée sur l’espace) : **montant fixe**
 
 ### 4) Exploiter la réservation
-- Accès au **QR Pass**.
-- Téléchargement du **Contrat PDF**.
+- Tant que le mot de passe n’est pas défini après une **réservation express**, le **QR Pass** et les **PDF** (ticket / contrat) restent masqués côté client ; un court formulaire permet de finaliser l’accès.
+- Accès au **QR Pass** une fois le compte sécurisé.
+- Téléchargement du **Contrat PDF** et du **ticket**.
 - Suivi dans le dashboard jusqu’à la fin de location.
 
 ---
@@ -83,8 +86,9 @@ IbiHub est une marketplace de stockage logistique qui connecte :
 
 ## 🆕 Mises à jour récentes
 
+- ⚡ **Réservation express** : réserver depuis la fiche espace sans inscription préalable ; création de compte par téléphone + mur « définir le mot de passe » avant affichage du pass (QR / PDF).
 - 🔁 **Compte unique, double usage** : un même utilisateur peut alterner entre mode **Commerçant** et mode **Propriétaire** depuis le dashboard.
-- 🎁 **Parrainage récompensé** : le parrain gagne **500 FCFA** à la première réservation terminée de son filleul.
-- 💸 **Facturation enrichie** : Mobile Money (MTN/Moov), historique PDF, solde parrainage.
+- 💸 **Facturation** : Mobile Money (MTN/Moov), historique PDF.
+- 📰 **Actualités** : articles publiés depuis l’admin (super-utilisateur), liste sur `/actualites/`.
 - ⛔ **Indisponibilités propriétaire** : blocage de plages de dates visibles en rouge/grisé sur le calendrier.
 - 📲 **Parcours terrain simplifié** : code court d’accès, actions rapides dépôt/retrait, support WhatsApp direct.

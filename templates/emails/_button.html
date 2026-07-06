@@ -1,0 +1,9 @@
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:{% if margin %}{{ margin }}{% else %}20px 0 0{% endif %};">
+  <tr>
+    <td align="center" style="border-radius:8px;background:{% if variant == 'secondary' %}#ffffff{% else %}#f35c16{% endif %};{% if variant == 'secondary' %}border:2px solid #0F7B6C;{% endif %}">
+      <a href="{{ url }}" target="_blank" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:{% if variant == 'secondary' %}#0F7B6C{% else %}#ffffff{% endif %};text-decoration:none;border-radius:8px;">
+        {{ label }}
+      </a>
+    </td>
+  </tr>
+</table>

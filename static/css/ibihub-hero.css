@@ -424,10 +424,37 @@
 }
 
 @media (max-width: 767px) {
-	.main-search-container.ibihub-hero .main-search-inner {
-		padding-top: 32px;
-		margin-top:2600px;
-	}
+
+	.ibihub-home-hero-flow{
+        display:flex !important;
+        flex-direction:column !important;
+		inset: 0 !important;
+		justify-content: center !important;
+		align-items: center !important;
+    }
+
+
+
+
+    /* texte */
+    .ibihub-home-hero-flow__head{
+        order:2;
+        text-align:center;
+        margin-top:20px;
+    }
+
+    /* search */
+    .ibihub-home-hero-flow__search{
+        order:3;
+        margin-top:20px;
+    }
+
+    /* categories */
+    .ibihub-home-hero-flow__categories{
+        order:4;
+        margin-top:20px;
+    }
+
 
 	.ibihub-hero-search {
 		flex-wrap: wrap;

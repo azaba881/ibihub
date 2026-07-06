@@ -24,6 +24,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, TemplateView, UpdateView
@@ -36,6 +37,7 @@ from .forms import (
     EntrepotAvisForm,
     EntrepotForm,
     IbiHubAuthenticationForm,
+    IbiHubSetPasswordForm,
     LitigeForm,
     OwnerKycForm,
     ReclamationForm,
@@ -43,6 +45,7 @@ from .forms import (
     UserRegistrationForm,
 )
 from .models import (
+    Article,
     CategorieStorage,
     Entrepot,
     EntrepotAvis,
@@ -51,7 +54,6 @@ from .models import (
     EntrepotImage,
     Favori,
     Litige,
-    ParrainageGain,
     Reservation,
     UserCustom,
 )
@@ -107,6 +109,11 @@ def home(request):
         recent_entrepots = list(entrepot_qs.filter(pk__in=picked))
         order = {pk: i for i, pk in enumerate(picked)}
         recent_entrepots.sort(key=lambda e: order[e.pk])
+    blog_articles_recent = list(
+        Article.objects.filter(is_publie=True)
+        .select_related('categorie')
+        .order_by('-published_at', '-created_at')[:3]
+    )
     return render(
         request,
         'public/home.html',
@@ -115,8 +122,32 @@ def home(request):
             'categories_banner': categories_banner,
             'categories_explore': categories_explore,
             'recent_entrepots': recent_entrepots,
+            'blog_articles_recent': blog_articles_recent,
         },
     )
+
+
+def blog_list(request):
+    qs = (
+        Article.objects.filter(is_publie=True)
+        .select_related('categorie', 'auteur')
+        .order_by('-published_at', '-created_at')
+    )
+    paginator = Paginator(qs, 9)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    return render(
+        request,
+        'public/blog-list.html',
+        {'page_obj': page_obj},
+    )
+
+
+def article_detail(request, slug):
+    article = get_object_or_404(
+        Article.objects.filter(is_publie=True).select_related('categorie', 'auteur'),
+        slug=slug,
+    )
+    return render(request, 'public/blog-detail.html', {'article': article})
 
 
 def liste_espaces(request):
@@ -185,13 +216,23 @@ def opportunites_immobilieres(request):
     return render(request, 'public/opportunites-immobilieres.html')
 
 
-def _send_welcome_email(user):
+def _abs_url(path, request=None):
+    """URL absolue pour les e-mails (les liens relatifs ne fonctionnent pas dans les clients mail)."""
+    if request is not None:
+        return request.build_absolute_uri(path)
+    base = getattr(settings, 'SITE_URL', '').rstrip('/')
+    if not path.startswith('/'):
+        path = '/' + path
+    return f'{base}{path}'
+
+
+def _send_welcome_email(user, request=None):
     email_to = (user.email or user.username or '').strip()
     if not email_to:
         return
     ctx = {
         'user': user,
-        'dashboard_url': '/dashboard/',
+        'dashboard_url': _abs_url('/dashboard/', request),
     }
     html_body = render_to_string('emails/welcome_user.html', ctx)
     text_body = render_to_string('emails/welcome_user.txt', ctx)
@@ -219,8 +260,11 @@ def _send_reservation_confirmation_email(reservation, request=None):
             ticket_url = ''
     ctx = {
         'reservation': reservation,
-        'dashboard_url': '/dashboard/reservations/',
-        'ticket_url': ticket_url,
+        'dashboard_url': _abs_url('/dashboard/reservations/', request),
+        'ticket_url': ticket_url or _abs_url(
+            reverse('core:reservation_ticket_pdf', kwargs={'pk': reservation.pk}),
+            request,
+        ),
     }
     html_body = render_to_string('emails/reservation_confirmation_user.html', ctx)
     text_body = render_to_string('emails/reservation_confirmation_user.txt', ctx)
@@ -408,19 +452,9 @@ class SignUpView(CreateView):
             self.object,
             backend='core.auth_backends.EmailOrPhoneBackend',
         )
-        _send_welcome_email(self.object)
-        if self.object.parrain_id:
-            messages.success(self.request, 'Bienvenue sur IbiHub. Parrainage appliqué avec succès.')
-        else:
-            messages.success(self.request, 'Bienvenue sur IbiHub.')
+        _send_welcome_email(self.object, request=self.request)
+        messages.success(self.request, 'Bienvenue sur IbiHub.')
         return HttpResponseRedirect(self.get_success_url())
-
-    def get_initial(self):
-        initial = super().get_initial()
-        ref = (self.request.GET.get('ref') or '').strip()
-        if ref:
-            initial['parrainage_code_input'] = ref
-        return initial
 
     def get_success_url(self):
         if self.object.role == 'OWNER':
@@ -455,24 +489,25 @@ def _parse_reservation_dates(post) -> tuple:
     return d0, d1
 
 
-def _push_pending_referral_notifications(request):
-    if not request.user.is_authenticated:
-        return
-    pending = list(
-        ParrainageGain.objects.filter(
-            parrain=request.user,
-            notified=False,
-        ).select_related('filleul')[:10]
-    )
-    if not pending:
-        return
-    for gain in pending:
-        label = gain.filleul.get_full_name() or gain.filleul.username
-        messages.success(
-            request,
-            f'Félicitations ! Vous avez gagné 500 FCFA grâce à la réservation de {label}.',
-        )
-    ParrainageGain.objects.filter(pk__in=[g.pk for g in pending]).update(notified=True)
+def _normalize_phone_e164(raw: str) -> str:
+    s = (raw or '').strip().replace(' ', '').replace('-', '')
+    if not s:
+        return ''
+    if s.startswith('+'):
+        digits = ''.join(c for c in s[1:] if c.isdigit())
+        return f'+{digits}' if digits else ''
+    digits = ''.join(c for c in s if c.isdigit())
+    if not digits:
+        return ''
+    if len(digits) >= 11 and digits.startswith('229'):
+        return f'+{digits[:11]}'
+    if len(digits) == 10 and digits.startswith('0'):
+        return f'+229{digits[-8:]}'
+    if len(digits) == 8:
+        return f'+229{digits}'
+    if len(digits) > 8:
+        return f'+229{digits[-8:]}'
+    return ''
 
 
 def _push_owner_revenue_hint(request):
@@ -492,7 +527,6 @@ def _push_owner_revenue_hint(request):
 
 @login_required
 def mon_dashboard(request):
-    _push_pending_referral_notifications(request)
     _push_owner_revenue_hint(request)
     user = request.user
     mode = get_dashboard_mode(request, user)
@@ -699,6 +733,12 @@ def reservation_contrat_download(request, pk):
     is_client = reservation.client_id == request.user.id
     if not (is_owner_of_space or is_client):
         raise PermissionDenied
+    if is_client and request.user.must_set_password:
+        messages.warning(
+            request,
+            'Pour obtenir votre pass d’accès, veuillez d’abord définir votre mot de passe.',
+        )
+        return redirect('core:reservation_express_set_password')
     if not reservation.contrat_pdf or not reservation.contrat_pdf.name:
         messages.error(
             request,
@@ -727,6 +767,12 @@ def reservation_ticket_download(request, pk):
     is_client = reservation.client_id == request.user.id
     if not (is_owner_of_space or is_client):
         raise PermissionDenied
+    if is_client and request.user.must_set_password:
+        messages.warning(
+            request,
+            'Pour obtenir votre pass d’accès, veuillez d’abord définir votre mot de passe.',
+        )
+        return redirect('core:reservation_express_set_password')
     if not reservation.ticket_pdf or not reservation.ticket_pdf.name:
         messages.error(request, 'Le ticket PDF n’est pas encore disponible.')
         return redirect('core:dashboard_reservations')
@@ -744,7 +790,6 @@ def reservation_ticket_download(request, pk):
 
 @login_required
 def dashboard_spaces(request):
-    _push_pending_referral_notifications(request)
     _push_owner_revenue_hint(request)
     if not user_has_owner_access(request.user):
         messages.info(request, 'La gestion des espaces est réservée aux propriétaires.')
@@ -758,26 +803,6 @@ def dashboard_spaces(request):
         request,
         'dashboard/dashboard-spaces.html',
         {'entrepots': entrepots},
-    )
-
-
-@login_required
-def dashboard_referral(request):
-    _push_pending_referral_notifications(request)
-    share_url = request.build_absolute_uri(reverse('core:sign_up'))
-    share_text = (
-        f"Rejoins IbiHub avec mon code {request.user.code_parrainage} : {share_url}"
-    )
-    return render(
-        request,
-        'dashboard/dashboard-referral.html',
-        {
-            'referral_code': request.user.code_parrainage,
-            'share_text': share_text,
-            'share_link_direct': request.build_absolute_uri(
-                f"{reverse('core:sign_up')}?ref={request.user.code_parrainage}"
-            ),
-        },
     )
 
 
@@ -980,7 +1005,6 @@ class EntrepotUpdateView(LoginRequiredMixin, UpdateView):
 
 @login_required
 def dashboard_reservations(request):
-    _push_pending_referral_notifications(request)
     _push_owner_revenue_hint(request)
     user = request.user
     mode = get_dashboard_mode(request, user)
@@ -1005,17 +1029,23 @@ def dashboard_reservations(request):
         )
         ctx['litige_form'] = LitigeForm()
     else:
+        must_set_password_wall = bool(user.must_set_password)
         reservations = list(
             Reservation.objects.filter(client=user)
             .select_related('entrepot', 'entrepot__categorie', 'etat_des_lieux')
             .order_by('-date_debut')
         )
         for r in reservations:
-            if r.statut == Reservation.Statut.CONFIRME and r.qr_code_auth:
+            if (
+                r.statut == Reservation.Statut.CONFIRME
+                and r.qr_code_auth
+                and not must_set_password_wall
+            ):
                 r.qr_data_uri = qr_code_data_uri(r.qr_code_auth)
             else:
                 r.qr_data_uri = None
         ctx['reservations'] = reservations
+        ctx['must_set_password_wall'] = must_set_password_wall
 
     return render(request, 'dashboard/dashboard-reservations.html', ctx)
 
@@ -1119,7 +1149,6 @@ def demander_visite(request, pk):
     return redirect('core:espace_detail', pk=entrepot.pk)
 
 
-@login_required
 @require_POST
 def reserver_espace(request, pk):
     entrepot = get_object_or_404(
@@ -1133,10 +1162,48 @@ def reserver_espace(request, pk):
         'date_fin': (request.POST.get('date_fin') or '').strip(),
         'inventaire_depot': (request.POST.get('inventaire_depot') or '').strip(),
         'type_paiement': (request.POST.get('type_paiement') or '').strip(),
+        'nom_client': (request.POST.get('nom_client') or '').strip(),
+        'telephone_client': (request.POST.get('telephone_client') or '').strip(),
     }
     session_key = f'pending_reservation_form_{entrepot.pk}'
 
-    if entrepot.proprietaire_id == request.user.id:
+    booking_user = request.user if request.user.is_authenticated else None
+    if booking_user is None:
+        nom_client = reservation_form_data['nom_client']
+        telephone_client = _normalize_phone_e164(reservation_form_data['telephone_client'])
+        if not nom_client or not telephone_client:
+            request.session[session_key] = reservation_form_data
+            messages.error(
+                request,
+                'Réservez en 1 minute: indiquez votre nom et téléphone.',
+            )
+            return redirect_detail
+        existing = UserCustom.objects.filter(telephone=telephone_client).first()
+        if existing:
+            booking_user = existing
+            if not booking_user.first_name and nom_client:
+                booking_user.first_name = nom_client[:150]
+                booking_user.save(update_fields=['first_name'])
+        else:
+            username_base = telephone_client
+            username = username_base
+            suffix = 1
+            while UserCustom.objects.filter(username=username).exists():
+                username = f'{username_base}_{suffix}'
+                suffix += 1
+            booking_user = UserCustom(
+                username=username,
+                email='',
+                role='MERCHANT',
+                telephone=telephone_client,
+                first_name=nom_client[:150],
+                must_set_password=True,
+            )
+            booking_user.set_password(get_random_string(20))
+            booking_user.save()
+        login(request, booking_user, backend='core.auth_backends.EmailOrPhoneBackend')
+
+    if entrepot.proprietaire_id == booking_user.id:
         messages.error(
             request,
             'Vous ne pouvez pas réserver votre propre espace.',
@@ -1198,7 +1265,7 @@ def reserver_espace(request, pk):
 
     reservation = Reservation(
         entrepot=entrepot,
-        client=request.user,
+        client=booking_user,
         date_debut=date_debut,
         date_fin=date_fin,
         statut=Reservation.Statut.CONFIRME,
@@ -1210,8 +1277,53 @@ def reserver_espace(request, pk):
     request.session.pop(session_key, None)
     _send_reservation_confirmation_email(reservation, request=request)
 
-    return HttpResponseRedirect(
-        f"{reverse('core:confirmation_reservation')}?reservation={reservation.pk}"
+    if booking_user.must_set_password:
+        return HttpResponseRedirect(
+            f"{reverse('core:reservation_express_success')}?reservation={reservation.pk}"
+        )
+    return HttpResponseRedirect(f"{reverse('core:confirmation_reservation')}?reservation={reservation.pk}")
+
+
+@login_required
+def reservation_express_success(request):
+    if not request.user.must_set_password:
+        return redirect('core:dashboard_reservations')
+    reservation = None
+    rid = request.GET.get('reservation')
+    if rid and rid.isdigit():
+        reservation = Reservation.objects.filter(
+            pk=int(rid),
+            client=request.user,
+        ).select_related('entrepot').first()
+    return render(
+        request,
+        'public/reservation-express-success.html',
+        {'reservation': reservation},
+    )
+
+
+@login_required
+def reservation_express_set_password(request):
+    if not request.user.must_set_password:
+        return redirect('core:dashboard_reservations')
+    if request.method == 'POST':
+        form = IbiHubSetPasswordForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            request.user.must_set_password = False
+            request.user.save(update_fields=['must_set_password'])
+            update_session_auth_hash(request, request.user)
+            messages.success(
+                request,
+                'Mot de passe défini. Votre pass d’accès est maintenant disponible.',
+            )
+            return redirect('core:dashboard_reservations')
+    else:
+        form = IbiHubSetPasswordForm(request.user)
+    return render(
+        request,
+        'public/reservation-express-set-password.html',
+        {'form': form},
     )
 
 
@@ -1364,11 +1476,11 @@ class EntrepotDetailView(DetailView):
         e = self.object
         user = self.request.user
         is_owner_of_space = user.is_authenticated and user.pk == e.proprietaire_id
-        ctx['booking_requires_login'] = not user.is_authenticated
+        ctx['booking_requires_login'] = False
+        ctx['booking_express_allowed'] = not user.is_authenticated
         ctx['booking_blocked_own'] = is_owner_of_space
         ctx['can_submit_reservation'] = (
-            user.is_authenticated
-            and not is_owner_of_space
+            not is_owner_of_space
             and e.disponible
             and e.proprietaire.is_verified
         )
@@ -1429,7 +1541,6 @@ class DashboardSettingsView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
     def get_context_data(self, **kwargs):
-        _push_pending_referral_notifications(self.request)
         password_form = kwargs.pop('password_form', None)
         active_settings_tab = kwargs.pop('active_settings_tab', None)
         ctx = super().get_context_data(**kwargs)
@@ -1449,11 +1560,6 @@ class DashboardSettingsView(LoginRequiredMixin, UpdateView):
             statut=Reservation.Statut.TERMINE,
         ).select_related('entrepot').order_by('-date_fin')[:100]
         ctx['billing_history'] = history_qs
-        ctx['referral_balance'] = self.request.user.solde_parrainage
-        ctx['referral_children_count'] = self.request.user.filleuls.count()
-        ctx['referral_history'] = ParrainageGain.objects.filter(
-            parrain=self.request.user
-        ).select_related('filleul', 'reservation').order_by('-created_at')[:50]
         return ctx
 
     def post(self, request, *args, **kwargs):

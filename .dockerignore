@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Secrets & local DB
+.env
+db.sqlite3
+
+# Build artifacts
+staticfiles/
+*.sqlite3
+
+# Media uploads (use Fly volume or object storage in production)
+media/
+
+# IDE & OS
+.git/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Docs & dev
+docs/
+*.md
+!README.md

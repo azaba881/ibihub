@@ -40,6 +40,18 @@ urlpatterns = [
         views.confirmation_reservation,
         name='confirmation_reservation',
     ),
+    path(
+        'reservation/express/succes/',
+        views.reservation_express_success,
+        name='reservation_express_success',
+    ),
+    path(
+        'reservation/express/mot-de-passe/',
+        views.reservation_express_set_password,
+        name='reservation_express_set_password',
+    ),
+    path('actualites/', views.blog_list, name='blog_list'),
+    path('actualites/<slug:slug>/', views.article_detail, name='blog_article_detail'),
     path('a-propos/', views.a_propos, name='a_propos'),
     path(
         'opportunites-immobilieres/',
@@ -58,6 +70,7 @@ urlpatterns = [
             template_name='public/auth/password_reset_form.html',
             form_class=IbiHubPasswordResetForm,
             email_template_name='emails/password_reset_email.txt',
+            html_email_template_name='emails/password_reset_email.html',
             subject_template_name='emails/password_reset_subject.txt',
             success_url=reverse_lazy('core:password_reset_done'),
             extra_context={'title': 'Mot de passe oublié'},
@@ -121,7 +134,6 @@ urlpatterns = [
     ),
     path('dashboard/favoris/', views.dashboard_favorites, name='dashboard_favorites'),
     path('dashboard/facturation/', views.dashboard_billing, name='dashboard_billing'),
-    path('dashboard/parrainage/', views.dashboard_referral, name='dashboard_referral'),
     path(
         'dashboard/disponibilites/',
         views.dashboard_disponibilites,

@@ -15,6 +15,7 @@ Ce document formalise les fonctionnalités cœur pour :
 |---|:---:|:---:|:---:|
 | Inscription / connexion | ✅ | ✅ | ✅ |
 | Connexion email/téléphone | ✅ | ✅ | ✅ |
+| Réservation express (sans compte préalable) | ✅ | ⛔ | ⛔ |
 | Recherche d’espaces | ✅ | ✅ | ⛔ |
 | Réservation | ✅ | ⛔ | ⛔ |
 | Inventaire de dépôt | ✅ (saisie) | 👁️ | 👁️ |
@@ -28,6 +29,8 @@ Ce document formalise les fonctionnalités cœur pour :
 | Libération caution | ⛔ | ⛔ | ✅ |
 | Analytics commissions | ⛔ | ⛔ | ✅ |
 | Taux d’occupation | ⛔ | ✅ | ✅ |
+| Articles blog (rédaction) | ⛔ | ⛔ | ✅ (superuser admin) |
+| Lecture actualités (vitrine) | ✅ | ✅ | ✅ |
 
 ---
 
@@ -101,6 +104,10 @@ Tous les calculs financiers utilisent `Decimal`.
 ### 7.3 Libération caution répétée
 - Si `caution_rendue=True`, l’action admin ne doit pas réappliquer la libération (idempotence logique).
 
+### 7.4 Réservation express et compte existant
+- Si le téléphone correspond à un utilisateur déjà inscrit, la réservation est rattachée à ce compte (pas de second compte).
+- Si ce compte n’a pas le flag `must_set_password`, le parcours post-réservation reste celui d’un utilisateur classique (pas de mur supplémentaire).
+
 ---
 
 ## 8. Admin Controls
@@ -119,21 +126,23 @@ Tous les calculs financiers utilisent `Decimal`.
 - Sidebar dynamique selon mode actif.
 - Si passage en mode propriétaire sans KYC validé : page intermédiaire KYC + blocage publication.
 
-### 9.2 Parrainage automatisé
-- Gain fixe : **500 FCFA**.
-- Déclencheur : `Reservation` passe à `TERMINE`.
-- Condition : client possède un `parrain`.
-- Anti-doublon :
-  - `Reservation.gain_parrainage_verse = True` après versement,
-  - historique `ParrainageGain` (une entrée par réservation).
-- Règle produit : versement sur la **première réservation terminée** du filleul.
-
-### 9.3 Facturation
-- Nouveaux champs profil:
+### 9.2 Facturation
+- Champs profil:
   - `reseau_momo` (`MTN` / `MOOV`)
   - `numero_momo` (E.164)
-  - `solde_parrainage`
 - Onglet facturation dashboard:
-  - historique factures PDF,
-  - historique gains parrainage,
-  - solde cumulé.
+  - historique factures PDF.
+
+### 9.3 Blog / actualités
+- Modèles `ArticleCategorie`, `Article` (slug = nom de lecture pour l’URL).
+- Création / édition dans **admin Django**, réservée aux **super-utilisateurs**.
+- Liste publique paginée : `/actualites/` ; détail : `/actualites/<slug>/`.
+
+### 9.4 Réservation express (guest → compte auto)
+- **Entrée** : visiteur non authentifié sur la fiche espace ; champs additionnels `nom_client`, `telephone_client` dans le POST de réservation.
+- **Déduplication** : si un `UserCustom` existe déjà avec le même `telephone` (E.164), ce compte est réutilisé ; sinon création avec `username` = téléphone (suffixe numérique si collision) et mot de passe aléatoire (non communiqué).
+- **Session** : `login()` immédiat après création ou association.
+- **Flag** : `UserCustom.must_set_password = True` pour les comptes créés via ce flux (ou équivalent produit).
+- **Mur d’accès** : tant que `must_set_password` est vrai pour le client, pas d’affichage QR côté dashboard commerçant, pas de téléchargement ticket/contrat PDF pour le client ; page dédiée de définition de mot de passe (`SetPasswordForm` / équivalent).
+- **Après définition** : `must_set_password = False`, session mise à jour ; accès normal au pass et aux PDF.
+- **Redirection post-réservation** : page de succès express puis invitation à définir le mot de passe (les utilisateurs déjà enregistrés avec mot de passe utilisent la page de confirmation habituelle).

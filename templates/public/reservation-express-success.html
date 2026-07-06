@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Réservation enregistrée — IbiHub{% endblock %}
+
+{% block content %}
+<section style="padding:56px 0;background:linear-gradient(180deg,#f7faf9,#eef4f2);min-height:58vh;">
+  <div class="container" style="max-width:860px;">
+    <div style="background:#fff;border-radius:18px;box-shadow:0 16px 36px rgba(13,92,77,.12);overflow:hidden;">
+      <div style="background:#0d5c4d;padding:22px 26px;color:#fff;">
+        <h1 style="margin:0;font-size:24px;font-family:Poppins,sans-serif;">Réservation enregistrée !</h1>
+        <p style="margin:6px 0 0;opacity:.95;">Pour obtenir votre Pass d'accès, veuillez définir votre mot de passe.</p>
+      </div>
+      <div style="padding:26px;">
+        {% if reservation %}
+        <p style="margin:0 0 8px;color:#374151;">Référence: <strong>#{{ reservation.pk }}</strong></p>
+        <p style="margin:0 0 16px;color:#374151;">Espace: <strong>{{ reservation.entrepot.titre }}</strong></p>
+        {% endif %}
+        <a href="{% url 'core:reservation_express_set_password' %}" style="display:inline-block;background:#0d5c4d;color:#fff;padding:12px 16px;border-radius:10px;font-weight:700;">Définir mon mot de passe</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

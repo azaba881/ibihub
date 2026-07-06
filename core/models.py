@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.text import slugify
 
 
 def validate_telephone_e164(value: str) -> None:
@@ -75,20 +76,6 @@ class UserCustom(AbstractUser):
         null=True,
         help_text='Scan ou photo de la pièce (traitement par l’équipe IbiHub).',
     )
-    code_parrainage = models.CharField(
-        max_length=12,
-        unique=True,
-        blank=True,
-        null=True,
-        help_text='Code unique de parrainage partagé à l’inscription.',
-    )
-    parrain = models.ForeignKey(
-        'self',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='filleuls',
-    )
     class ReseauMomo(models.TextChoices):
         MTN = 'MTN', 'MTN Mobile Money'
         MOOV = 'MOOV', 'Moov Money'
@@ -105,11 +92,9 @@ class UserCustom(AbstractUser):
         validators=[validate_telephone_e164],
         help_text='Numéro Mobile Money (format international, ex. +229...).',
     )
-    solde_parrainage = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=Decimal('0.00'),
-        help_text='Cumul des gains de parrainage.',
+    must_set_password = models.BooleanField(
+        default=False,
+        help_text="Bloque l'accès QR/PDF tant que l'utilisateur n'a pas défini son mot de passe.",
     )
 
     def __str__(self) -> str:
@@ -118,19 +103,6 @@ class UserCustom(AbstractUser):
     @property
     def has_owner_access(self) -> bool:
         return self.role == 'OWNER' or self.can_post_announcements
-
-    def _generate_referral_code(self) -> str:
-        alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-        for _ in range(100):
-            candidate = ''.join(random.choice(alphabet) for _ in range(8))
-            if not UserCustom.objects.filter(code_parrainage=candidate).exclude(pk=self.pk).exists():
-                return candidate
-        return uuid.uuid4().hex[:8].upper()
-
-    def save(self, *args, **kwargs):
-        if not self.code_parrainage:
-            self.code_parrainage = self._generate_referral_code()
-        super().save(*args, **kwargs)
 
 
 class CategorieStorage(models.Model):
@@ -442,10 +414,6 @@ class Reservation(models.Model):
         default=False,
         help_text='Indique si la caution a été restituée.',
     )
-    gain_parrainage_verse = models.BooleanField(
-        default=False,
-        help_text='Empêche de verser plusieurs fois la récompense de parrainage.',
-    )
 
     class Meta:
         verbose_name = 'réservation'
@@ -610,30 +578,87 @@ class Litige(models.Model):
         ordering = ['-created_at']
 
 
-class ParrainageGain(models.Model):
-    parrain = models.ForeignKey(
-        UserCustom,
-        on_delete=models.CASCADE,
-        related_name='gains_parrainage',
-    )
-    filleul = models.ForeignKey(
-        UserCustom,
-        on_delete=models.CASCADE,
-        related_name='gains_generees',
-    )
-    reservation = models.OneToOneField(
-        Reservation,
-        on_delete=models.CASCADE,
-        related_name='gain_parrainage',
-    )
-    montant = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('500.00'))
-    created_at = models.DateTimeField(auto_now_add=True)
-    notified = models.BooleanField(default=False)
+class ArticleCategorie(models.Model):
+    """Catégorie d’article de blog (distincte des catégories de stockage)."""
+
+    nom = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120, unique=True)
 
     class Meta:
-        verbose_name = 'gain de parrainage'
-        verbose_name_plural = 'gains de parrainage'
-        ordering = ['-created_at']
+        verbose_name = 'catégorie d’article'
+        verbose_name_plural = 'catégories d’articles'
+        ordering = ['nom']
+
+    def __str__(self) -> str:
+        return self.nom
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.nom)[:110] or 'categorie'
+            s = base
+            n = 1
+            while ArticleCategorie.objects.filter(slug=s).exclude(pk=self.pk).exists():
+                n += 1
+                s = f'{base}-{n}'
+            self.slug = s
+        super().save(*args, **kwargs)
+
+
+class Article(models.Model):
+    """Article publié sur la vitrine (rédigé depuis l’admin Django par le super-utilisateur)."""
+
+    titre = models.CharField(max_length=200)
+    slug = models.SlugField(
+        max_length=200,
+        unique=True,
+        help_text='Nom de lecture (URL), ex. securiser-mon-stockage',
+    )
+    categorie = models.ForeignKey(
+        ArticleCategorie,
+        on_delete=models.PROTECT,
+        related_name='articles',
+    )
+    resume = models.CharField(
+        max_length=500,
+        blank=True,
+        help_text='Chapô affiché dans les listes.',
+    )
+    contenu = models.TextField()
+    image_couverture = models.ImageField(
+        upload_to='blog/covers/',
+        blank=True,
+        null=True,
+    )
+    auteur = models.ForeignKey(
+        UserCustom,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='articles_rediges',
+    )
+    is_publie = models.BooleanField(default=False)
+    published_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'article'
+        verbose_name_plural = 'articles'
+        ordering = ['-published_at', '-created_at']
+
+    def __str__(self) -> str:
+        return self.titre
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.titre)[:180] or 'article'
+            s = base
+            n = 1
+            while Article.objects.filter(slug=s).exclude(pk=self.pk).exists():
+                n += 1
+                s = f'{base}-{n}'
+            self.slug = s
+        super().save(*args, **kwargs)
 
 
 class Favori(models.Model):

@@ -1,18 +1,25 @@
-<!DOCTYPE html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Nouveau message contact</title></head>
-<body style="margin:0;background:#f3f6f5;font-family:Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px;"><tr><td align="center">
-<table width="100%" style="max-width:620px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.08)">
-<tr><td style="background:#0d5c4d;color:#fff;padding:18px 24px;font-size:20px;font-weight:700;">Nouveau message — Contact</td></tr>
-<tr><td style="padding:22px 24px;color:#1f2937;line-height:1.6;">
-<table width="100%" style="border-collapse:collapse;">
-<tr><td style="padding:8px;border-bottom:1px solid #e5e7eb;color:#6b7280;width:140px;">Nom</td><td style="padding:8px;border-bottom:1px solid #e5e7eb;font-weight:600;">{{ name }}</td></tr>
-<tr><td style="padding:8px;border-bottom:1px solid #e5e7eb;color:#6b7280;">E-mail</td><td style="padding:8px;border-bottom:1px solid #e5e7eb;"><a href="mailto:{{ email }}" style="color:#0d5c4d;text-decoration:none;">{{ email }}</a></td></tr>
-<tr><td style="padding:8px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Sujet</td><td style="padding:8px;border-bottom:1px solid #e5e7eb;">{{ subject }}</td></tr>
+{% extends "emails/_base.html" %}
+{% block title %}Nouveau message contact — IbiHub{% endblock %}
+{% block content %}
+<h1 style="margin:0 0 16px;font-size:22px;color:#014431;">Nouveau message — Contact</h1>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+  <tr>
+    <td style="padding:10px 0;font-size:14px;color:#6b7280;width:120px;vertical-align:top;">Nom</td>
+    <td style="padding:10px 0;font-size:14px;color:#1F2937;font-weight:600;border-bottom:1px solid #eef2f1;">{{ name }}</td>
+  </tr>
+  <tr>
+    <td style="padding:10px 0;font-size:14px;color:#6b7280;vertical-align:top;">E-mail</td>
+    <td style="padding:10px 0;font-size:14px;border-bottom:1px solid #eef2f1;">
+      <a href="mailto:{{ email }}" style="color:#0F7B6C;text-decoration:none;">{{ email }}</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:10px 0;font-size:14px;color:#6b7280;vertical-align:top;">Sujet</td>
+    <td style="padding:10px 0;font-size:14px;color:#1F2937;border-bottom:1px solid #eef2f1;">{{ subject }}</td>
+  </tr>
 </table>
-<div style="margin-top:14px;padding:14px;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa;white-space:pre-wrap;">{{ message }}</div>
-<p style="margin:16px 0 0;"><a href="mailto:{{ email }}" style="display:inline-block;background:#0d5c4d;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:600;">Répondre au visiteur</a></p>
-</td></tr>
-</table>
-</td></tr></table>
-</body></html>
+<div style="padding:16px;background:#f8faf9;border:1px solid #d9e5e1;border-radius:10px;font-size:14px;line-height:1.7;color:#374151;white-space:pre-wrap;">{{ message }}</div>
+<p style="margin:20px 0 0;">
+  <a href="mailto:{{ email }}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:8px;background:#f35c16;">Répondre au visiteur</a>
+</p>
+{% endblock %}

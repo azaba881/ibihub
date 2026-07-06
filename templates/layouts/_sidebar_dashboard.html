@@ -68,11 +68,6 @@
 				<span class="icon"><i class="fa fa-heart" aria-hidden="true"></i></span> Mes favoris
 			</a>
 		</li>
-		<li>
-			<a href="{% url 'core:dashboard_referral' %}" class="{% if request.resolver_match.url_name == 'dashboard_referral' %}is-active{% endif %}">
-				<span class="icon"><i class="fa fa-share-alt" aria-hidden="true"></i></span> Parrainage
-			</a>
-		</li>
 		{% endif %}
 		<li>
 			<a href="{% url 'core:dashboard_settings' %}" class="{% if request.resolver_match.url_name == 'dashboard_settings' %}is-active{% endif %}">
